@@ -209,6 +209,7 @@ async function quickSellAllToFunds() {
       type: 'market',
       strike_price: props.market?.last_price,
       quantity: availBase,
+      is_demo: isDemoMode.value,
     });
     toastRef.value?.show(`Sold ${availBase} ${props.market?.base_currency} to USDT funds balance.`, 'success');
     usdtAmount.value = '';

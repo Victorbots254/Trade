@@ -220,6 +220,7 @@ async function closePosition(holding) {
       side: 'sell',
       type: 'market',
       quantity: holding.amount,
+      is_demo: isDemoMode.value,
     });
 
     const gainLossText = holding.pnlAmount >= 0 
