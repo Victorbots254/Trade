@@ -66,7 +66,7 @@ Route::get('/risk-disclosure', [TradingTerminalController::class, 'riskDisclosur
 
 // Public Company & Info Pages
 Route::get('/about', fn () => Inertia::render('About'))->name('about');
-Route::get('/blog', fn () => Inertia::render('Blog'))->name('blog');
+Route::get('/blog', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog');
 Route::get('/careers', fn () => Inertia::render('Careers'))->name('careers');
 Route::get('/bug-bounty', fn () => Inertia::render('BugBounty'))->name('bug-bounty');
 Route::get('/media-kit', fn () => Inertia::render('MediaKit'))->name('media-kit');

@@ -110,6 +110,175 @@ class BlogController extends Controller
                     <p>Once you hold an asset, it will appear in your <strong>Holdings & Positions</strong> tab. Our platform calculates your live Unrealized P&L (Profit and Loss) against the live market oracle. When you are ready to secure your gains, simply click the <strong>Close Position</strong> button. Our system will instantly execute a Market Sell order on your behalf, sweeping the asset from your ledger and crediting the equivalent USDT directly to your Available Balance.</p>
                 </div>
             "
+        ],
+        "candlestick-charts-beginners" => [
+            "title" => "How to Read Candlestick Charts for Beginners",
+            "slug" => "candlestick-charts-beginners",
+            "category" => "Education",
+            "read_time" => "9 min read",
+            "image" => "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1000",
+            "excerpt" => "Candlestick patterns are the foundation of technical analysis. This guide explains the 5 most common patterns every trader needs to know.",
+            "content" => "
+                <div class=\"prose prose-invert max-w-none space-y-6\">
+                    <p class=\"text-lg leading-relaxed text-slate-300\">Technical analysis starts with understanding price action. Candlestick charts offer a highly visual representation of market psychology over a given timeframe. Whether you are trading 1-minute binary options or holding spot Bitcoin for a year, reading the candles is a mandatory skill.</p>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">The Anatomy of a Candle</h3>
+                    <p>Every candlestick has a <strong>Body</strong> and <strong>Wicks (Shadows)</strong>.</p>
+                    <ul class=\"list-disc pl-5 space-y-2 text-slate-300\">
+                        <li><strong class=\"text-emerald-400\">Green (Bullish) Candle:</strong> The bottom of the body is the Open price, and the top is the Close price. The wicks show the highest and lowest prices reached during that timeframe.</li>
+                        <li><strong class=\"text-rose-400\">Red (Bearish) Candle:</strong> The top of the body is the Open price, and the bottom is the Close price.</li>
+                    </ul>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">The 3 Most Powerful Patterns</h3>
+                    
+                    <div class=\"bg-slate-800 p-6 rounded-xl border border-slate-700 my-6 space-y-4\">
+                        <div>
+                            <h4 class=\"text-lg font-bold text-amber-400\">1. The Hammer (Bullish Reversal)</h4>
+                            <p class=\"text-slate-300 text-sm mt-1\">Found at the bottom of a downtrend. It has a small body and a long lower wick. It signals that sellers pushed the price down, but buyers overwhelmed them and drove the price back up.</p>
+                        </div>
+                        <div class=\"border-t border-slate-700 pt-4\">
+                            <h4 class=\"text-lg font-bold text-amber-400\">2. Engulfing Patterns</h4>
+                            <p class=\"text-slate-300 text-sm mt-1\">A small candle is immediately followed by a massive candle of the opposite color that completely 'engulfs' the previous body. A green engulfing candle indicates massive buying momentum.</p>
+                        </div>
+                        <div class=\"border-t border-slate-700 pt-4\">
+                            <h4 class=\"text-lg font-bold text-amber-400\">3. The Doji (Indecision)</h4>
+                            <p class=\"text-slate-300 text-sm mt-1\">A cross-like candle where the open and close prices are nearly identical. It shows that buyers and sellers are deadlocked. If a Doji appears after a long trend, a reversal is highly probable.</p>
+                        </div>
+                    </div>
+                </div>
+            "
+        ],
+        "usdt-bep20-explained" => [
+            "title" => "USDT BEP20 Explained: Why We Chose Binance Smart Chain",
+            "slug" => "usdt-bep20-explained",
+            "category" => "Platform",
+            "read_time" => "6 min read",
+            "image" => "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=1000",
+            "excerpt" => "BEP20 USDT offers near-instant finality, sub-cent fees, and universal wallet support. Here is why it is the ideal deposit currency for TradePro.",
+            "content" => "
+                <div class=\"prose prose-invert max-w-none space-y-6\">
+                    <p class=\"text-lg leading-relaxed text-slate-300\">At TradePro, our primary base currency is Tether (USDT). However, USDT exists on dozens of different blockchains (Ethereum ERC20, Tron TRC20, Solana, etc.). We exclusively built our infrastructure around <strong>Binance Smart Chain (BEP20)</strong>. Here is why.</p>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">The Problem with Ethereum (ERC20)</h3>
+                    <p>While Ethereum is the most decentralized smart contract network, it suffers from severe congestion. During a bull market, transferring USDT over ERC20 can cost upwards of $20 to $50 in gas fees, and take up to 15 minutes to confirm. For a high-frequency trading platform, this friction is unacceptable.</p>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">The BEP20 Advantage</h3>
+                    <p>Binance Smart Chain utilizes a Proof-of-Staked-Authority (PoSA) consensus model. This allows it to achieve remarkable efficiency metrics:</p>
+                    <ul class=\"list-disc pl-5 space-y-2 text-slate-300\">
+                        <li><strong class=\"text-emerald-400\">Near-Instant Finality:</strong> Blocks are minted every 3 seconds. Your deposit is confirmed and credited to your trading account almost instantly.</li>
+                        <li><strong class=\"text-emerald-400\">Micro-Fees:</strong> Transferring BEP20 USDT typically costs less than $0.05 in BNB gas fees, regardless of the transaction size.</li>
+                        <li><strong class=\"text-emerald-400\">Ecosystem Integration:</strong> It is natively supported by Binance, Trust Wallet, MetaMask, and hardware wallets like Ledger.</li>
+                    </ul>
+
+                    <p class=\"mt-8\">When you deposit to your TradePro wallet, ensure your sending exchange or wallet has selected the <strong>BSC / BEP20</strong> network. Sending funds via the wrong network will result in permanent loss.</p>
+                </div>
+            "
+        ],
+        "cold-storage-security" => [
+            "title" => "How TradePro Secures Your Funds: Cold Storage Architecture",
+            "slug" => "cold-storage-security",
+            "category" => "Security",
+            "read_time" => "7 min read",
+            "image" => "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=1000",
+            "excerpt" => "We store 98% of user funds in offline cold wallets with multi-signature signing requirements. Here is exactly how your money is protected.",
+            "content" => "
+                <div class=\"prose prose-invert max-w-none space-y-6\">
+                    <p class=\"text-lg leading-relaxed text-slate-300\">In the cryptocurrency industry, security is not a feature; it is the entire foundation of trust. TradePro utilizes institutional-grade security architectures to ensure that client assets are immune to hot-wallet breaches, server compromises, and physical attacks.</p>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">The 98 / 2 Distribution Rule</h3>
+                    <p>TradePro keeps a maximum of <strong>2%</strong> of total platform assets in internet-connected \"Hot Wallets\". These hot wallets are used solely to facilitate automated daily withdrawals and immediate liquidity for users.</p>
+                    <p>The remaining <strong>98%</strong> of assets are swept daily into our Air-Gapped Cold Storage system. These wallets reside on specialized hardware that has never, and will never, touch the internet.</p>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">Multi-Signature (Multi-Sig) Authentication</h3>
+                    <p>Our cold storage addresses are governed by a 3-of-5 Multi-Sig smart contract. This means that to move funds out of cold storage, 3 out of 5 highly secured cryptographic keys must sign the transaction simultaneously.</p>
+                    <ul class=\"list-disc pl-5 space-y-2 text-slate-300\">
+                        <li>Keys are distributed across geographically separated secure vaults.</li>
+                        <li>No single executive, developer, or hacker can unilaterally access the funds.</li>
+                        <li>Physical access to the keys requires biometric authentication and armed security clearance.</li>
+                    </ul>
+
+                    <p class=\"mt-6\">Your peace of mind is our priority. Trade confidently knowing your capital is guarded by enterprise-grade cryptographic fortresses.</p>
+                </div>
+            "
+        ],
+        "binary-vs-spot" => [
+            "title" => "Binary vs Spot: Which Trading Style Suits You?",
+            "slug" => "binary-vs-spot",
+            "category" => "Education",
+            "read_time" => "10 min read",
+            "image" => "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1000",
+            "excerpt" => "Both have merit — but they suit very different trading styles and risk tolerances. We break down the differences with real examples.",
+            "content" => "
+                <div class=\"prose prose-invert max-w-none space-y-6\">
+                    <p class=\"text-lg leading-relaxed text-slate-300\">TradePro offers two distinct avenues for market speculation: traditional Spot Trading and fast-paced Binary Options. Understanding the mechanical and psychological differences between them is crucial to finding your edge as a trader.</p>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">Spot Trading: The Investor's Approach</h3>
+                    <p>Spot trading involves taking direct ownership of the asset. If Bitcoin is $60,000 and you buy 1 BTC, your portfolio value fluctuates exactly 1:1 with Bitcoin's price.</p>
+                    <ul class=\"list-disc pl-5 space-y-2 text-slate-300\">
+                        <li><strong class=\"text-emerald-400\">Pros:</strong> Infinite time horizon. You can never be liquidated or \"expire\" out of a spot trade. It is the safest way to ride long-term macroeconomic trends.</li>
+                        <li><strong class=\"text-rose-400\">Cons:</strong> Capital intensive. To make $6,000 profit, you need Bitcoin to move 10%, which might take months.</li>
+                    </ul>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">Binary Options: The Day Trader's Scalp</h3>
+                    <p>Binary options abstract away the asset ownership. You are simply betting on the <strong>direction</strong> of the price over a fixed timeframe (e.g. 60 seconds).</p>
+                    <ul class=\"list-disc pl-5 space-y-2 text-slate-300\">
+                        <li><strong class=\"text-emerald-400\">Pros:</strong> Massive ROI velocity. You can earn an 88% payout even if the price of Bitcoin only moves by $1 in your direction. It thrives in stagnant, choppy markets.</li>
+                        <li><strong class=\"text-rose-400\">Cons:</strong> Binary outcomes. If you are wrong by a single tick at expiration, the stake is lost. It requires extreme discipline and precision timing.</li>
+                    </ul>
+
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">The Verdict</h3>
+                    <p>Successful traders use both. They use <strong>Spot Trading</strong> to securely accumulate wealth over years, and they use a small, dedicated allocation of risk capital for <strong>Binary Options</strong> to generate immediate daily cash flow.</p>
+                </div>
+            "
+        ],
+        "global-infrastructure" => [
+            "title" => "TradePro Now Serves Traders in 140+ Countries",
+            "slug" => "global-infrastructure",
+            "category" => "Announcement",
+            "read_time" => "4 min read",
+            "image" => "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=1000",
+            "excerpt" => "We have completed our global infrastructure expansion. No KYC barriers, no geographic restrictions. Open to all serious traders.",
+            "content" => "
+                <div class=\"prose prose-invert max-w-none space-y-6\">
+                    <p class=\"text-lg leading-relaxed text-slate-300\">We are thrilled to announce that TradePro has successfully deployed decentralized matching engine nodes across 14 global server regions, reducing trade execution latency to sub-10 milliseconds for users across 140+ countries.</p>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">Decentralized Access</h3>
+                    <p>Our philosophy is simple: financial tools should be globally accessible. By utilizing non-custodial decentralized bridging protocols and Web3 architecture, we have eliminated traditional geographic boundaries.</p>
+                    <ul class=\"list-disc pl-5 space-y-2 text-slate-300\">
+                        <li>No discriminatory regional IP bans.</li>
+                        <li>No restrictive fiat banking requirements—fund entirely via USDT BEP20.</li>
+                        <li>Privacy-first architecture.</li>
+                    </ul>
+                    
+                    <p class=\"mt-6\">Whether you are trading from Tokyo, London, or São Paulo, TradePro guarantees institutional liquidity, fixed-payout binary contracts, and 24/7 uptime.</p>
+                </div>
+            "
+        ],
+        "redis-matching-engine" => [
+            "title" => "Under the Hood: Our Redis-Powered Order Matching Engine",
+            "slug" => "redis-matching-engine",
+            "category" => "Tech",
+            "read_time" => "11 min read",
+            "image" => "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=1000",
+            "excerpt" => "Sub-millisecond matching is not a marketing claim — it is a direct result of our atomic Lua scripts running on Redis sorted sets.",
+            "content" => "
+                <div class=\"prose prose-invert max-w-none space-y-6\">
+                    <p class=\"text-lg leading-relaxed text-slate-300\">When volatility strikes and Bitcoin dumps $2,000 in a minute, traditional database-backed exchanges freeze. Order books lock up, liquidations fail to process, and users are left with API timeouts. At TradePro, we solved this by moving our entire matching engine into in-memory architecture.</p>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">Why Relational Databases Fail at Scale</h3>
+                    <p>MySQL and PostgreSQL are brilliant for storing persistent ledger data, but they are absolutely terrible for live order book matching. Reading from a disk, acquiring row-level locks, and calculating spread crosses across millions of active orders causes a bottleneck.</p>
+                    
+                    <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">The Redis Sorted Set Solution</h3>
+                    <p>Instead of SQL, our live order book exists entirely in RAM using Redis <code>ZSET</code> (Sorted Sets). When a limit order is placed, it is inserted into the set where the score is the price.</p>
+                    <ul class=\"list-disc pl-5 space-y-2 text-slate-300\">
+                        <li><strong class=\"text-emerald-400\">O(log(N)) Time Complexity:</strong> Redis can find the highest Bid or lowest Ask in microseconds, regardless of how large the order book gets.</li>
+                        <li><strong class=\"text-emerald-400\">Atomic Lua Scripting:</strong> When a Market Order hits the book, a Lua script atomically crosses the spread, deducts balances, and writes the execution log without any race conditions.</li>
+                        <li><strong class=\"text-emerald-400\">Asynchronous Persistence:</strong> The Redis engine matches the trade instantly and returns the success to the user. In the background, a queue worker safely persists the finalized ledger state to our primary SQL database.</li>
+                    </ul>
+
+                    <p class=\"mt-6\">This hybrid architecture guarantees that you will never miss a fill due to system lag. Your trades execute at the exact speed of your network connection.</p>
+                </div>
+            "
         ]
     ];
 
