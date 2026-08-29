@@ -61,7 +61,7 @@
           <div v-if="type === 'limit'">
             <label class="block text-slate-500 dark:text-slate-400 text-[11px] mb-1">Price ({{ market?.quote_currency }})</label>
             <div class="relative">
-              <input v-model="price" @input="userEditedPrice = true" type="number" step="0.01" min="0.01" required
+              <input v-model="price" @input="userEditedPrice = true" type="number" step="any" min="0.000001" required
                      class="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2.5 py-1.5 font-mono text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:border-emerald-500" />
               <span class="absolute right-2.5 top-2 text-slate-400 dark:text-slate-500 font-mono text-[11px]">{{ market?.quote_currency }}</span>
             </div>
@@ -77,7 +77,7 @@
               Amount ({{ side === 'buy' ? 'USDT' : market?.base_currency }})
             </label>
             <div class="relative">
-              <input v-model="orderAmount" type="number" :step="side === 'buy' ? '1' : '0.0001'" min="0.000001" required
+              <input v-model="orderAmount" type="number" step="any" min="0.000001" required
                      class="w-full bg-white dark:bg-[#0b0e11] border border-slate-300 dark:border-[#2b3139] rounded-lg px-2.5 py-1.5 font-mono text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:border-emerald-500 dark:focus:border-[#f0b90b] transition" />
               <span class="absolute right-2.5 top-2 text-slate-400 dark:text-slate-500 font-mono text-[11px]">
                 {{ side === 'buy' ? 'USDT' : market?.base_currency }}
