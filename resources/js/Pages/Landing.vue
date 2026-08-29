@@ -390,6 +390,7 @@
         <div class="space-y-3">
           <div class="text-[11px] font-bold uppercase tracking-widest" :class="isDark?'text-white':'text-[#1e2329]'">Support</div>
           <ul class="space-y-2 text-[13px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">
+            <li><a href="/learn" class="hover:text-[#f0b90b] transition font-semibold">Trading Academy</a></li>
             <li><a href="/payments/binance-guide" class="hover:text-[#f0b90b] transition">Deposit Guide (Binance)</a></li>
             <li><a href="/faq" class="hover:text-[#f0b90b] transition">FAQ Center</a></li>
             <li><a href="/contact" class="hover:text-[#f0b90b] transition">Contact Support</a></li>

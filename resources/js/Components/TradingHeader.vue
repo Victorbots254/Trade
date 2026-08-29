@@ -19,16 +19,12 @@
         </Link>
 
         <Link href="/trade/options/BTC_USDT" class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5" :class="$page.url.includes('/trade/options') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
-          <span class="text-amber-400">⚡</span>
+          
           <span>Quick Trade</span>
         </Link>
 
         <Link href="/monthly-interests" class="px-3 py-1.5 rounded-lg transition" :class="$page.url === '/monthly-interests' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
           Earn
-        </Link>
-        <Link href="/learn" class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5" :class="$page.url.startsWith('/learn') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
-          <span class="text-blue-400">📖</span>
-          <span>Academy</span>
         </Link>
         <Link href="/trades" class="px-3 py-1.5 rounded-lg transition" :class="$page.url === '/trades' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
           Past Trades

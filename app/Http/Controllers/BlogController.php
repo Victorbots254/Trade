@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
 
 namespace App\Http\Controllers;
 
@@ -17,7 +17,7 @@ class BlogController extends Controller
             "excerpt" => "Learn the basics of Quick Options (Binary Trading) and how you can capitalize on short-term market volatility.",
             "content" => "
                 <h3>What are Quick Options?</h3>
-                <p>Quick Options allow you to predict whether the price of an asset (like Bitcoin) will go <strong>Up</strong> or <strong>Down</strong> within a very short time frame—usually 1 to 5 minutes.</p>
+                <p>Quick Options allow you to predict whether the price of an asset (like Bitcoin) will go <strong>Up</strong> or <strong>Down</strong> within a very short time frame - usually 1 to 5 minutes.</p>
                 <br>
                 <h3>How to Place Your First Trade</h3>
                 <ol>
@@ -36,7 +36,7 @@ class BlogController extends Controller
             "category" => "Wealth Management",
             "read_time" => "3 min read",
             "image" => "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=1000",
-            "excerpt" => "Don't let your USDT sit idle. Discover how locking your funds in our Monthly Interests pool can generate reliable passive yields.",
+            "excerpt" => "Do not let your USDT sit idle. Discover how locking your funds in our Monthly Interests pool can generate reliable passive yields.",
             "content" => "
                 <h3>Why Leave Your Crypto Idle?</h3>
                 <p>Many traders keep a large portion of their portfolio in stablecoins like USDT waiting for the perfect trading opportunity. Instead of letting those funds sit idle, you can put them to work.</p>
@@ -54,7 +54,7 @@ class BlogController extends Controller
             "
         ],
         "spot-trading-guide" => [
-            "title" => "The Beginner's Guide to Spot Trading Crypto",
+            "title" => "The Beginners Guide to Spot Trading Crypto",
             "slug" => "spot-trading-guide",
             "category" => "Market Basics",
             "read_time" => "5 min read",
@@ -99,4 +99,3 @@ class BlogController extends Controller
         ]);
     }
 }
-
