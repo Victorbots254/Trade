@@ -1,152 +1,203 @@
 <template>
-  <div class="min-h-screen bg-slate-950 text-slate-100 font-sans select-none flex flex-col pb-12">
+  <div class="min-h-screen bg-[#0b0e11] text-slate-300 font-sans selection:bg-emerald-500/30 flex flex-col">
+    <!-- Header -->
+    <TradingHeader :user="$page.props.auth.user" />
     <ToastNotification ref="toastRef" />
 
-    <TradingHeader 
-      :user="$page.props.auth.user"
-      :markets="markets"
-      :wallets="wallets"
-      @account-mode-changed="(mode) => accountMode = mode"
-    />
-
-    <!-- Main Workspace Container -->
-    <div class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
-      <div class="flex flex-col md:flex-row justify-between md:items-center border-b border-slate-800 pb-4 gap-2">
+    <div class="flex-1 max-w-[1400px] w-full mx-auto px-4 py-8 space-y-6 overflow-y-auto pb-24">
+      
+      <!-- Page Title Area -->
+      <div class="flex items-center justify-between border-b border-[#2b3139] pb-4">
         <div>
-          <h1 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
-            <span>📋 My Trades & Activity Portal</span>
+          <h1 class="text-2xl font-black text-white tracking-tight flex items-center space-x-3">
+            <svg class="w-7 h-7 text-[#f0b90b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            <span>My Trades & Portfolio</span>
           </h1>
-          <p class="text-xs text-slate-400">View and manage all your live open positions, active countdowns, holdings, and historical trade settlements.</p>
+          <p class="text-sm text-[#848e9c] mt-1">Manage live spot holdings, active options, and view execution history.</p>
         </div>
-
-        <!-- Navigation Action Buttons -->
-        <div class="flex items-center space-x-2 font-medium text-xs">
-          <Link href="/terminal" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3.5 py-2 rounded-lg transition">
-            Spot Terminal →
-          </Link>
-          <Link href="/trade/options/BTC_USDT" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-lg transition shadow">
-            Quick Options →
-          </Link>
+        <div class="flex space-x-3">
+          <Link href="/terminal" class="bg-[#2b3139] hover:bg-[#323942] text-white px-4 py-2 rounded-lg text-sm font-bold transition">Spot Terminal &rarr;</Link>
+          <Link href="/trade/options/BTC_USDT" class="bg-[#f0b90b] hover:bg-[#b07e00] text-[#1e2329] px-4 py-2 rounded-lg text-sm font-bold transition">Quick Options &rarr;</Link>
         </div>
       </div>
 
-      <!-- Tab Selection Bar -->
-      <div class="flex space-x-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800 font-medium text-xs overflow-x-auto">
+      <!-- Tab Navigation -->
+      <div class="flex space-x-2 border-b border-[#2b3139]">
         <button @click="activeTab = 'active'" 
-                :class="activeTab === 'active' ? 'bg-emerald-600 text-white font-bold shadow' : 'text-slate-400 hover:text-slate-200'"
-                class="px-4 py-2 rounded-lg transition flex items-center space-x-2 whitespace-nowrap">
-          <span>⚡ Active Positions & Open Orders</span>
-          <span class="bg-slate-950 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold">{{ totalActiveCount }}</span>
+                :class="activeTab === 'active' ? 'border-[#f0b90b] text-[#f0b90b]' : 'border-transparent text-[#848e9c] hover:text-white'"
+                class="px-5 py-3 border-b-2 font-bold transition flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          <span>Active Positions & Holdings</span>
+          <span v-if="totalActiveCount > 0" class="bg-[#f0b90b] text-[#1e2329] text-[10px] px-1.5 py-0.5 rounded ml-2">{{ totalActiveCount }}</span>
         </button>
-        <button @click="activeTab = 'settled_options'" 
-                :class="activeTab === 'settled_options' ? 'bg-emerald-600 text-white font-bold shadow' : 'text-slate-400 hover:text-slate-200'"
-                class="px-4 py-2 rounded-lg transition flex items-center space-x-2 whitespace-nowrap">
-          <span>📊 Settled Options History</span>
-          <span class="bg-slate-950 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold">{{ filteredSettledOptions.length }}</span>
-        </button>
-        <button @click="activeTab = 'spot_history'" 
-                :class="activeTab === 'spot_history' ? 'bg-emerald-600 text-white font-bold shadow' : 'text-slate-400 hover:text-slate-200'"
-                class="px-4 py-2 rounded-lg transition flex items-center space-x-2 whitespace-nowrap">
-          <span>📜 Completed Spot Orders</span>
-          <span class="bg-slate-950 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold">{{ filteredOrderHistory.length }}</span>
+        <button @click="activeTab = 'history'" 
+                :class="activeTab === 'history' ? 'border-[#f0b90b] text-[#f0b90b]' : 'border-transparent text-[#848e9c] hover:text-white'"
+                class="px-5 py-3 border-b-2 font-bold transition flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span>Trade History</span>
         </button>
       </div>
 
-      <!-- TAB 1: ACTIVE POSITIONS & OPEN ORDERS -->
+      <!-- ACTIVE TAB -->
       <div v-if="activeTab === 'active'" class="space-y-6">
-        <!-- Section A: Active Options Positions (Countdowns & Live P&L) -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-            <h3 class="font-bold text-slate-100 text-sm flex items-center space-x-2">
-              <span>Active Options Positions ({{ filteredActiveOptions.length }})</span>
-              <span class="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">AUTO-SETTLING</span>
+        
+        <!-- Spot Holdings -->
+        <div class="bg-[#1e2329] rounded-xl border border-[#2b3139] overflow-hidden shadow-xl">
+          <div class="px-5 py-4 border-b border-[#2b3139] flex justify-between items-center bg-[#181a20]">
+            <h3 class="font-bold text-white flex items-center space-x-2">
+              <span>Spot Asset Holdings ({{ activeHoldings.length }})</span>
             </h3>
-            <span class="text-slate-500 font-mono">Payout: +88% Profit</span>
+            <span class="text-[11px] text-[#848e9c] uppercase tracking-widest font-bold">Unrealized P&L Tracker</span>
           </div>
-
+          
           <div class="overflow-x-auto">
-            <table class="w-full text-left font-mono">
-              <thead>
-                <tr class="text-slate-500 border-b border-slate-800 pb-2">
-                  <th>Market</th>
-                  <th>Direction</th>
-                  <th>Entry Price</th>
-                  <th>Current Price</th>
-                  <th>Investment</th>
-                  <th>Timer</th>
-                  <th class="text-right">Status</th>
+            <table class="w-full text-left text-sm font-mono whitespace-nowrap">
+              <thead class="bg-[#181a20]">
+                <tr class="text-[#848e9c] text-[11px] uppercase tracking-wider">
+                  <th class="px-5 py-3 font-medium">Asset</th>
+                  <th class="px-5 py-3 font-medium">Quantity</th>
+                  <th class="px-5 py-3 font-medium">Avg Buy Price</th>
+                  <th class="px-5 py-3 font-medium">Current Price</th>
+                  <th class="px-5 py-3 font-medium">Market Value</th>
+                  <th class="px-5 py-3 font-medium">Unrealized P&L</th>
+                  <th class="px-5 py-3 text-right font-medium">Action</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-800/60">
-                <tr v-for="c in filteredActiveOptions" :key="c.id" class="hover:bg-slate-800/30 transition">
-                  <td class="py-3 font-bold text-slate-100">{{ c.market?.symbol }}</td>
-                  <td class="py-3">
-                    <span :class="c.direction === 'higher' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-rose-400 bg-rose-500/10 border-rose-500/30'" class="px-2 py-0.5 rounded border uppercase font-bold text-[10px]">
-                      {{ c.direction === 'higher' ? 'HIGHER ⬆' : 'LOWER ⬇' }}
-                    </span>
+              <tbody class="divide-y divide-[#2b3139]">
+                <tr v-for="h in activeHoldings" :key="h.currency" class="hover:bg-[#2b3139]/30 transition group">
+                  <td class="px-5 py-4 font-bold text-white flex items-center space-x-2">
+                    <img :src="`/images/crypto/${h.currency.toLowerCase()}.png`" @error="$event.target.src='https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=024'" class="w-5 h-5 rounded-full" />
+                    <span>{{ h.currency }}/USDT</span>
                   </td>
-                  <td class="py-3 text-slate-300">${{ formatPrice(c.entry_price) }}</td>
-                  <td class="py-3 font-bold text-slate-100">${{ formatPrice(getContractCurrentPrice(c)) }}</td>
-                  <td class="py-3 text-emerald-400 font-bold">${{ formatPrice(c.investment_amount) }}</td>
-                  <td class="py-3 text-amber-400 font-bold font-mono">
-                    {{ formatCountdown(c.remaining_seconds) }}
+                  <td class="px-5 py-4 text-white">{{ h.amount.toFixed(4) }} <span class="text-[#848e9c] text-xs">{{ h.currency }}</span></td>
+                  <td class="px-5 py-4 text-slate-300">${{ formatPrice(h.avgBuyPrice) }}</td>
+                  <td class="px-5 py-4 text-white">${{ formatPrice(h.currentPrice) }}</td>
+                  <td class="px-5 py-4 font-bold text-white">${{ formatPrice(h.marketValue) }}</td>
+                  <td class="px-5 py-4 font-bold" :class="h.pnlAmount >= 0 ? 'text-[#0ecb81]' : 'text-[#f6465d]'">
+                    {{ h.pnlAmount >= 0 ? '+' : '' }}${{ formatPrice(h.pnlAmount) }} ({{ h.pnlAmount >= 0 ? '+' : '' }}{{ h.pnlPercent.toFixed(2) }}%)
                   </td>
-                  <td class="py-3 text-right font-bold">
-                    <span v-if="isContractWinning(c)" class="text-emerald-400">WINNING (+${{ formatPrice(c.payout_amount - c.investment_amount) }})</span>
-                    <span v-else class="text-rose-400">OUT OF MONEY</span>
+                  <td class="px-5 py-4 text-right">
+                    <button @click="closePosition(h)" :disabled="processingId === h.currency"
+                            class="bg-[#f6465d] hover:bg-[#f6465d]/80 text-white font-bold px-3 py-1.5 rounded text-xs transition shadow flex items-center justify-end space-x-1 ml-auto disabled:opacity-50">
+                      <svg v-if="processingId === h.currency" class="animate-spin h-3 w-3 text-white mr-1" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Market Sell</span>
+                    </button>
                   </td>
                 </tr>
-                <tr v-if="filteredActiveOptions.length === 0">
-                  <td colspan="7" class="py-6 text-center text-slate-500">No active option contracts running.</td>
+                <tr v-if="activeHoldings.length === 0">
+                  <td colspan="7" class="py-10 text-center text-[#848e9c]">
+                    <div class="flex flex-col items-center justify-center">
+                      <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                      <span>No active spot holdings found. Purchase assets on the Spot Terminal.</span>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Section B: Open Spot Orders -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-            <h3 class="font-bold text-slate-100 text-sm">Open Spot Limit Orders ({{ filteredOpenOrders.length }})</h3>
-            <span class="text-slate-500 font-mono">Unfilled Spot Buy & Sell Orders</span>
+        <!-- Active Options Positions -->
+        <div class="bg-[#1e2329] rounded-xl border border-[#2b3139] overflow-hidden shadow-xl">
+          <div class="px-5 py-4 border-b border-[#2b3139] flex justify-between items-center bg-[#181a20]">
+            <h3 class="font-bold text-white flex items-center space-x-2">
+              <span>Active Options Contracts ({{ filteredActiveOptions.length }})</span>
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/30 tracking-wider">AUTO-SETTLING</span>
+            </h3>
+            <span class="text-[11px] text-[#848e9c] font-mono">Payout: +88% Profit</span>
           </div>
 
           <div class="overflow-x-auto">
-            <table class="w-full text-left font-mono">
-              <thead>
-                <tr class="text-slate-500 border-b border-slate-800 pb-2">
-                  <th>Market</th>
-                  <th>Side / Type</th>
-                  <th>Order Price</th>
-                  <th>Quantity</th>
-                  <th>Filled Amount</th>
-                  <th>Created Date</th>
-                  <th class="text-right">Action</th>
+            <table class="w-full text-left font-mono whitespace-nowrap">
+              <thead class="bg-[#181a20]">
+                <tr class="text-[#848e9c] text-[11px] uppercase tracking-wider">
+                  <th class="px-5 py-3 font-medium">Market</th>
+                  <th class="px-5 py-3 font-medium">Direction</th>
+                  <th class="px-5 py-3 font-medium">Entry Price</th>
+                  <th class="px-5 py-3 font-medium">Live Oracle</th>
+                  <th class="px-5 py-3 font-medium">Investment</th>
+                  <th class="px-5 py-3 font-medium">Countdown</th>
+                  <th class="px-5 py-3 text-right font-medium">Status</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-800/60">
-                <tr v-for="o in filteredOpenOrders" :key="o.id" class="hover:bg-slate-800/30 transition">
-                  <td class="py-3 font-bold text-slate-100">{{ o.market?.symbol }}</td>
-                  <td class="py-3 uppercase font-bold" :class="o.side === 'buy' ? 'text-emerald-400' : 'text-rose-400'">
+              <tbody class="divide-y divide-[#2b3139]">
+                <tr v-for="o in filteredActiveOptions" :key="o.id" class="hover:bg-[#2b3139]/30 transition">
+                  <td class="px-5 py-4 font-bold text-white">{{ (markets.find(m => m.id === o.market_id) || {}).symbol || 'Unknown' }}</td>
+                  <td class="px-5 py-4">
+                    <span :class="o.direction === 'higher' ? 'bg-[#0ecb81]/10 text-[#0ecb81]' : 'bg-[#f6465d]/10 text-[#f6465d]'"
+                          class="px-2 py-1 rounded text-xs font-bold uppercase tracking-wider flex items-center w-fit space-x-1">
+                      <svg v-if="o.direction === 'higher'" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                      <svg v-else class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                      <span>{{ o.direction === 'higher' ? 'CALL' : 'PUT' }}</span>
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 text-slate-300">${{ formatPrice(o.entry_price) }}</td>
+                  <td class="px-5 py-4 font-bold" :class="isContractWinning(o) ? 'text-[#0ecb81]' : 'text-[#f6465d]'">
+                    ${{ formatPrice(getContractCurrentPrice(o)) }}
+                  </td>
+                  <td class="px-5 py-4 text-white font-bold">${{ formatPrice(o.amount) }}</td>
+                  <td class="px-5 py-4">
+                    <span class="bg-[#2b3139] text-[#f0b90b] px-2 py-1 rounded font-bold shadow-inner">
+                      {{ formatCountdown(o.remaining_seconds) }}
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 text-right">
+                    <span v-if="isContractWinning(o)" class="text-[#0ecb81] font-bold text-xs bg-[#0ecb81]/10 px-2 py-1 rounded animate-pulse">Winning</span>
+                    <span v-else class="text-[#f6465d] font-bold text-xs bg-[#f6465d]/10 px-2 py-1 rounded">Losing</span>
+                  </td>
+                </tr>
+                <tr v-if="filteredActiveOptions.length === 0">
+                  <td colspan="7" class="py-10 text-center text-[#848e9c]">No active binary options running.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Open Limit Orders -->
+        <div class="bg-[#1e2329] rounded-xl border border-[#2b3139] overflow-hidden shadow-xl">
+          <div class="px-5 py-4 border-b border-[#2b3139] flex justify-between items-center bg-[#181a20]">
+            <h3 class="font-bold text-white flex items-center space-x-2">
+              <span>Open Spot Limit Orders ({{ filteredOpenOrders.length }})</span>
+            </h3>
+            <span class="text-[11px] text-[#848e9c] font-mono">Unfilled Spot Buy & Sell Orders</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono whitespace-nowrap">
+              <thead class="bg-[#181a20]">
+                <tr class="text-[#848e9c] text-[11px] uppercase tracking-wider">
+                  <th class="px-5 py-3 font-medium">Market</th>
+                  <th class="px-5 py-3 font-medium">Side / Type</th>
+                  <th class="px-5 py-3 font-medium">Order Price</th>
+                  <th class="px-5 py-3 font-medium">Quantity</th>
+                  <th class="px-5 py-3 font-medium">Filled Amount</th>
+                  <th class="px-5 py-3 font-medium">Created Date</th>
+                  <th class="px-5 py-3 text-right font-medium">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#2b3139]">
+                <tr v-for="o in filteredOpenOrders" :key="o.id" class="hover:bg-[#2b3139]/30 transition">
+                  <td class="px-5 py-4 font-bold text-white">{{ o.market?.symbol }}</td>
+                  <td class="px-5 py-4 uppercase font-bold" :class="o.side === 'buy' ? 'text-[#0ecb81]' : 'text-[#f6465d]'">
                     {{ o.side }} / {{ o.type }}
                   </td>
-                  <td class="py-3 text-slate-200">${{ formatPrice(o.price) }}</td>
-                  <td class="py-3 text-slate-300">{{ Number(o.quantity).toFixed(4) }}</td>
-                  <td class="py-3 text-slate-400">{{ Number(o.filled_quantity).toFixed(4) }}</td>
-                  <td class="py-3 text-slate-500">{{ formatDate(o.created_at) }}</td>
-                  <td class="py-3 text-right">
+                  <td class="px-5 py-4 text-slate-300">${{ formatPrice(o.price) }}</td>
+                  <td class="px-5 py-4 text-white">{{ Number(o.quantity).toFixed(4) }}</td>
+                  <td class="px-5 py-4 text-white">{{ Number(o.filled_quantity || 0).toFixed(4) }}</td>
+                  <td class="px-5 py-4 text-[#848e9c] text-sm">{{ formatDate(o.created_at) }}</td>
+                  <td class="px-5 py-4 text-right">
                     <button @click="cancelOrder(o.id)" :disabled="processingId === o.id"
-                            class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-3 py-1 rounded-lg font-bold transition flex items-center space-x-1 ml-auto">
-                      <svg v-if="processingId === o.id" class="animate-spin h-3 w-3 text-rose-400" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      <span>Close Order</span>
+                            class="bg-[#2b3139] hover:bg-[#323942] text-white px-3 py-1 rounded text-xs transition border border-[#848e9c]/30 disabled:opacity-50">
+                      Cancel
                     </button>
                   </td>
                 </tr>
                 <tr v-if="filteredOpenOrders.length === 0">
-                  <td colspan="7" class="py-6 text-center text-slate-500">No open spot orders.</td>
+                  <td colspan="7" class="py-10 text-center text-[#848e9c]">No open spot orders waiting to be filled.</td>
                 </tr>
               </tbody>
             </table>
@@ -154,97 +205,98 @@
         </div>
       </div>
 
-      <!-- TAB 2: SETTLED OPTIONS HISTORY -->
-      <div v-else-if="activeTab === 'settled_options'" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-          <h3 class="font-bold text-slate-100 text-sm">Settled Options Contracts History</h3>
-          <span class="text-slate-500 font-mono">1m - 1h Completed Contracts</span>
+      <!-- HISTORY TAB -->
+      <div v-if="activeTab === 'history'" class="space-y-6">
+        
+        <!-- Settled Options -->
+        <div class="bg-[#1e2329] rounded-xl border border-[#2b3139] overflow-hidden shadow-xl">
+          <div class="px-5 py-4 border-b border-[#2b3139] flex justify-between items-center bg-[#181a20]">
+            <h3 class="font-bold text-white">Settled Options History ({{ filteredSettledOptions.length }})</h3>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono whitespace-nowrap">
+              <thead class="bg-[#181a20]">
+                <tr class="text-[#848e9c] text-[11px] uppercase tracking-wider">
+                  <th class="px-5 py-3 font-medium">Market</th>
+                  <th class="px-5 py-3 font-medium">Direction</th>
+                  <th class="px-5 py-3 font-medium">Entry -> Exit Price</th>
+                  <th class="px-5 py-3 font-medium">Investment</th>
+                  <th class="px-5 py-3 font-medium">Payout</th>
+                  <th class="px-5 py-3 font-medium">Settled Time</th>
+                  <th class="px-5 py-3 text-right font-medium">Result</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#2b3139]">
+                <tr v-for="o in filteredSettledOptions" :key="o.id" class="hover:bg-[#2b3139]/30 transition">
+                  <td class="px-5 py-4 font-bold text-white">{{ (markets.find(m => m.id === o.market_id) || {}).symbol || 'Unknown' }}</td>
+                  <td class="px-5 py-4">
+                    <span :class="o.direction === 'higher' ? 'text-[#0ecb81]' : 'text-[#f6465d]'" class="font-bold uppercase">
+                      {{ o.direction === 'higher' ? 'CALL' : 'PUT' }}
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 text-slate-300">
+                    <span class="line-through opacity-70">${{ formatPrice(o.entry_price) }}</span> &rarr; 
+                    <span class="font-bold">${{ formatPrice(o.settle_price) }}</span>
+                  </td>
+                  <td class="px-5 py-4 text-white">${{ formatPrice(o.amount) }}</td>
+                  <td class="px-5 py-4 font-bold text-white">${{ formatPrice(o.payout || 0) }}</td>
+                  <td class="px-5 py-4 text-[#848e9c] text-sm">{{ formatDate(o.settled_at) }}</td>
+                  <td class="px-5 py-4 text-right">
+                    <span :class="o.status === 'win' ? 'bg-[#0ecb81]/10 text-[#0ecb81]' : 'bg-[#f6465d]/10 text-[#f6465d]'"
+                          class="px-2.5 py-1 rounded font-bold uppercase tracking-wider text-xs">
+                      {{ o.status }}
+                    </span>
+                  </td>
+                </tr>
+                <tr v-if="filteredSettledOptions.length === 0">
+                  <td colspan="7" class="py-10 text-center text-[#848e9c]">No settled options history.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left font-mono">
-            <thead>
-              <tr class="text-slate-500 border-b border-slate-800 pb-2">
-                <th>Market</th>
-                <th>Direction</th>
-                <th>Entry Price</th>
-                <th>Strike Price</th>
-                <th>Investment</th>
-                <th>Payout</th>
-                <th class="text-right">Outcome</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/60">
-              <tr v-for="c in filteredSettledOptions" :key="c.id" class="hover:bg-slate-800/30 transition">
-                <td class="py-3 font-bold text-slate-100">{{ c.market?.symbol }}</td>
-                <td class="py-3">
-                  <span :class="c.direction === 'higher' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-rose-400 bg-rose-500/10 border-rose-500/30'" class="px-2 py-0.5 rounded border uppercase font-bold text-[10px]">
-                    {{ c.direction === 'higher' ? 'HIGHER ⬆' : 'LOWER ⬇' }}
-                  </span>
-                </td>
-                <td class="py-3 text-slate-300">${{ formatPrice(c.entry_price) }}</td>
-                <td class="py-3 font-bold text-slate-100">${{ formatPrice(c.strike_price || c.entry_price) }}</td>
-                <td class="py-3 text-slate-200">${{ formatPrice(c.investment_amount) }}</td>
-                <td class="py-3 font-bold" :class="c.status === 'win' ? 'text-emerald-400' : 'text-slate-500'">
-                  ${{ formatPrice(c.status === 'win' ? c.payout_amount : 0) }}
-                </td>
-                <td class="py-3 text-right">
-                  <span v-if="c.status === 'win'" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded font-bold">
-                    🎉 WIN (+${{ formatPrice(c.payout_amount - c.investment_amount) }})
-                  </span>
-                  <span v-else class="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded font-bold">
-                    ❌ LOSS
-                  </span>
-                </td>
-              </tr>
-              <tr v-if="filteredSettledOptions.length === 0">
-                <td colspan="7" class="py-8 text-center text-slate-500">No settled options contracts history found.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <!-- Completed Spot Orders -->
+        <div class="bg-[#1e2329] rounded-xl border border-[#2b3139] overflow-hidden shadow-xl">
+          <div class="px-5 py-4 border-b border-[#2b3139] flex justify-between items-center bg-[#181a20]">
+            <h3 class="font-bold text-white">Completed Spot Orders ({{ filteredOrderHistory.length }})</h3>
+          </div>
 
-      <!-- TAB 3: COMPLETED SPOT ORDERS -->
-      <div v-else-if="activeTab === 'spot_history'" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4 text-xs">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-          <h3 class="font-bold text-slate-100 text-sm">Completed Spot Orders History</h3>
-          <span class="text-slate-500 font-mono">Filled & Cancelled Spot Orders</span>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left font-mono">
-            <thead>
-              <tr class="text-slate-500 border-b border-slate-800 pb-2">
-                <th>Market</th>
-                <th>Side / Type</th>
-                <th>Execution Price</th>
-                <th>Quantity</th>
-                <th>Total Value</th>
-                <th class="text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/60">
-              <tr v-for="o in filteredOrderHistory" :key="o.id" class="hover:bg-slate-800/30 transition">
-                <td class="py-3 font-bold text-slate-100">{{ o.market?.symbol }}</td>
-                <td class="py-3 uppercase font-bold" :class="o.side === 'buy' ? 'text-emerald-400' : 'text-rose-400'">
-                  {{ o.side }} / {{ o.type }}
-                </td>
-                <td class="py-3 text-slate-200">${{ formatPrice(o.price) }}</td>
-                <td class="py-3 text-slate-300">{{ Number(o.filled_quantity || o.quantity).toFixed(4) }}</td>
-                <td class="py-3 text-slate-100 font-bold">${{ formatPrice((o.price || 0) * (o.filled_quantity || o.quantity)) }}</td>
-                <td class="py-3 text-right">
-                  <span :class="o.status === 'filled' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700'"
-                        class="px-2.5 py-1 rounded font-bold capitalize">
-                    {{ o.status }}
-                  </span>
-                </td>
-              </tr>
-              <tr v-if="filteredOrderHistory.length === 0">
-                <td colspan="6" class="py-8 text-center text-slate-500">No completed spot order history found.</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono whitespace-nowrap">
+              <thead class="bg-[#181a20]">
+                <tr class="text-[#848e9c] text-[11px] uppercase tracking-wider">
+                  <th class="px-5 py-3 font-medium">Market</th>
+                  <th class="px-5 py-3 font-medium">Side / Type</th>
+                  <th class="px-5 py-3 font-medium">Execution Price</th>
+                  <th class="px-5 py-3 font-medium">Quantity</th>
+                  <th class="px-5 py-3 font-medium">Total Value</th>
+                  <th class="px-5 py-3 text-right font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#2b3139]">
+                <tr v-for="o in filteredOrderHistory" :key="o.id" class="hover:bg-[#2b3139]/30 transition">
+                  <td class="px-5 py-4 font-bold text-white">{{ o.market?.symbol }}</td>
+                  <td class="px-5 py-4 uppercase font-bold" :class="o.side === 'buy' ? 'text-[#0ecb81]' : 'text-[#f6465d]'">
+                    {{ o.side }} / {{ o.type }}
+                  </td>
+                  <td class="px-5 py-4 text-slate-300">${{ formatPrice(o.price) }}</td>
+                  <td class="px-5 py-4 text-white">{{ Number(o.filled_quantity || o.quantity).toFixed(4) }}</td>
+                  <td class="px-5 py-4 text-white font-bold">${{ formatPrice((o.price || 0) * (o.filled_quantity || o.quantity)) }}</td>
+                  <td class="px-5 py-4 text-right">
+                    <span :class="o.status === 'filled' ? 'bg-[#0ecb81]/10 text-[#0ecb81]' : 'bg-[#2b3139] text-[#848e9c]'"
+                          class="px-2.5 py-1 rounded font-bold capitalize text-xs">
+                      {{ o.status }}
+                    </span>
+                  </td>
+                </tr>
+                <tr v-if="filteredOrderHistory.length === 0">
+                  <td colspan="6" class="py-10 text-center text-[#848e9c]">No completed spot order history found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -261,7 +313,6 @@ import axios from 'axios';
 
 import TradingHeader from '@/Components/TradingHeader.vue';
 import ToastNotification from '@/Components/ToastNotification.vue';
-import WithdrawalTicker from '@/Components/WithdrawalTicker.vue';
 import BottomMarketTicker from '@/Components/BottomMarketTicker.vue';
 
 const props = defineProps({
@@ -293,6 +344,52 @@ const activeOptionsList = ref((props.activeOptions || []).map(c => {
   return c;
 }));
 
+const filteredWallets = computed(() => {
+  return (props.wallets || []).filter(w => isDemoMode.value ? w.is_demo : !w.is_demo);
+});
+
+// Calculate Spot Holdings
+const activeHoldings = computed(() => {
+  const holdings = [];
+
+  filteredWallets.value.forEach(w => {
+    const qty = parseFloat(w.available_balance || 0);
+    if (w.currency === 'USDT' || qty <= 0) return;
+
+    const market = (props.markets || []).find(m => m.base_currency === w.currency);
+    if (!market) return;
+
+    const currentPrice = parseFloat(market.last_price || 0);
+    const marketValue = qty * currentPrice;
+
+    const buyOrders = orderHistoryList.value.filter(o => o.market_id === market.id && o.side === 'buy' && o.status === 'filled' && (isDemoMode.value ? o.is_demo : !o.is_demo));
+    let avgBuyPrice = currentPrice;
+    if (buyOrders.length > 0) {
+      const totalCost = buyOrders.reduce((acc, o) => acc + (parseFloat(o.price) * parseFloat(o.filled_quantity)), 0);
+      const totalQty = buyOrders.reduce((acc, o) => acc + parseFloat(o.filled_quantity), 0);
+      if (totalQty > 0) {
+        avgBuyPrice = totalCost / totalQty;
+      }
+    }
+
+    const pnlAmount = (currentPrice - avgBuyPrice) * qty;
+    const pnlPercent = avgBuyPrice > 0 ? ((currentPrice - avgBuyPrice) / avgBuyPrice) * 100 : 0;
+
+    holdings.push({
+      currency: w.currency,
+      marketId: market.id,
+      amount: qty,
+      avgBuyPrice,
+      currentPrice,
+      marketValue,
+      pnlAmount,
+      pnlPercent
+    });
+  });
+
+  return holdings;
+});
+
 const filteredOpenOrders = computed(() => {
   return openOrdersList.value.filter(o => (isDemoMode.value ? o.is_demo : !o.is_demo));
 });
@@ -310,7 +407,7 @@ const filteredSettledOptions = computed(() => {
 });
 
 const totalActiveCount = computed(() => {
-  return filteredActiveOptions.value.length + filteredOpenOrders.value.length;
+  return filteredActiveOptions.value.length + filteredOpenOrders.value.length + activeHoldings.value.length;
 });
 
 let timerInterval = null;
@@ -373,6 +470,34 @@ function isContractWinning(contract) {
     return curPrice > entry;
   }
   return curPrice < entry;
+}
+
+async function closePosition(holding) {
+  processingId.value = holding.currency;
+  try {
+    await axios.post('/api/orders', {
+      market_id: holding.marketId,
+      side: 'sell',
+      type: 'market',
+      quantity: holding.amount,
+      is_demo: isDemoMode.value,
+    });
+
+    const gainLossText = holding.pnlAmount >= 0 
+      ? `+$${formatPrice(holding.pnlAmount)} PROFIT`
+      : `-$${formatPrice(Math.abs(holding.pnlAmount))} LOSS`;
+
+    toastRef.value?.show(`Closed ${holding.currency} position! Credited $${formatPrice(holding.marketValue)} USDT (${gainLossText}).`, 'success');
+    
+    // Remove from active holdings visually until reload
+    const wIndex = props.wallets.findIndex(w => w.currency === holding.currency && w.is_demo === isDemoMode.value);
+    if (wIndex >= 0) props.wallets[wIndex].available_balance = 0;
+
+  } catch (err) {
+    toastRef.value?.show(err.response?.data?.message || 'Error closing position.', 'error');
+  } finally {
+    processingId.value = null;
+  }
 }
 
 async function cancelOrder(id) {
