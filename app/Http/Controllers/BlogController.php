@@ -153,7 +153,7 @@ class BlogController extends Controller
             "slug" => "usdt-bep20-explained",
             "category" => "Platform",
             "read_time" => "6 min read",
-            "image" => "https://images.unsplash.com/photo-1621504450181-5d156f0bb225?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "BEP20 USDT offers near-instant finality, sub-cent fees, and universal wallet support. Here is why it is the ideal deposit currency for TradePro.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
@@ -179,7 +179,7 @@ class BlogController extends Controller
             "slug" => "cold-storage-security",
             "category" => "Security",
             "read_time" => "7 min read",
-            "image" => "https://images.unsplash.com/photo-1639762681485-074b7f4ec651?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "We store 98% of user funds in offline cold wallets with multi-signature signing requirements. Here is exactly how your money is protected.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
@@ -206,7 +206,7 @@ class BlogController extends Controller
             "slug" => "binary-vs-spot",
             "category" => "Education",
             "read_time" => "10 min read",
-            "image" => "https://images.unsplash.com/photo-1621416953228-868f08c3475c?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "Both have merit — but they suit very different trading styles and risk tolerances. We break down the differences with real examples.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">

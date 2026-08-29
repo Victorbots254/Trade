@@ -24,7 +24,7 @@
             </div>
             <div class="flex items-center justify-between pt-4 border-t border-slate-800/50 text-xs font-mono text-slate-500">
               <span>{{ article.read_time }}</span>
-              <span class="text-emerald-400 group-hover:translate-x-1 transition transform inline-block">Read Guide ?</span>
+              <span class="text-emerald-400 group-hover:translate-x-1 transition transform inline-block">Read Guide &rarr;</span>
             </div>
           </div>
         </Link>
