@@ -35,6 +35,8 @@ class OrderController extends Controller
             return response()->json([
                 'message' => "Order quantity must be at least {$market->min_order_size} {$market->base_currency}.",
             ], 422);
+        }
+
         $submittedPrice = $request->type === 'market' ? ($request->has('strike_price') ? $request->strike_price : ($market->last_price ?: 1)) : $request->price;
         
         // SECURITY MIDDLEWARE: Anti-Price-Spoofing Oracle
