@@ -158,6 +158,11 @@ Route::middleware('auth')->group(function () {
     // Deposits & Payments
     Route::get('/api/deposits', [DepositController::class, 'index']);
     Route::post('/api/deposits', [DepositController::class, 'store']);
+    
+    // Withdrawals
+    Route::get('/withdraw', [\App\Http\Controllers\WithdrawalController::class, 'index'])->name('withdraw');
+    Route::post('/withdraw', [\App\Http\Controllers\WithdrawalController::class, 'store']);
+
     Route::post('/api/payments/bep20', function (Request $request) {
         $request->validate([
             'bep20_address' => ['required', 'string', 'regex:/^0x[a-fA-F0-9]{40}$/'],

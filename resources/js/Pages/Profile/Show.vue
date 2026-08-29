@@ -18,67 +18,6 @@
         <p class="text-xs md:text-sm text-slate-400 mt-1">Overview of your account profile, real live wallet balances, demo practice funds, and payment settings.</p>
       </div>
 
-      <!-- Quick Action Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Card 1: Live Trading -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between group">
-          <div class="space-y-2 mb-6">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-lg">
-                📈
-              </div>
-              <div>
-                <h3 class="font-bold text-slate-100 text-base group-hover:text-emerald-400 transition">Live Trading Terminal</h3>
-                <p class="text-xs text-slate-400">Access the full trading engine and execution platform.</p>
-              </div>
-            </div>
-          </div>
-          
-          <Link href="/trade/BTCUSDT" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl transition text-xs shadow-lg text-center flex items-center justify-center space-x-1">
-            <span>Enter Terminal →</span>
-          </Link>
-        </div>
-
-        <!-- Card 2: Payments -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between group">
-          <div class="space-y-2 mb-6">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-lg">
-                💳
-              </div>
-              <div>
-                <h3 class="font-bold text-slate-100 text-base group-hover:text-amber-400 transition">Payments & Settings</h3>
-                <p class="text-xs text-slate-400">Link your BEP20 address for automated withdrawals.</p>
-              </div>
-            </div>
-          </div>
-
-          <Link href="/payments" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl transition text-xs shadow-lg text-center flex items-center justify-center space-x-1">
-            <span>Manage Payments →</span>
-          </Link>
-        </div>
-
-        <!-- Card 3: Monthly Interests -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between group relative overflow-hidden">
-          <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
-          <div class="space-y-2 mb-6 relative z-10">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-lg">
-                %
-              </div>
-              <div>
-                <h3 class="font-bold text-slate-100 text-base group-hover:text-blue-400 transition">Monthly Interests</h3>
-                <p class="text-xs text-slate-400">Lock your idle USDT and earn passive monthly yield.</p>
-              </div>
-            </div>
-          </div>
-
-          <Link href="/monthly-interests" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl transition text-xs shadow-lg text-center flex items-center justify-center space-x-1 relative z-10">
-            <span>Earn Interest →</span>
-          </Link>
-        </div>
-      </div>
-
       <!-- BALANCE OVERVIEW CARDS: REAL LIVE FUNDS VS DEMO PRACTICE FUNDS -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Card 1: REAL LIVE AVAILABLE USDT BALANCE -->
