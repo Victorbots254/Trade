@@ -71,20 +71,28 @@
             Market Price (Best Execution)
           </div>
 
-          <!-- USDT Amount Input -->
+          <!-- Amount Input -->
           <div>
-            <label class="block text-slate-500 dark:text-slate-400 text-[11px] mb-1">Amount (USDT)</label>
+            <label class="block text-slate-500 dark:text-slate-400 text-[11px] mb-1">
+              Amount ({{ side === 'buy' ? 'USDT' : market?.base_currency }})
+            </label>
             <div class="relative">
-              <input v-model="usdtAmount" type="number" step="1" min="1" required
+              <input v-model="orderAmount" type="number" :step="side === 'buy' ? '1' : '0.0001'" min="0.000001" required
                      class="w-full bg-white dark:bg-[#0b0e11] border border-slate-300 dark:border-[#2b3139] rounded-lg px-2.5 py-1.5 font-mono text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:border-emerald-500 dark:focus:border-[#f0b90b] transition" />
-              <span class="absolute right-2.5 top-2 text-slate-400 dark:text-slate-500 font-mono text-[11px]">USDT</span>
+              <span class="absolute right-2.5 top-2 text-slate-400 dark:text-slate-500 font-mono text-[11px]">
+                {{ side === 'buy' ? 'USDT' : market?.base_currency }}
+              </span>
             </div>
           </div>
 
         <!-- Calculated Receive/Sell View -->
         <div class="bg-slate-100 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 p-2.5 rounded font-mono text-[11px] flex justify-between items-center">
-          <span class="text-slate-600 dark:text-slate-400">Est. {{ market?.base_currency }} to {{ side === 'buy' ? 'Receive' : 'Sell' }}:</span>
-          <span class="text-emerald-700 dark:text-emerald-400 font-bold">{{ calculatedQuantity.toFixed(6) }} {{ market?.base_currency }}</span>
+          <span class="text-slate-600 dark:text-slate-400">
+            Est. {{ side === 'buy' ? market?.base_currency : 'USDT' }} to Receive:
+          </span>
+          <span class="text-emerald-700 dark:text-emerald-400 font-bold">
+            {{ side === 'buy' ? calculatedQuantity.toFixed(6) + ' ' + market?.base_currency : totalCost + ' USDT' }}
+          </span>
         </div>
 
         <!-- Percentage Slider Buttons -->
@@ -145,15 +153,19 @@ const side = ref('buy');
 const type = ref('limit');
 const price = ref(props.market?.last_price || 0);
 const userEditedPrice = ref(false);
-const usdtAmount = ref('50');
+const orderAmount = ref('50');
 const loading = ref(false);
 const quickLiquidating = ref(false);
 
 const calculatedQuantity = computed(() => {
-  const p = type.value === 'market' ? (props.market?.last_price || 1) : (parseFloat(price.value) || 1);
-  const u = parseFloat(usdtAmount.value) || 0;
-  if (p <= 0) return 0;
-  return u / p;
+  const u = parseFloat(orderAmount.value) || 0;
+  if (side.value === 'buy') {
+    const p = type.value === 'market' ? (props.market?.last_price || 1) : (parseFloat(price.value) || 1);
+    if (p <= 0) return 0;
+    return u / p;
+  } else {
+    return u; // For sell, the input IS the base quantity!
+  }
 });
 
 watch(() => props.market?.id, () => {
@@ -181,17 +193,22 @@ const baseWallet = computed(() => (props.wallets || []).find(w => w.currency ===
 const quoteWallet = computed(() => (props.wallets || []).find(w => w.currency === props.market?.quote_currency && (isDemoMode.value ? w.is_demo : !w.is_demo)));
 
 const totalCost = computed(() => {
-  return (parseFloat(usdtAmount.value) || 0).toFixed(2);
+  const u = parseFloat(orderAmount.value) || 0;
+  if (side.value === 'buy') {
+    return u.toFixed(2);
+  } else {
+    const p = type.value === 'market' ? (props.market?.last_price || 1) : (parseFloat(price.value) || 1);
+    return (u * p).toFixed(2);
+  }
 });
 
 function setPercentage(pct) {
   if (side.value === 'buy') {
     const availUSDT = quoteWallet.value?.available_balance || 0;
-    usdtAmount.value = (availUSDT * (pct / 100)).toFixed(2);
+    orderAmount.value = (availUSDT * (pct / 100)).toFixed(2);
   } else {
     const availBase = baseWallet.value?.available_balance || 0;
-    const p = type.value === 'market' ? (props.market?.last_price || 1) : (parseFloat(price.value) || 1);
-    usdtAmount.value = (availBase * p * (pct / 100)).toFixed(2);
+    orderAmount.value = (availBase * (pct / 100)).toFixed(6);
   }
 }
 
@@ -212,7 +229,7 @@ async function quickSellAllToFunds() {
       is_demo: isDemoMode.value,
     });
     toastRef.value?.show(`Sold ${availBase} ${props.market?.base_currency} to USDT funds balance.`, 'success');
-    usdtAmount.value = '';
+    orderAmount.value = '';
     emit('order-placed');
   } catch (err) {
     toastRef.value?.show(err.response?.data?.message || 'Failed to liquidate asset.', 'error');
@@ -244,7 +261,7 @@ async function submitOrder() {
       is_demo: isDemoMode.value,
     });
     toastRef.value?.show(response.data.message, 'success');
-    usdtAmount.value = '';
+    orderAmount.value = '';
     emit('order-placed');
   } catch (err) {
     toastRef.value?.show(err.response?.data?.message || 'Failed to submit order.', 'error');
