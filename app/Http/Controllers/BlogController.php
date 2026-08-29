@@ -79,7 +79,7 @@ class BlogController extends Controller
             "slug" => "spot-trading-guide",
             "category" => "Market Basics",
             "read_time" => "15 min read",
-            "image" => "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "A comprehensive deep dive into operating a professional cryptocurrency exchange terminal. Master the order book and execute trades with precision.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
@@ -116,7 +116,7 @@ class BlogController extends Controller
             "slug" => "candlestick-charts-beginners",
             "category" => "Education",
             "read_time" => "9 min read",
-            "image" => "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "Candlestick patterns are the foundation of technical analysis. This guide explains the 5 most common patterns every trader needs to know.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
@@ -153,7 +153,7 @@ class BlogController extends Controller
             "slug" => "usdt-bep20-explained",
             "category" => "Platform",
             "read_time" => "6 min read",
-            "image" => "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1621504450181-5d156f0bb225?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "BEP20 USDT offers near-instant finality, sub-cent fees, and universal wallet support. Here is why it is the ideal deposit currency for TradePro.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
@@ -179,7 +179,7 @@ class BlogController extends Controller
             "slug" => "cold-storage-security",
             "category" => "Security",
             "read_time" => "7 min read",
-            "image" => "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1639762681485-074b7f4ec651?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "We store 98% of user funds in offline cold wallets with multi-signature signing requirements. Here is exactly how your money is protected.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
@@ -206,7 +206,7 @@ class BlogController extends Controller
             "slug" => "binary-vs-spot",
             "category" => "Education",
             "read_time" => "10 min read",
-            "image" => "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1621416953228-868f08c3475c?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "Both have merit — but they suit very different trading styles and risk tolerances. We break down the differences with real examples.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
@@ -236,7 +236,7 @@ class BlogController extends Controller
             "slug" => "global-infrastructure",
             "category" => "Announcement",
             "read_time" => "4 min read",
-            "image" => "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "We have completed our global infrastructure expansion. No KYC barriers, no geographic restrictions. Open to all serious traders.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
@@ -259,7 +259,7 @@ class BlogController extends Controller
             "slug" => "redis-matching-engine",
             "category" => "Tech",
             "read_time" => "11 min read",
-            "image" => "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?auto=format&fit=crop&q=80&w=1000",
+            "image" => "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=1000",
             "excerpt" => "Sub-millisecond matching is not a marketing claim — it is a direct result of our atomic Lua scripts running on Redis sorted sets.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
