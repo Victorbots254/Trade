@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #020617; /* Slate 950 */
+    color: #f8fafc;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* LIGHT THEME COMPREHENSIVE HIGH-CONTRAST OVERRIDES */
+html.light body {
+  background-color: #f1f5f9 !important; /* Clean Light Slate background */
+  color: #0f172a !important; /* Deep Navy dark text */
+}
+
+/* Background Containers & Cards */
+html.light .bg-slate-950,
+html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/90 {
+  background-color: #f8fafc !important;
+}
+
+html.light header,
+html.light header.bg-slate-900,
+html.light div.bg-slate-900,
+html.light nav.bg-slate-900,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/60 {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.light .bg-slate-800,
+html.light .bg-slate-800\/80,
+html.light .bg-slate-800\/40,
+html.light .bg-slate-800\/30 {
+  background-color: #e2e8f0 !important;
+}
+
+/* Borders */
+html.light .border-slate-800,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/60,
+html.light .border-slate-900\/60,
+html.light .border-slate-700 {
+  border-color: #cbd5e1 !important;
+}
+
+/* Text Colors - High Contrast Dark Slate */
+html.light .text-slate-100,
+html.light .text-slate-200 {
+  color: #0f172a !important;
+}
+
+html.light .text-slate-300,
+html.light .text-slate-400 {
+  color: #334155 !important;
+}
+
+html.light .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* GUARANTEE SOLID WHITE TEXT ON ACTION BUTTONS & BADGES */
+html.light .text-white,
+html.light button.bg-emerald-600,
+html.light button.bg-emerald-500,
+html.light button.bg-rose-600,
+html.light button.bg-rose-500,
+html.light button.bg-amber-600,
+html.light button.bg-amber-500,
+html.light button.bg-emerald-600 *,
+html.light button.bg-emerald-500 *,
+html.light button.bg-rose-600 *,
+html.light button.bg-rose-500 *,
+html.light button.bg-amber-600 *,
+html.light button.bg-amber-500 *,
+html.light a.bg-emerald-600,
+html.light a.bg-emerald-500,
+html.light a.bg-rose-600,
+html.light a.bg-rose-500 {
+  color: #ffffff !important;
+}
+
+/* Color Accent Badges & Highlights in Light Mode */
+html.light .text-amber-300,
+html.light .text-amber-400 {
+  color: #b45309 !important; /* Dark Amber / Gold */
+}
+
+html.light .text-emerald-300,
+html.light .text-emerald-400 {
+  color: #047857 !important; /* Dark Emerald Green */
+}
+
+html.light .text-rose-400 {
+  color: #be123c !important; /* Dark Rose / Red */
+}
+
+/* LIGHT MODE NOTICE & WARNING BOXES HIGH-CONTRAST STYLING */
+html.light .bg-amber-500\/10,
+html.light .bg-amber-500\/20,
+html.light .bg-amber-500\/30 {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+  color: #78350f !important;
+}
+
+html.light .bg-amber-500\/10 *,
+html.light .bg-amber-500\/20 *,
+html.light .bg-amber-500\/30 * {
+  color: #78350f !important;
+}
+
+/* LIGHT MODE BOTTOM TICKER BAR STYLING */
+html.light .bottom-ticker-bar {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html.light .ticker-badge {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+html.light .ticker-symbol,
+html.light .ticker-price {
+  color: #0f172a !important;
+}
+
+html.light .ticker-dot {
+  color: #cbd5e1 !important;
+}
+
+/* Navbar Links & Buttons in Light Mode */
+html.light header a,
+html.light header button {
+  color: #1e293b !important;
+}
+
+html.light header a.bg-slate-800,
+html.light header button.bg-slate-800 {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Form Inputs, Selects & Tables */
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light table th {
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light table td {
+  border-color: #e2e8f0 !important;
+}
+
+html.light table tr:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}

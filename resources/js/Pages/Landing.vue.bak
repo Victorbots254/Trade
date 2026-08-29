@@ -1,0 +1,281 @@
+<template>
+  <div class="min-h-screen font-sans select-none flex flex-col" :class="isDark ? 'bg-[#0b0e11] text-white' : 'bg-white text-[#1e2329]'">
+
+    <!-- ===== ANNOUNCEMENT BAR ===== -->
+    <div class="bg-[#f0b90b] text-[#1e2329] text-[11px] font-semibold text-center py-2 px-4 flex items-center justify-center space-x-2">
+      <span>🎉</span>
+      <span>New: Binary Options now available! Trade BTC, ETH, GOLD & more with up to 88% ROI. <a href="/trade/BTC_USDT" class="underline ml-1">Start Trading →</a></span>
+    </div>
+
+    <!-- ===== TOP NAVBAR ===== -->
+    <header class="sticky top-0 z-50 border-b" :class="isDark ? 'bg-[#0b0e11] border-[#1e2329]' : 'bg-white border-gray-200'">
+      <div class="max-w-[1400px] mx-auto px-4 h-14 flex items-center justify-between">
+      <a href="/" class="flex items-center space-x-2 font-bold text-xl text-emerald-400 tracking-wider">
+        <span>TRADE<span class="text-slate-400 font-normal">PRO</span></span>
+      </a>
+
+      <div class="hidden md:flex items-center space-x-8 text-xs font-medium text-slate-300">
+        <a href="#markets" class="hover:text-emerald-400 transition">Markets</a>
+        <a href="#features" class="hover:text-emerald-400 transition">Infrastructure</a>
+        <a href="#security" class="hover:text-emerald-400 transition">Security</a>
+        <a href="/terms" class="hover:text-emerald-400 transition">Terms</a>
+      </div>
+
+      <div class="flex items-center space-x-3 text-xs">
+        <a v-if="user" href="/trade/BTC_USDT" @click="loadingTarget = 'terminal'" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold transition shadow-lg shadow-emerald-950/50 flex items-center space-x-2">
+          <svg v-if="loadingTarget === 'terminal'" class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Open Terminal</span>
+        </a>
+        <template v-else>
+          <a href="/login" @click="loadingTarget = 'login'" class="text-slate-300 hover:text-white px-3.5 py-2 font-medium flex items-center space-x-1.5">
+            <svg v-if="loadingTarget === 'login'" class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Log In</span>
+          </a>
+          <a href="/register" @click="loadingTarget = 'register'" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold transition shadow-lg shadow-emerald-950/50 flex items-center space-x-1.5">
+            <svg v-if="loadingTarget === 'register'" class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Create Account</span>
+          </a>
+        </template>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-16 pb-20 px-6 text-center max-w-5xl mx-auto space-y-8 flex-1">
+      <div class="inline-flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1.5 rounded-full text-emerald-400 text-xs font-semibold font-mono">
+        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-ping"></span>
+        <span>NEXT-GEN INSTITUTIONAL SPOT EXCHANGE</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight text-slate-100">
+        Trade <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Crypto, Gold, & Stocks</span> with Sub-Millisecond Speed
+      </h1>
+
+      <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+        Engineered for high-frequency traders. Powered by Redis in-memory order books, strict double-entry accounting ledgers, and instant BEP-20 USDT deposit settlement.
+      </p>
+
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-4 text-xs font-bold pt-4">
+        <a href="/trade/BTC_USDT" @click="loadingTarget = 'hero_terminal'" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3.5 rounded-xl transition shadow-xl shadow-emerald-950/60 uppercase tracking-wider flex items-center justify-center space-x-2">
+          <svg v-if="loadingTarget === 'hero_terminal'" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Launch Trading Terminal</span>
+          <span v-if="loadingTarget !== 'hero_terminal'">→</span>
+        </a>
+        <a href="/register" @click="loadingTarget = 'hero_register'" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 px-8 py-3.5 rounded-xl transition uppercase tracking-wider flex items-center justify-center space-x-2">
+          <svg v-if="loadingTarget === 'hero_register'" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Open Free Account</span>
+        </a>
+      </div>
+
+      <!-- Hero Metrics Bar -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-12 text-left font-mono">
+        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+          <div class="text-xs text-slate-400">24h Execution Volume</div>
+          <div class="text-xl font-bold text-emerald-400 mt-1">$2.48 Billion</div>
+        </div>
+        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+          <div class="text-xs text-slate-400">Order Matching Latency</div>
+          <div class="text-xl font-bold text-cyan-400 mt-1">&lt; 0.45 ms</div>
+        </div>
+        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+          <div class="text-xs text-slate-400">Ledger Accuracy</div>
+          <div class="text-xl font-bold text-slate-100 mt-1">100% Double-Entry</div>
+        </div>
+        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+          <div class="text-xs text-slate-400">Supported Markets</div>
+          <div class="text-xl font-bold text-amber-400 mt-1">14+ Assets</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Markets Overview Section -->
+    <section id="markets" class="bg-slate-900/50 border-y border-slate-800 py-16 px-6">
+      <div class="max-w-6xl mx-auto space-y-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-slate-800 pb-6">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-100">Live Asset Markets</h2>
+            <p class="text-xs text-slate-400 mt-1">Real-time market depth and 24h ticker variations.</p>
+          </div>
+          <div class="flex space-x-2 text-xs font-medium">
+            <button v-for="cat in ['all', 'crypto', 'commodities', 'stocks']" :key="cat"
+                    @click="activeCategory = cat"
+                    :class="activeCategory === cat ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200'"
+                    class="px-3 py-1.5 rounded-lg capitalize transition">
+              {{ cat }}
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left font-mono text-xs">
+            <thead>
+              <tr class="text-slate-500 border-b border-slate-800">
+                <th class="pb-3 font-medium">Trading Pair</th>
+                <th class="pb-3 font-medium">Category</th>
+                <th class="pb-3 font-medium text-right">Last Price</th>
+                <th class="pb-3 font-medium text-right">24h Change</th>
+                <th class="pb-3 font-medium text-right">24h High</th>
+                <th class="pb-3 font-medium text-right">24h Low</th>
+                <th class="pb-3 font-medium text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              <tr v-for="m in filteredMarkets" :key="m.symbol" class="hover:bg-slate-900 transition">
+                <td class="py-3.5 font-bold text-slate-100">{{ m.symbol }}</td>
+                <td class="py-3.5 text-slate-400 uppercase text-[10px] font-sans">{{ getCategory(m.symbol) }}</td>
+                <td class="py-3.5 text-right font-bold text-slate-200">${{ formatPrice(m.last_price) }}</td>
+                <td :class="m.change_24h >= 0 ? 'text-emerald-400' : 'text-rose-400'" class="py-3.5 text-right font-bold">
+                  {{ m.change_24h >= 0 ? '+' : '' }}{{ m.change_24h }}%
+                </td>
+                <td class="py-3.5 text-right text-slate-400">${{ formatPrice(m.high_24h) }}</td>
+                <td class="py-3.5 text-right text-slate-400">${{ formatPrice(m.low_24h) }}</td>
+                <td class="py-3.5 text-right">
+                  <a :href="'/trade/' + m.symbol.replace('/', '_')" @click="loadingTarget = 'market_' + m.symbol" class="bg-slate-800 hover:bg-emerald-600 text-slate-200 hover:text-white px-3 py-1.5 rounded-md font-sans text-[11px] font-semibold transition inline-flex items-center space-x-1">
+                    <svg v-if="loadingTarget === 'market_' + m.symbol" class="animate-spin h-3 w-3 text-white mr-1" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Trade Now →</span>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture & Features Section -->
+    <section id="features" class="py-20 px-6 max-w-6xl mx-auto space-y-12">
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h2 class="text-3xl font-bold text-slate-100">Institutional Infrastructure</h2>
+        <p class="text-xs text-slate-400">Engineered with financial-grade precision and zero compromise on security.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 hover:border-slate-700 transition">
+          <div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-400 text-lg">📈</div>
+          <h3 class="font-bold text-slate-100 text-base">In-Memory Redis Matcher</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Atomic Lua scripts operating on Redis Sorted Sets guarantee sub-millisecond price-time priority order matching.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 hover:border-slate-700 transition">
+          <div class="w-10 h-10 bg-cyan-500/10 border border-cyan-500/30 rounded-xl flex items-center justify-center text-cyan-400 text-lg">📊</div>
+          <h3 class="font-bold text-slate-100 text-base">Double-Entry Accounting</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Every balance mutation creates immutable debit and credit ledger records with row-level locks, preventing negative balances.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 hover:border-slate-700 transition">
+          <div class="w-10 h-10 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-center text-amber-400 text-lg">🛡️</div>
+          <h3 class="font-bold text-slate-100 text-base">BEP-20 Instant Deposits</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Scan-to-pay BNB Smart Chain custodial deposits with BscScan TxHash validation and support webhook notifications.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900/60 py-12 px-6 text-xs text-slate-400">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="space-y-3">
+          <a href="/" class="flex items-center space-x-2 font-bold text-lg text-emerald-400 tracking-wider">
+            <span>TRADE<span class="text-slate-400 font-normal">PRO</span></span>
+          </a>
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            Next-generation spot exchange for crypto, precious metals, and equities.
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Trading Platform</div>
+          <ul class="space-y-1 text-slate-400">
+            <li><a href="/trade/BTC_USDT" class="hover:text-emerald-400 transition">BTC/USDT Spot</a></li>
+            <li><a href="/trade/GOLD_USDT" class="hover:text-emerald-400 transition">Gold Spot (XAU)</a></li>
+            <li><a href="/trade/NVDA_USDT" class="hover:text-emerald-400 transition">NVIDIA Spot (NVDA)</a></li>
+            <li><a href="/deposit" class="hover:text-emerald-400 transition">BEP-20 Deposits</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-2">
+          <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Legal & Compliance</div>
+          <ul class="space-y-1 text-slate-400">
+            <li><a href="/terms" class="hover:text-emerald-400 transition">Terms of Service</a></li>
+            <li><a href="/privacy" class="hover:text-emerald-400 transition">Privacy Policy</a></li>
+            <li><a href="/risk-disclosure" class="hover:text-emerald-400 transition">Risk Disclosure</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-2">
+          <div class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">System Status</div>
+          <div class="flex items-center space-x-2 text-emerald-400 font-mono text-[11px]">
+            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-ping"></span>
+            <span>All Systems Operational</span>
+          </div>
+          <p class="text-[10px] text-slate-500 pt-2">
+            © 2026 TradePro Inc. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue';
+
+const props = defineProps({
+  user: Object,
+  markets: Array,
+});
+
+const activeCategory = ref('all');
+const loadingTarget = ref(null);
+
+const cryptoSymbols = ['BTC/USDT', 'ETH/USDT', 'BNB/USDT', 'SOL/USDT', 'XRP/USDT', 'DOGE/USDT'];
+const commoditySymbols = ['GOLD/USDT', 'SILVER/USDT', 'OIL/USDT'];
+const stockSymbols = ['NVDA/USDT', 'AAPL/USDT', 'TSLA/USDT', 'MSFT/USDT', 'SPY/USDT'];
+
+const filteredMarkets = computed(() => {
+  let list = props.markets || [];
+
+  if (activeCategory.value === 'crypto') {
+    list = list.filter(m => cryptoSymbols.includes(m.symbol));
+  } else if (activeCategory.value === 'commodities') {
+    list = list.filter(m => commoditySymbols.includes(m.symbol));
+  } else if (activeCategory.value === 'stocks') {
+    list = list.filter(m => stockSymbols.includes(m.symbol));
+  }
+
+  return list;
+});
+
+function getCategory(symbol) {
+  if (cryptoSymbols.includes(symbol)) return 'Crypto';
+  if (commoditySymbols.includes(symbol)) return 'Commodity';
+  if (stockSymbols.includes(symbol)) return 'Stock Equities';
+  return 'Spot';
+}
+
+function formatPrice(val) {
+  return Number(val || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+</script>
