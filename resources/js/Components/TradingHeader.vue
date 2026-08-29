@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <header class="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs select-none shadow-md z-40 transition-colors duration-200">
     <ToastNotification ref="toastRef" />
 
@@ -14,7 +14,7 @@
       <!-- Professional Navigation Links -->
       <nav class="hidden md:flex items-center space-x-1 font-semibold text-[13px]">
         <Link href="/terminal" class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5" :class="$page.url === '/terminal' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
-          <span class="text-emerald-400">📈</span>
+          
           <span>Spot Trade</span>
         </Link>
 
