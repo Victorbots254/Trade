@@ -91,11 +91,21 @@ Route::post('/api/register', function (Request $request) {
         'accepted_terms_ip' => $request->ip(),
     ]);
 
-    // Create initial $0.00 USDT balance on registration
-    Wallet::create([
+    // Create initial $0.00 USDT LIVE balance on registration
+    \App\Models\Wallet::create([
         'user_id' => $user->id,
         'currency' => 'USDT',
+        'is_demo' => false,
         'available_balance' => 0.00,
+        'locked_balance' => 0.00,
+    ]);
+
+    // Create initial $10,000.00 USDT DEMO balance on registration
+    \App\Models\Wallet::create([
+        'user_id' => $user->id,
+        'currency' => 'USDT',
+        'is_demo' => true,
+        'available_balance' => 10000.00,
         'locked_balance' => 0.00,
     ]);
 
@@ -162,6 +172,10 @@ Route::middleware('auth')->group(function () {
     // Withdrawals
     Route::get('/withdraw', [\App\Http\Controllers\WithdrawalController::class, 'index'])->name('withdraw');
     Route::post('/withdraw', [\App\Http\Controllers\WithdrawalController::class, 'store']);
+
+    // Learning / Blog Guidelines
+    Route::get('/learn', [\App\Http\Controllers\BlogController::class, 'index'])->name('learn.index');
+    Route::get('/learn/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('learn.show');
 
     Route::post('/api/payments/bep20', function (Request $request) {
         $request->validate([

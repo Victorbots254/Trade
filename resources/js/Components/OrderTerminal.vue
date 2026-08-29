@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-slate-900 border border-slate-800 rounded-lg p-3 flex flex-col h-full text-xs select-none">
+  <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 flex flex-col h-full text-xs select-none">
     <ToastNotification ref="toastRef" />
 
     <div class="mb-3 p-2 rounded-md font-mono text-[11px] flex justify-between items-center"
-         :class="activeAccountMode === 'demo' ? 'bg-[#f0b90b]/10 border border-[#f0b90b]/30 text-[#f0b90b]' : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300'">
+         :class="activeAccountMode === 'demo' ? 'bg-amber-100 dark:bg-[#f0b90b]/10 border border-amber-300 dark:border-[#f0b90b]/30 text-amber-700 dark:text-[#f0b90b]' : 'bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300'">
       <div class="flex items-center space-x-1.5 font-bold">
         <span v-if="activeAccountMode === 'demo'">🎮 DEMO DASHBOARD</span>
         <span v-else class="flex items-center space-x-1">
-          <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span>
+          <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
           <span>🟢 LIVE REAL TRADING</span>
         </span>
       </div>
@@ -57,34 +57,34 @@
     <!-- Inputs Form -->
     <form @submit.prevent="submitOrder" class="space-y-3 flex-1 flex flex-col justify-between">
       <div class="space-y-2.5">
-        <!-- Price Input -->
-        <div v-if="type === 'limit'">
-          <label class="block text-slate-400 text-[11px] mb-1">Price ({{ market?.quote_currency }})</label>
-          <div class="relative">
-            <input v-model="price" @input="userEditedPrice = true" type="number" step="0.01" min="0.01" required
-                   class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 font-mono text-slate-100 text-sm focus:outline-none focus:border-emerald-500" />
-            <span class="absolute right-2.5 top-2 text-slate-500 font-mono text-[11px]">{{ market?.quote_currency }}</span>
+          <!-- Price Input -->
+          <div v-if="type === 'limit'">
+            <label class="block text-slate-500 dark:text-slate-400 text-[11px] mb-1">Price ({{ market?.quote_currency }})</label>
+            <div class="relative">
+              <input v-model="price" @input="userEditedPrice = true" type="number" step="0.01" min="0.01" required
+                     class="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2.5 py-1.5 font-mono text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:border-emerald-500" />
+              <span class="absolute right-2.5 top-2 text-slate-400 dark:text-slate-500 font-mono text-[11px]">{{ market?.quote_currency }}</span>
+            </div>
           </div>
-        </div>
 
-        <div v-else class="bg-slate-950/60 border border-slate-800 rounded p-2 text-slate-400 text-center font-mono">
-          Market Price (Best Execution)
-        </div>
-
-        <!-- USDT Amount Input -->
-        <div>
-          <label class="block text-slate-400 text-[11px] mb-1">Amount (USDT)</label>
-          <div class="relative">
-            <input v-model="usdtAmount" type="number" step="1" min="1" required
-                   class="w-full bg-[#0b0e11] border border-[#2b3139] rounded-lg px-2.5 py-1.5 font-mono text-slate-100 text-sm focus:outline-none focus:border-[#f0b90b] transition" />
-            <span class="absolute right-2.5 top-2 text-slate-500 font-mono text-[11px]">USDT</span>
+          <div v-else class="bg-slate-100 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 rounded p-2 text-slate-500 dark:text-slate-400 text-center font-mono">
+            Market Price (Best Execution)
           </div>
-        </div>
+
+          <!-- USDT Amount Input -->
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 text-[11px] mb-1">Amount (USDT)</label>
+            <div class="relative">
+              <input v-model="usdtAmount" type="number" step="1" min="1" required
+                     class="w-full bg-white dark:bg-[#0b0e11] border border-slate-300 dark:border-[#2b3139] rounded-lg px-2.5 py-1.5 font-mono text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:border-emerald-500 dark:focus:border-[#f0b90b] transition" />
+              <span class="absolute right-2.5 top-2 text-slate-400 dark:text-slate-500 font-mono text-[11px]">USDT</span>
+            </div>
+          </div>
 
         <!-- Calculated Receive/Sell View -->
-        <div class="bg-slate-950/60 border border-slate-800 p-2.5 rounded font-mono text-[11px] flex justify-between items-center">
-          <span class="text-slate-400">Est. {{ market?.base_currency }} to {{ side === 'buy' ? 'Receive' : 'Sell' }}:</span>
-          <span class="text-emerald-400 font-bold">{{ calculatedQuantity.toFixed(6) }} {{ market?.base_currency }}</span>
+        <div class="bg-slate-100 dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800 p-2.5 rounded font-mono text-[11px] flex justify-between items-center">
+          <span class="text-slate-600 dark:text-slate-400">Est. {{ market?.base_currency }} to {{ side === 'buy' ? 'Receive' : 'Sell' }}:</span>
+          <span class="text-emerald-700 dark:text-emerald-400 font-bold">{{ calculatedQuantity.toFixed(6) }} {{ market?.base_currency }}</span>
         </div>
 
         <!-- Percentage Slider Buttons -->

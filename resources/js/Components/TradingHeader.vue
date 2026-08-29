@@ -13,29 +13,22 @@
 
       <!-- Professional Navigation Links -->
       <nav class="hidden md:flex items-center space-x-1 font-semibold text-[13px]">
-        <Link href="/terminal" class="px-3 py-1.5 rounded-lg transition" :class="$page.url === '/terminal' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
-          Markets
+        <Link href="/terminal" class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5" :class="$page.url === '/terminal' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
+          <span class="text-emerald-400">📈</span>
+          <span>Spot Trade</span>
         </Link>
 
-        <!-- TRADE DROPDOWN -->
-        <div class="relative" @mouseenter="showTradeDropdown = true" @mouseleave="showTradeDropdown = false">
-          <button class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1" :class="$page.url.includes('/trade/') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
-            <span>Trade</span>
-            <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </button>
-
-          <div v-if="showTradeDropdown" @click="showTradeDropdown = false" class="absolute top-full left-0 mt-0 w-44 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-1.5 z-50">
-            <Link href="/terminal" class="px-4 py-2 hover:bg-slate-800 text-slate-300 hover:text-[#f0b90b] flex items-center space-x-2 transition">
-              <span>Spot Trading</span>
-            </Link>
-            <Link href="/trade/options/BTC_USDT" class="px-4 py-2 hover:bg-slate-800 text-slate-300 hover:text-[#f0b90b] flex items-center space-x-2 transition">
-              <span>Quick Options</span>
-            </Link>
-          </div>
-        </div>
+        <Link href="/trade/options/BTC_USDT" class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5" :class="$page.url.includes('/trade/options') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
+          <span class="text-amber-400">⚡</span>
+          <span>Quick Trade</span>
+        </Link>
 
         <Link href="/monthly-interests" class="px-3 py-1.5 rounded-lg transition" :class="$page.url === '/monthly-interests' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
           Earn
+        </Link>
+        <Link href="/learn" class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5" :class="$page.url.startsWith('/learn') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
+          <span class="text-blue-400">📖</span>
+          <span>Academy</span>
         </Link>
         <Link href="/trades" class="px-3 py-1.5 rounded-lg transition" :class="$page.url === '/trades' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
           Past Trades
@@ -46,14 +39,14 @@
     <!-- Right User Controls & Balance CTAs -->
     <div class="flex items-center space-x-3">
       <!-- TWO DEDICATED DASHBOARD SWITCHERS: DEMO DASHBOARD vs LIVE REAL DASHBOARD -->
-      <div class="hidden lg:flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800 font-medium mr-2">
+      <div class="hidden lg:flex items-center space-x-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-300 dark:border-slate-800 font-medium mr-2">
         <button @click="switchAccountMode('demo')" 
-                :class="accountMode === 'demo' ? 'bg-[#f0b90b]/20 text-[#f0b90b] border border-[#f0b90b]/40 font-bold shadow' : 'text-slate-400 hover:text-slate-200'"
+                :class="accountMode === 'demo' ? 'bg-amber-200 dark:bg-[#f0b90b]/20 text-amber-800 dark:text-[#f0b90b] border border-amber-400 dark:border-[#f0b90b]/40 font-bold shadow' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'"
                 class="px-3 py-1 rounded-lg transition flex items-center space-x-1.5 text-xs">
           <span>Demo</span>
         </button>
         <button @click="switchAccountMode('live')" 
-                :class="accountMode === 'live' ? 'bg-[#f0b90b] text-[#1e2329] font-bold shadow shadow-[#f0b90b]/20' : 'text-slate-400 hover:text-slate-200'"
+                :class="accountMode === 'live' ? 'bg-[#f0b90b] text-[#1e2329] font-bold shadow shadow-[#f0b90b]/20' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'"
                 class="px-3 py-1 rounded-lg transition flex items-center space-x-1.5 text-xs">
           <span class="w-1.5 h-1.5 bg-[#1e2329] rounded-full animate-ping" v-if="accountMode === 'live'"></span>
           <span>Live</span>
@@ -62,13 +55,13 @@
 
       <div v-if="user" class="flex items-center space-x-3">
         <!-- DEMO DASHBOARD BALANCE VIEW -->
-        <div v-if="accountMode === 'demo'" class="flex items-center space-x-2 bg-[#f0b90b]/10 border border-[#f0b90b]/30 px-3 py-1.5 rounded-lg font-mono">
-          <span class="text-[#f0b90b] font-bold">Demo Funds:</span>
-          <span class="text-[#f0b90b] font-bold text-sm">${{ formatBalance(demoBalance) }}</span>
+        <div v-if="accountMode === 'demo'" class="flex items-center space-x-2 bg-amber-100 dark:bg-[#f0b90b]/10 border border-amber-300 dark:border-[#f0b90b]/30 px-3 py-1.5 rounded-lg font-mono">
+          <span class="text-amber-700 dark:text-[#f0b90b] font-bold">Demo Funds:</span>
+          <span class="text-amber-700 dark:text-[#f0b90b] font-bold text-sm">${{ formatBalance(demoBalance) }}</span>
           <button @click="resetDemoBalance" :disabled="resetting"
                   title="Reset Demo Account to $10,000.00"
-                  class="ml-1 text-[10px] text-[#f0b90b] hover:text-white bg-[#f0b90b]/20 hover:bg-[#f0b90b]/40 border border-[#f0b90b]/40 px-2 py-0.5 rounded transition flex items-center space-x-1">
-            <svg v-if="resetting" class="animate-spin h-3 w-3 text-[#f0b90b]" fill="none" viewBox="0 0 24 24">
+                  class="ml-1 text-[10px] text-amber-700 dark:text-[#f0b90b] hover:text-amber-900 dark:hover:text-white bg-amber-200 dark:bg-[#f0b90b]/20 hover:bg-amber-300 dark:hover:bg-[#f0b90b]/40 border border-amber-300 dark:border-[#f0b90b]/40 px-2 py-0.5 rounded transition flex items-center space-x-1">
+            <svg v-if="resetting" class="animate-spin h-3 w-3 text-amber-700 dark:text-[#f0b90b]" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
