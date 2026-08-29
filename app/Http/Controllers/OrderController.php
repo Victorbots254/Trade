@@ -37,29 +37,39 @@ class OrderController extends Controller
             ], 422);
         }
 
-        $submittedPrice = $request->type === 'market' ? ($request->has('strike_price') ? $request->strike_price : ($market->last_price ?: 1)) : $request->price;
-        
         // SECURITY MIDDLEWARE: Anti-Price-Spoofing Oracle
+        $actualPrice = null;
         try {
             $cleanSym = str_replace('/', '', $market->symbol);
             $res = \Illuminate\Support\Facades\Http::timeout(3)->get("https://api.binance.com/api/v3/ticker/price", ['symbol' => $cleanSym]);
             if ($res->ok() && isset($res['price'])) {
                 $actualPrice = (float) $res['price'];
                 $market->last_price = $actualPrice; // Update local cache
-                
-                // If it's a market order, the submitted price MUST be within 1% of the actual price to prevent spoofing
-                if ($request->type === 'market') {
-                    $diffPercent = abs($submittedPrice - $actualPrice) / $actualPrice * 100;
-                    if ($diffPercent > 1.0) {
-                        return response()->json(['message' => 'Market price divergence too high (Slippage > 1%). Please resubmit your order.'], 400);
-                    }
-                }
+                $market->save();
             }
         } catch (\Exception $e) {
             // Fallback if Binance API is unreachable
         }
 
-        $price = $submittedPrice;
+        if ($request->type === 'market') {
+            if ($request->has('strike_price')) {
+                // If the frontend explicitly requested a strike price, ensure it hasn't spoofed/diverged from reality
+                $submittedPrice = (float) $request->strike_price;
+                if ($actualPrice) {
+                    $diffPercent = abs($submittedPrice - $actualPrice) / $actualPrice * 100;
+                    if ($diffPercent > 1.0) {
+                        return response()->json(['message' => 'Market price divergence too high (Slippage > 1%). Please resubmit your order.'], 400);
+                    }
+                }
+                $price = $submittedPrice;
+            } else {
+                // If it's a standard market order (like "Close Position"), just use the live oracle price
+                $price = $actualPrice ?: ($market->last_price ?: 1);
+            }
+        } else {
+            $price = $request->price;
+        }
+
         $quantity = $request->quantity;
 
         // Determine wallet & lock amount
