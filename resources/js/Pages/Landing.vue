@@ -72,8 +72,12 @@
     <!-- HERO SECTION -->
     <section class="relative overflow-hidden" :class="isDark ? 'bg-[#0b0e11]' : 'bg-white'">
       <div class="absolute inset-0 pointer-events-none">
-        <div class="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full opacity-[0.04]" style="background:radial-gradient(circle,#f0b90b,transparent)"></div>
-        <div class="absolute top-20 right-0 w-[400px] h-[400px] rounded-full opacity-[0.04]" style="background:radial-gradient(circle,#0ecb81,transparent)"></div>
+        <!-- Richer, more vibrant gradient blobs -->
+        <div v-if="isDark" class="absolute -top-32 -left-32 w-[700px] h-[700px] rounded-full" style="background: radial-gradient(circle, rgba(240,185,11,0.10) 0%, transparent 65%); filter: blur(60px);"></div>
+        <div v-if="isDark" class="absolute top-0 right-0 w-[500px] h-[500px] rounded-full" style="background: radial-gradient(circle, rgba(14,203,129,0.07) 0%, transparent 65%); filter: blur(70px);"></div>
+        <div v-if="isDark" class="absolute bottom-0 left-1/3 w-[400px] h-[300px]" style="background: radial-gradient(ellipse, rgba(240,185,11,0.05) 0%, transparent 70%); filter: blur(50px);"></div>
+        <!-- Grid overlay for depth -->
+        <div v-if="isDark" class="absolute inset-0 opacity-[0.025]" style="background-image: linear-gradient(rgba(240,185,11,1) 1px, transparent 1px), linear-gradient(90deg, rgba(240,185,11,1) 1px, transparent 1px); background-size: 60px 60px;"></div>
       </div>
       <div class="relative max-w-[1400px] mx-auto px-4 pt-16 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div class="space-y-6">
@@ -99,7 +103,8 @@
           </div>
         </div>
         <div class="hidden lg:block">
-          <div class="rounded-2xl border p-5 space-y-4" :class="isDark?'bg-[#1e2329] border-[#2b3139]':'bg-gray-50 border-gray-200'">
+          <div class="rounded-2xl p-5 space-y-4 shadow-2xl" :class="isDark?'':'bg-gray-50 border border-gray-200'"
+            :style="isDark ? 'background: linear-gradient(145deg, rgba(30,35,41,0.9) 0%, rgba(20,24,30,0.9) 100%); border: 1px solid rgba(240,185,11,0.2); box-shadow: 0 24px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(240,185,11,0.08);' : ''">
             <div class="flex items-center justify-between">
               <div>
                 <div class="font-bold text-lg" :class="isDark?'text-white':'text-[#1e2329]'">BTC/USDT</div>
