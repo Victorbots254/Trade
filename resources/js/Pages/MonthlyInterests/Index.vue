@@ -35,7 +35,7 @@
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden">
           <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl"></div>
           <div class="text-slate-400 text-sm mb-2">Target Yield (APY)</div>
-          <div class="text-3xl font-bold text-emerald-400">5.0% <span class="text-sm text-slate-500 font-normal">/ month</span></div>
+          <div class="text-3xl font-bold text-emerald-400">15.0% <span class="text-sm text-slate-500 font-normal">/ month</span></div>
         </div>
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg">
           <div class="text-slate-400 text-sm mb-2">Total Interest Earned</div>
@@ -151,12 +151,12 @@ const totalEarned = computed(() => {
 
 const estInterest = computed(() => {
   const amt = parseFloat(form.amount) || 0;
-  return (amt * 0.05).toFixed(2);
+  return (amt * 0.15).toFixed(2);
 });
 
 const estTotal = computed(() => {
   const amt = parseFloat(form.amount) || 0;
-  return (amt + amt * 0.05).toFixed(2);
+  return (amt + amt * 0.15).toFixed(2);
 });
 
 function submitLock() {

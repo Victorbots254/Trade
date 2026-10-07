@@ -88,15 +88,20 @@
           </div>
 
           <div>
-            <label class="block text-slate-400 text-[11px] mb-1 font-medium">M-Pesa Phone Number</label>
+            <div class="flex justify-between items-center mb-1">
+              <label class="block text-slate-400 text-[11px] font-medium">M-Pesa Phone Number</label>
+              <span v-if="mpesaForm.phone" class="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded">
+                Sending to: {{ formattedModalPhone }}
+              </span>
+            </div>
             <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-mono text-xs">🇰🇪 +254</span>
               <input v-model="mpesaForm.phone"
                      type="text"
                      required
-                     placeholder="712 345 678"
-                     class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-16 pr-3 py-2 text-slate-100 font-mono text-xs focus:outline-none focus:border-emerald-500" />
+                     placeholder="e.g. 0798637930 or 254798637930"
+                     class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 font-mono text-xs focus:outline-none focus:border-emerald-500" />
             </div>
+            <p class="text-[10px] text-slate-500 mt-1">Accepts any format — sent as pure 254XXXXXXXXX with no plus.</p>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -183,7 +188,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 
 const props = defineProps({
@@ -201,6 +206,14 @@ const mpesaLoading = ref(false);
 const mpesaError = ref('');
 const mpesaActivePrompt = ref(null);
 let mpesaTimer = null;
+
+const formattedModalPhone = computed(() => {
+  let p = (mpesaForm.value.phone || '').replace(/[^0-9]/g, '');
+  if (p.startsWith('2540')) p = '254' + p.slice(4);
+  else if (p.startsWith('0')) p = '254' + p.slice(1);
+  else if (p.startsWith('7') || p.startsWith('1')) p = '254' + p;
+  return p;
+});
 
 // Crypto State
 const form = ref({

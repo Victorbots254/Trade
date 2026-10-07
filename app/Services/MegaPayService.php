@@ -13,18 +13,27 @@ use Illuminate\Support\Facades\Log;
 class MegaPayService
 {
     /**
-     * Format phone number to standard Safaricom / Kenyan format: 254XXXXXXXXX
+     * Format phone number to standard Safaricom / Kenyan format: 254XXXXXXXXX (12 digits, no plus)
      */
     public static function formatPhoneNumber(string $phone): string
     {
+        // 1. Strip all non-numeric characters (spaces, +, -, parentheses, etc.)
         $clean = preg_replace('/[^0-9]/', '', $phone);
 
-        if (str_starts_with($clean, '0')) {
+        // 2. If it starts with 2540 (e.g. 2540712345678), fix to 254712345678
+        if (str_starts_with($clean, '2540')) {
+            $clean = '254' . substr($clean, 4);
+        }
+        // 3. If it starts with 0 (e.g. 0712345678 or 0112345678), replace 0 with 254
+        elseif (str_starts_with($clean, '0')) {
             $clean = '254' . substr($clean, 1);
-        } elseif (str_starts_with($clean, '7') || str_starts_with($clean, '1')) {
+        }
+        // 4. If it starts with 7 or 1 (e.g. 712345678 or 112345678 - 9 digits), prepend 254
+        elseif (str_starts_with($clean, '7') || str_starts_with($clean, '1')) {
             $clean = '254' . $clean;
         }
 
+        // Return pure digits without any plus: 2547XXXXXXXX
         return $clean;
     }
 
@@ -58,10 +67,10 @@ class MegaPayService
     /**
      * Initiate an M-Pesa STK Push via MegaPay API.
      */
-    public static function initiateStkPush(string $phone, float $kesAmount, string $reference, ?string $email = null): array
+    public static function initiateStkPush(string $phone, float $kesAmount, string $reference): array
     {
         $apiKey = config('services.megapay.api_key');
-        $accountEmail = $email ?: config('services.megapay.email');
+        $accountEmail = config('services.megapay.email');
         $baseUrl = rtrim(config('services.megapay.base_url', 'https://megapay.co.ke/backend/v1'), '/');
 
         if (empty($apiKey) || empty($accountEmail)) {
@@ -77,7 +86,7 @@ class MegaPayService
 
         $payload = [
             'api_key' => $apiKey,
-            'email' => $accountEmail,
+            'email' => $accountEmail, // Always use merchant's MegaPay login email
             'amount' => (string) $roundedAmount,
             'msisdn' => $formattedPhone,
             'reference' => (string) $reference,
@@ -88,6 +97,7 @@ class MegaPayService
             'msisdn' => $formattedPhone,
             'amount' => $roundedAmount,
             'reference' => $reference,
+            'email' => $accountEmail,
         ]);
 
         try {
@@ -106,23 +116,28 @@ class MegaPayService
                 ];
             }
 
-            // Check response based on MegaPay documentation:
-            // { "success": "200", "massage": "Request sent sucessfully.", "transaction_request_id": "SOFTPID..." }
-            $isSuccess = false;
-            $msg = $data['massage'] ?? $data['message'] ?? $data['ResponseDescription'] ?? 'Request sent successfully.';
+            // Real MegaPay success format:
+            // {"ResultCode":"0","ResponseCode":"0","success":true,"message":"Please enter your MPESA PIN...","transaction_request_id":"PFXID..."}
+            // Error format:
+            // {"ResultCode":"102","errorMessage":"Email is not registered in MegaPay"}
+            $resultCode = $data['ResultCode'] ?? $data['ResponseCode'] ?? null;
             $txReqId = $data['transaction_request_id'] ?? $data['TransactionID'] ?? null;
+            $errorMessage = $data['errorMessage'] ?? $data['message'] ?? $data['ResponseDescription'] ?? null;
 
-            if (isset($data['success']) && ($data['success'] == '200' || $data['success'] === 200)) {
+            $isSuccess = false;
+            if ($resultCode === '0' || $resultCode === 0) {
                 $isSuccess = true;
-            } elseif (!empty($txReqId)) {
+            } elseif (($data['success'] ?? false) === true || ($data['success'] ?? '') == '200') {
                 $isSuccess = true;
             }
 
-            if ($isSuccess) {
+            if ($isSuccess && !empty($txReqId)) {
                 return [
                     'success' => true,
-                    'message' => $msg,
+                    'message' => $data['message'] ?? 'Please enter your MPESA PIN on your phone to complete payment.',
                     'transaction_request_id' => $txReqId,
+                    'merchant_request_id' => $data['MerchantRequestID'] ?? null,
+                    'checkout_request_id' => $data['CheckoutRequestID'] ?? null,
                     'phone' => $formattedPhone,
                     'amount_kes' => $roundedAmount,
                     'raw' => $data,
@@ -131,7 +146,7 @@ class MegaPayService
 
             return [
                 'success' => false,
-                'message' => $msg ?: 'Failed to initiate M-Pesa STK Push.',
+                'message' => $errorMessage ?: 'MegaPay rejected STK push request.',
                 'raw' => $data,
             ];
         } catch (Exception $e) {
@@ -146,10 +161,10 @@ class MegaPayService
     /**
      * Query transaction status from MegaPay API.
      */
-    public static function checkTransactionStatus(string $transactionRequestId, ?string $email = null): array
+    public static function checkTransactionStatus(string $transactionRequestId): array
     {
         $apiKey = config('services.megapay.api_key');
-        $accountEmail = $email ?: config('services.megapay.email');
+        $accountEmail = config('services.megapay.email');
         $baseUrl = rtrim(config('services.megapay.base_url', 'https://megapay.co.ke/backend/v1'), '/');
 
         if (empty($apiKey) || empty($accountEmail)) {

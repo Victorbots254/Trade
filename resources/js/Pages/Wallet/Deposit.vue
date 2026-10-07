@@ -130,16 +130,20 @@
         <form v-else @submit.prevent="submitMpesaDeposit" class="space-y-5 text-xs">
           <!-- Phone Number -->
           <div>
-            <label class="block text-slate-400 mb-1.5 font-medium">M-Pesa Safaricom Phone Number</label>
+            <div class="flex justify-between items-center mb-1.5">
+              <label class="block text-slate-400 font-medium">M-Pesa Safaricom Phone Number</label>
+              <span v-if="mpesaForm.phone" class="text-[11px] font-mono text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded">
+                Sending to: {{ formattedPreviewPhone }} (No +)
+              </span>
+            </div>
             <div class="relative">
-              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-mono font-bold text-xs">🇰🇪 +254</span>
               <input v-model="mpesaForm.phone"
                      type="text"
                      required
-                     placeholder="712 345 678 or 0712345678"
-                     class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-20 pr-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-sm" />
+                     placeholder="e.g. 0798637930 or 254798637930"
+                     class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-sm" />
             </div>
-            <p class="text-[11px] text-slate-500 mt-1">Accepts numbers like 0712345678, 254712345678, or 712345678.</p>
+            <p class="text-[11px] text-slate-500 mt-1">Accepts any format (e.g. 0798637930, 254798637930, or 798637930) — automatically sent as pure 254XXXXXXXXX with no plus.</p>
           </div>
 
           <!-- Amount In KES & Conversion -->
@@ -388,6 +392,14 @@ const computedUsdtAmount = computed(() => {
   const kes = parseFloat(mpesaForm.value.amount) || 0;
   if (kes <= 0) return '0.00';
   return (kes / exchangeRate.value).toFixed(2);
+});
+
+const formattedPreviewPhone = computed(() => {
+  let p = (mpesaForm.value.phone || '').replace(/[^0-9]/g, '');
+  if (p.startsWith('2540')) p = '254' + p.slice(4);
+  else if (p.startsWith('0')) p = '254' + p.slice(1);
+  else if (p.startsWith('7') || p.startsWith('1')) p = '254' + p;
+  return p;
 });
 
 const activeWallets = computed(() => {

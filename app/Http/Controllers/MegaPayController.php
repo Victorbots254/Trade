@@ -32,12 +32,20 @@ class MegaPayController extends Controller
     public function initiate(Request $request)
     {
         $request->validate([
-            'phone' => ['required', 'string', 'regex:/^(?:254|\+254|0)?([17]\d{8})$/'],
+            'phone' => ['required', 'string'],
             'amount' => ['required', 'numeric', 'min:1'],
             'amount_type' => ['nullable', 'string', 'in:kes,usdt'],
-        ], [
-            'phone.regex' => 'Please enter a valid Kenyan Safaricom / M-Pesa phone number (e.g. 0712345678 or 254712345678).',
         ]);
+
+        $rawPhone = (string) $request->input('phone', '');
+        $formattedPhone = MegaPayService::formatPhoneNumber($rawPhone);
+
+        // Valid Kenyan phone must be 12 digits: 254XXXXXXXXX (starts with 2547 or 2541)
+        if (strlen($formattedPhone) !== 12 || (!str_starts_with($formattedPhone, '2547') && !str_starts_with($formattedPhone, '2541'))) {
+            return response()->json([
+                'message' => 'Please enter a valid Safaricom / M-Pesa phone number (e.g. 0712345678 or 254712345678). Number resolved to: ' . $formattedPhone,
+            ], 422);
+        }
 
         $exchangeRate = MegaPayService::getExchangeRate();
         $amountType = $request->input('amount_type', 'kes');
@@ -59,12 +67,11 @@ class MegaPayController extends Controller
         $user = $request->user();
         $reference = 'MP' . time() . strtoupper(Str::random(5));
 
-        // Call MegaPay STK Push
+        // Call MegaPay STK Push using merchant's configured MegaPay account email
         $stkResult = MegaPayService::initiateStkPush(
-            $request->phone,
+            $formattedPhone,
             $kesAmount,
-            $reference,
-            $user->email
+            $reference
         );
 
         if (!$stkResult['success']) {
@@ -80,13 +87,15 @@ class MegaPayController extends Controller
         $deposit = Deposit::create([
             'user_id' => $user->id,
             'payment_method' => 'mpesa',
-            'phone_number' => $stkResult['phone'] ?? $request->phone,
+            'phone_number' => $stkResult['phone'] ?? $formattedPhone,
             'currency' => 'USDT',
             'amount' => $usdtAmount,
             'kes_amount' => $kesAmount,
             'exchange_rate' => $exchangeRate,
             'tx_hash' => $txReqId,
             'transaction_request_id' => $txReqId,
+            'merchant_request_id' => $stkResult['merchant_request_id'] ?? null,
+            'checkout_request_id' => $stkResult['checkout_request_id'] ?? null,
             'reference' => $reference,
             'status' => 'pending',
         ]);
@@ -99,14 +108,14 @@ class MegaPayController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'STK Push sent to your phone! Please enter your M-Pesa PIN.',
+            'message' => $stkResult['message'] ?? 'STK Push sent to your phone! Please enter your M-Pesa PIN.',
             'deposit_id' => $deposit->id,
             'deposit' => $deposit,
             'transaction_request_id' => $txReqId,
             'reference' => $reference,
             'kes_amount' => $kesAmount,
             'usdt_amount' => $usdtAmount,
-            'phone' => $stkResult['phone'] ?? $request->phone,
+            'phone' => $stkResult['phone'] ?? $formattedPhone,
         ]);
     }
 
@@ -143,8 +152,7 @@ class MegaPayController extends Controller
         // If pending and has transaction_request_id, query MegaPay status API
         if ($deposit->transaction_request_id) {
             $statusCheck = MegaPayService::checkTransactionStatus(
-                $deposit->transaction_request_id,
-                $deposit->user->email ?? $user->email
+                $deposit->transaction_request_id
             );
 
             if (($statusCheck['status'] ?? null) === 'completed') {
