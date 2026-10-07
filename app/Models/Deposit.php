@@ -12,9 +12,18 @@ class Deposit extends Model
 
     protected $fillable = [
         'user_id',
+        'payment_method',
+        'phone_number',
         'currency',
         'amount',
+        'kes_amount',
+        'exchange_rate',
         'tx_hash',
+        'mpesa_receipt',
+        'transaction_request_id',
+        'merchant_request_id',
+        'checkout_request_id',
+        'reference',
         'receipt_path',
         'status',
         'rejection_reason',
@@ -24,6 +33,8 @@ class Deposit extends Model
 
     protected $casts = [
         'amount' => 'decimal:8',
+        'kes_amount' => 'decimal:2',
+        'exchange_rate' => 'decimal:4',
         'approved_at' => 'datetime',
     ];
 

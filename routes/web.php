@@ -168,6 +168,11 @@ Route::middleware('auth')->group(function () {
     // Deposits & Payments
     Route::get('/api/deposits', [DepositController::class, 'index']);
     Route::post('/api/deposits', [DepositController::class, 'store']);
+
+    // MegaPay M-Pesa Payments
+    Route::get('/api/mpesa/settings', [\App\Http\Controllers\MegaPayController::class, 'getSettings']);
+    Route::post('/api/mpesa/initiate', [\App\Http\Controllers\MegaPayController::class, 'initiate']);
+    Route::get('/api/mpesa/status/{deposit}', [\App\Http\Controllers\MegaPayController::class, 'checkStatus']);
     
     // Withdrawals
     Route::get('/withdraw', [\App\Http\Controllers\WithdrawalController::class, 'index'])->name('withdraw');
@@ -227,3 +232,8 @@ Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin'
     Route::post('/users/bulk-mode', [AdminUserController::class, 'bulkUpdateOutcomeMode'])->name('admin.users.bulk_mode');
     Route::post('/users/{user}/mode', [AdminUserController::class, 'updateOutcomeMode'])->name('admin.users.mode');
 });
+
+// MegaPay M-Pesa Real-Time Webhooks (Public)
+Route::post('/api/webhooks/megapay', [\App\Http\Controllers\MegaPayController::class, 'webhook'])->name('webhook.megapay.api');
+Route::post('/webhooks/megapay', [\App\Http\Controllers\MegaPayController::class, 'webhook'])->name('webhook.megapay');
+

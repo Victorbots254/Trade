@@ -41,10 +41,11 @@
             <thead>
               <tr class="bg-slate-950 text-slate-400 border-b border-slate-800 font-mono text-[11px]">
                 <th class="p-3">ID</th>
+                <th class="p-3">Method</th>
                 <th class="p-3">User</th>
                 <th class="p-3">Amount</th>
-                <th class="p-3">TxHash (BscScan Quick Verifier)</th>
-                <th class="p-3">Receipt</th>
+                <th class="p-3">Reference / TxHash / Receipt</th>
+                <th class="p-3">Receipt Image</th>
                 <th class="p-3">Status</th>
                 <th class="p-3 text-right">Actions</th>
               </tr>
@@ -53,14 +54,34 @@
               <tr v-for="d in deposits" :key="d.id" class="hover:bg-slate-800/40 transition">
                 <td class="p-3 text-slate-400">#{{ d.id }}</td>
                 <td class="p-3">
+                  <span v-if="d.payment_method === 'mpesa'" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-bold">
+                    📱 M-PESA
+                  </span>
+                  <span v-else class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded text-[10px] font-bold">
+                    🟡 BEP-20
+                  </span>
+                </td>
+                <td class="p-3">
                   <div class="font-semibold text-slate-200">{{ d.user?.name || 'User #' + d.user_id }}</div>
                   <div class="text-[10px] text-slate-500 font-mono">{{ d.user?.email }}</div>
+                  <div v-if="d.phone_number" class="text-[10px] text-emerald-400 font-mono">📱 {{ d.phone_number }}</div>
                 </td>
                 <td class="p-3 font-bold text-emerald-400">
                   {{ d.amount }} {{ d.currency }}
+                  <span v-if="d.kes_amount" class="text-slate-400 font-normal text-[10px] block">
+                    (KES {{ Number(d.kes_amount).toLocaleString() }})
+                  </span>
                 </td>
                 <td class="p-3">
-                  <div class="flex items-center space-x-2">
+                  <div v-if="d.payment_method === 'mpesa'">
+                    <div v-if="d.mpesa_receipt" class="text-emerald-400 font-bold text-xs">
+                      Receipt: {{ d.mpesa_receipt }}
+                    </div>
+                    <div class="text-[10px] text-slate-400 truncate max-w-[200px]">
+                      Req: {{ d.transaction_request_id || d.tx_hash }}
+                    </div>
+                  </div>
+                  <div v-else class="flex items-center space-x-2">
                     <span class="truncate max-w-[180px] text-slate-300">{{ d.tx_hash }}</span>
                     <a :href="d.bscscan_url" target="_blank"
                        class="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded text-[10px] transition flex items-center space-x-1">

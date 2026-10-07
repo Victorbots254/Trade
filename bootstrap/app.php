@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             guests: '/login',
             users: '/terminal'
         );
+        $middleware->validateCsrfTokens(except: [
+            'api/webhooks/*',
+            'webhooks/*',
+        ]);
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);

@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'megapay' => [
+        'api_key' => env('MEGAPAY_API_KEY', ''),
+        'email' => env('MEGAPAY_EMAIL', ''),
+        'base_url' => env('MEGAPAY_BASE_URL', 'https://megapay.co.ke/backend/v1'),
+        'exchange_rate' => (float) env('MEGAPAY_EXCHANGE_RATE', 130.0),
+    ],
+
 ];
