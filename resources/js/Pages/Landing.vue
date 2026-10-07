@@ -163,20 +163,56 @@
     <!-- MARKETS TABLE -->
     <section id="markets" class="py-16 px-4" :class="isDark?'bg-[#0b0e11]':'bg-white'">
       <div class="max-w-[1400px] mx-auto space-y-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
-            <h2 class="text-2xl font-bold" :class="isDark?'text-white':'text-[#1e2329]'">Market Overview</h2>
+            <div class="flex items-center space-x-3">
+              <h2 class="text-2xl font-bold" :class="isDark?'text-white':'text-[#1e2329]'">Market Overview</h2>
+              <span class="text-[11px] px-2.5 py-0.5 rounded-full font-semibold font-mono"
+                :class="isDark ? 'bg-[#f0b90b]/10 text-[#f0b90b] border border-[#f0b90b]/20' : 'bg-amber-100 text-amber-800 border border-amber-200'">
+                {{ showAllMarkets ? 'All (' + filteredMarkets.length + ')' : 'Top 20' }}
+              </span>
+            </div>
             <p class="text-[13px] mt-1" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Real-time prices across all spot pairs.</p>
           </div>
-          <div class="flex items-center space-x-2 text-[12px] font-semibold">
-            <button v-for="cat in ['All','Crypto','Commodities','Stocks']" :key="cat"
-              @click="activeCategory=cat.toLowerCase()"
-              class="px-4 py-1.5 rounded-lg transition"
-              :class="activeCategory===cat.toLowerCase()?'bg-[#f0b90b] text-[#1e2329]':isDark?'bg-[#1e2329] text-[#848e9c] hover:text-white border border-[#2b3139]':'bg-gray-100 text-[#474d57] hover:bg-gray-200'">
-              {{ cat }}
-            </button>
+
+          <!-- Controls: Categories, Search, and Top 20 / View All Toggle -->
+          <div class="flex flex-wrap items-center gap-3 text-[12px] font-semibold w-full lg:w-auto">
+            <!-- Category Tabs -->
+            <div class="flex items-center space-x-1">
+              <button v-for="cat in ['All','Crypto','Commodities','Stocks']" :key="cat"
+                @click="activeCategory=cat.toLowerCase()"
+                class="px-3.5 py-1.5 rounded-lg transition"
+                :class="activeCategory===cat.toLowerCase()?'bg-[#f0b90b] text-[#1e2329] font-bold':isDark?'bg-[#1e2329] text-[#848e9c] hover:text-white border border-[#2b3139]':'bg-gray-100 text-[#474d57] hover:bg-gray-200'">
+                {{ cat }}
+              </button>
+            </div>
+
+            <!-- Quick Search Input -->
+            <div class="relative flex-1 sm:w-44">
+              <input v-model="marketSearch" type="text" placeholder="Search pairs..."
+                class="w-full text-xs rounded-lg pl-7 pr-7 py-1.5 border focus:outline-none transition"
+                :class="isDark ? 'bg-[#181a20] border-[#2b3139] text-white placeholder-[#848e9c] focus:border-[#f0b90b]' : 'bg-gray-50 border-gray-200 text-[#1e2329] placeholder-gray-400 focus:border-[#f0b90b]'" />
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] opacity-60">🔍</span>
+              <button v-if="marketSearch" @click="marketSearch=''" class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 hover:text-white">✕</button>
+            </div>
+
+            <!-- Top 20 vs View All Toggle Button Group -->
+            <div class="flex items-center space-x-1 p-0.5 rounded-lg border text-[11px]"
+              :class="isDark ? 'bg-[#181a20] border-[#2b3139]' : 'bg-gray-100 border-gray-200'">
+              <button @click="showAllMarkets = false"
+                class="px-3 py-1 rounded-md transition font-medium"
+                :class="!showAllMarkets ? 'bg-[#f0b90b] text-[#1e2329] font-bold shadow-sm' : isDark ? 'text-[#848e9c] hover:text-white' : 'text-[#474d57] hover:text-[#1e2329]'">
+                Top 20
+              </button>
+              <button @click="showAllMarkets = true"
+                class="px-3 py-1 rounded-md transition font-medium"
+                :class="showAllMarkets ? 'bg-[#f0b90b] text-[#1e2329] font-bold shadow-sm' : isDark ? 'text-[#848e9c] hover:text-white' : 'text-[#474d57] hover:text-[#1e2329]'">
+                View All <span v-if="filteredMarkets.length" class="text-[10px] opacity-75 font-mono">({{ filteredMarkets.length }})</span>
+              </button>
+            </div>
           </div>
         </div>
+
         <div class="overflow-x-auto rounded-2xl border" :class="isDark?'border-[#2b3139]':'border-gray-200'">
           <table class="w-full text-[13px]">
             <thead>
@@ -192,7 +228,7 @@
               </tr>
             </thead>
             <tbody class="divide-y" :class="isDark?'divide-[#2b3139]':'divide-gray-100'">
-              <tr v-for="(m,i) in filteredMarkets" :key="m.symbol"
+              <tr v-for="(m,i) in displayedMarkets" :key="m.symbol"
                 class="transition cursor-pointer" :class="isDark?'hover:bg-[#181a20]':'hover:bg-gray-50'">
                 <td class="px-4 py-4 text-[12px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">{{ i+1 }}</td>
                 <td class="px-4 py-4">
@@ -215,8 +251,46 @@
                   <a :href="'/trade/'+m.symbol.replace('/','_')" class="inline-block bg-[#f0b90b]/10 hover:bg-[#f0b90b] text-[#f0b90b] hover:text-[#1e2329] border border-[#f0b90b]/40 hover:border-[#f0b90b] font-bold px-4 py-1.5 rounded-lg text-[11px] transition">Trade</a>
                 </td>
               </tr>
+              <tr v-if="displayedMarkets.length === 0">
+                <td colspan="8" class="px-4 py-12 text-center text-[13px]" :class="isDark ? 'text-[#848e9c]' : 'text-[#707a8a]'">
+                  No markets found matching your criteria.
+                </td>
+              </tr>
             </tbody>
           </table>
+
+          <!-- Bottom Action Bar: Show 20 vs View All -->
+          <div v-if="filteredMarkets.length > 20" class="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"
+            :class="isDark ? 'border-[#2b3139] bg-[#181a20]/60 text-[#848e9c]' : 'border-gray-200 bg-gray-50 text-[#707a8a]'">
+            <div class="flex items-center space-x-2">
+              <span>Showing</span>
+              <span class="font-bold font-mono px-2 py-0.5 rounded text-[11px]" :class="isDark ? 'bg-[#0b0e11] text-white' : 'bg-white text-[#1e2329]'">
+                {{ displayedMarkets.length }}
+              </span>
+              <span>of</span>
+              <span class="font-bold font-mono px-2 py-0.5 rounded text-[11px]" :class="isDark ? 'bg-[#0b0e11] text-white' : 'bg-white text-[#1e2329]'">
+                {{ filteredMarkets.length }}
+              </span>
+              <span>markets</span>
+              <span v-if="!showAllMarkets" class="text-[11px] text-[#f0b90b] font-medium">(First 20)</span>
+            </div>
+
+            <div class="flex items-center space-x-3">
+              <button v-if="!showAllMarkets"
+                @click="showAllMarkets = true"
+                class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-md flex items-center space-x-2 group">
+                <span>View All {{ filteredMarkets.length }} Markets</span>
+                <span class="transition-transform group-hover:translate-y-0.5 font-bold">▾</span>
+              </button>
+              <button v-else
+                @click="collapseTo20"
+                class="border px-5 py-2.5 rounded-xl text-xs font-semibold transition flex items-center space-x-2 group"
+                :class="isDark ? 'border-[#2b3139] text-[#848e9c] hover:text-white hover:border-[#f0b90b]' : 'border-gray-300 text-[#474d57] hover:text-[#1e2329] hover:border-[#f0b90b]'">
+                <span>Show Just 20</span>
+                <span class="transition-transform group-hover:-translate-y-0.5 font-bold">▴</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -519,16 +593,48 @@ onUnmounted(() => {
 
 
 const cryptoSymbols = ['BTC/USDT','ETH/USDT','BNB/USDT','SOL/USDT','XRP/USDT','DOGE/USDT'];
-const commoditySymbols = ['GOLD/USDT','SILVER/USDT','OIL/USDT'];
-const stockSymbols = ['NVDA/USDT','AAPL/USDT','TSLA/USDT','MSFT/USDT','SPY/USDT'];
+const commoditySymbols = ['GOLD','GOLD/USDT','SILVER/USDT','OIL/USDT','USOIL'];
+const stockSymbols = ['NVDA/USDT','AAPL/USDT','TSLA/USDT','MSFT/USDT','SPY/USDT','AAPLB/USDT','NVDAB/USDT','SPYB/USDT','TSLAB/USDT'];
+
+// 20 vs View All mode: Defaults to showing 20 at first round
+const showAllMarkets = ref(false);
+const marketSearch = ref('');
 
 const filteredMarkets = computed(() => {
   let list = props.markets || [];
-  if (activeCategory.value === 'crypto') return list.filter(m => cryptoSymbols.includes(m.symbol));
-  if (activeCategory.value === 'commodities') return list.filter(m => commoditySymbols.includes(m.symbol));
-  if (activeCategory.value === 'stocks') return list.filter(m => stockSymbols.includes(m.symbol));
+  if (activeCategory.value === 'crypto') {
+    list = list.filter(m => !commoditySymbols.includes(m.symbol) && !stockSymbols.includes(m.symbol));
+  } else if (activeCategory.value === 'commodities') {
+    list = list.filter(m => commoditySymbols.includes(m.symbol) || m.symbol.includes('GOLD') || m.symbol.includes('OIL') || m.symbol.includes('SILVER'));
+  } else if (activeCategory.value === 'stocks') {
+    list = list.filter(m => stockSymbols.includes(m.symbol));
+  }
+
+  if (marketSearch.value.trim()) {
+    const q = marketSearch.value.trim().toLowerCase();
+    list = list.filter(m => 
+      m.symbol.toLowerCase().includes(q) || 
+      getFullName(m.symbol).toLowerCase().includes(q)
+    );
+  }
+
   return list;
 });
+
+const displayedMarkets = computed(() => {
+  if (showAllMarkets.value) {
+    return filteredMarkets.value;
+  }
+  return filteredMarkets.value.slice(0, 20);
+});
+
+function collapseTo20() {
+  showAllMarkets.value = false;
+  const el = document.getElementById('markets');
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 
 const tickerMarkets = computed(() => {
   const list = props.markets || [];
