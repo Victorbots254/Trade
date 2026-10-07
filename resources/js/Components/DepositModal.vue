@@ -106,16 +106,22 @@
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-slate-400 text-[11px] mb-1 font-medium">Amount (KES)</label>
+              <div class="flex justify-between items-center mb-1">
+                <label class="block text-slate-400 text-[11px] font-medium">Amount (KES)</label>
+                <span class="text-[10px] text-emerald-400 font-mono">Min: {{ minKesAmount }} KES</span>
+              </div>
               <input v-model="mpesaForm.amount"
                      type="number"
-                     min="10"
+                     :min="minKesAmount"
                      required
-                     placeholder="1300"
+                     :placeholder="minKesAmount.toString()"
                      class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 font-mono text-slate-100 text-xs font-bold focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label class="block text-slate-400 text-[11px] mb-1 font-medium">Credits in USDT</label>
+              <div class="flex justify-between items-center mb-1">
+                <label class="block text-slate-400 text-[11px] font-medium">Credits in USDT</label>
+                <span class="text-[10px] text-emerald-400 font-mono">Min: 5.00 USDT</span>
+              </div>
               <input :value="((mpesaForm.amount || 0) / exchangeRate).toFixed(2)"
                      readonly
                      class="w-full bg-slate-950/60 border border-slate-800 rounded-lg px-3 py-2 font-mono text-emerald-400 text-xs font-bold focus:outline-none cursor-default" />
@@ -165,8 +171,11 @@
         <!-- User Input Fields -->
         <div class="space-y-3">
           <div>
-            <label class="block text-slate-400 text-[11px] mb-1">Expected Amount</label>
-            <input v-model="form.amount" type="number" step="0.0001" min="0.0001" required placeholder="e.g. 500.00"
+            <div class="flex justify-between items-center mb-1">
+              <label class="block text-slate-400 text-[11px]">Expected Amount</label>
+              <span v-if="form.currency === 'USDT'" class="text-[10px] text-amber-400 font-mono">Min: 5.00 USDT</span>
+            </div>
+            <input v-model="form.amount" type="number" step="0.0001" :min="form.currency === 'USDT' ? 5 : 0.0001" required :placeholder="form.currency === 'USDT' ? 'e.g. 50.00 (min 5.00)' : 'e.g. 0.50'"
                    class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 font-mono text-slate-100 focus:outline-none focus:border-amber-500 text-xs" />
           </div>
 
@@ -201,11 +210,15 @@ const activeTab = ref('mpesa'); // 'mpesa' | 'crypto'
 const exchangeRate = ref(130);
 
 // M-Pesa State
-const mpesaForm = ref({ phone: '', amount: '1300' });
+const mpesaForm = ref({ phone: '', amount: '650' });
 const mpesaLoading = ref(false);
 const mpesaError = ref('');
 const mpesaActivePrompt = ref(null);
 let mpesaTimer = null;
+
+const minKesAmount = computed(() => {
+  return Math.ceil(5 * exchangeRate.value);
+});
 
 const formattedModalPhone = computed(() => {
   let p = (mpesaForm.value.phone || '').replace(/[^0-9]/g, '');

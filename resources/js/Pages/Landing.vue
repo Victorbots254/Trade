@@ -425,7 +425,7 @@
           <a href="/register" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-10 py-4 rounded-xl text-sm transition shadow-xl">Create Free Account →</a>
           <a href="/trade/BTC_USDT" class="border font-semibold px-10 py-4 rounded-xl text-sm transition" :class="isDark?'border-[#2b3139] text-white hover:border-[#f0b90b]':'border-gray-300 text-[#1e2329] hover:border-[#f0b90b]'">Demo Trade (No Signup)</a>
         </div>
-        <div class="text-[11px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">🎮 Free $10,000 Demo · 💳 Min. Deposit $10 USDT · ⚡ Withdraw Anytime</div>
+        <div class="text-[11px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">🎮 Free $10,000 Demo · 💳 Min. Deposit $5 USDT · ⚡ Withdraw Anytime</div>
       </div>
     </section>
 
@@ -701,12 +701,12 @@ const features = [
 
 const steps = [
   {icon:'📝', title:'Create Your Account', desc:'Register with an email address. No KYC required to start trading instantly.'},
-  {icon:'💳', title:'Deposit USDT', desc:'Send USDT via BNB Smart Chain (BEP20) to your unique deposit address. Minimum: $10.'},
+  {icon:'💳', title:'Deposit USDT', desc:'Deposit via instant M-Pesa or send USDT via BNB Smart Chain (BEP20). Minimum: $5.'},
   {icon:'📈', title:'Start Trading', desc:'Choose Spot Trading or Binary Options. Place your first trade and track profits in real time.'},
 ];
 
 const faqs = [
-  {q:'What is the minimum deposit?', a:'The minimum deposit is $10 USDT via BNB Smart Chain (BEP20). Deposits are credited after 1 network confirmation, usually within 1-3 minutes.'},
+  {q:'What is the minimum deposit?', a:'The minimum deposit is $5 USDT via M-Pesa or BNB Smart Chain (BEP20). Deposits are credited automatically.'},
   {q:'How do I deposit? Do I need Binance?', a:'You can send USDT (BEP20) from any exchange or wallet supporting BNB Smart Chain — including Binance, Trust Wallet, MetaMask (BSC), and others. We provide a detailed step-by-step Binance guide.'},
   {q:'What is the difference between Spot and Binary Options?', a:'Spot Trading lets you buy and sell asset pairs (e.g., BTC/USDT) at market prices. Binary Options are short-term contracts where you predict UP or DOWN within a fixed time, with up to 88% payout on a correct call.'},
   {q:'Can I use a demo account before depositing real funds?', a:'Yes! Every account comes with a free $10,000 demo balance. Practice Spot and Options trading with no real money at risk. Demo and real balances are completely isolated from each other.'},

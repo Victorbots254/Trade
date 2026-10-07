@@ -52,7 +52,7 @@ const openKey = ref(null);
 function toggle(key) { openKey.value = openKey.value === key ? null : key; }
 const faqCategories = [
   { icon:'💰', name:'Deposits & Withdrawals', faqs:[
-    { q:'What is the minimum deposit?', a:'Minimum deposit is $10 USDT via BNB Smart Chain (BEP20). Credits appear after 1 confirmation (approx. 1-3 minutes).' },
+    { q:'What is the minimum deposit?', a:'Minimum deposit is $5 USDT via M-Pesa or BNB Smart Chain (BEP20). Credits appear almost instantly for M-Pesa and within 1-3 minutes for crypto.' },
     { q:'How do I deposit USDT?', a:'Go to Payments → Deposit. Copy your unique BEP20 deposit address and send USDT from any BEP20-compatible wallet or exchange (e.g., Binance, Trust Wallet).' },
     { q:'How fast are withdrawals?', a:'Within 10 minutes of admin approval. Funds arrive directly in your BEP20 wallet with a verifiable on-chain transaction hash.' },
     { q:'Are there withdrawal fees?', a:'TradePro charges no platform withdrawal fee. Standard BNB Smart Chain gas fees (typically under $0.01) apply.' },

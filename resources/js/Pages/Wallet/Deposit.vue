@@ -149,22 +149,29 @@
           <!-- Amount In KES & Conversion -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-slate-400 mb-1.5 font-medium">Deposit Amount (KES)</label>
+              <div class="flex justify-between items-center mb-1.5">
+                <label class="block text-slate-400 font-medium">Deposit Amount (KES)</label>
+                <span class="text-[10px] text-emerald-400 font-mono">Min: {{ minKesAmount }} KES ($5)</span>
+              </div>
               <div class="relative">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-mono font-bold text-xs">KES</span>
                 <input v-model="mpesaForm.amount"
                        @input="onKesAmountInput"
                        type="number"
                        step="1"
-                       min="10"
+                       :min="minKesAmount"
                        required
-                       placeholder="e.g. 1300"
+                       :placeholder="'e.g. ' + minKesAmount"
                        class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-14 pr-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-sm font-bold" />
               </div>
+              <p class="text-[11px] text-slate-500 mt-1">Minimum deposit: $5.00 USDT (~{{ minKesAmount }} KES)</p>
             </div>
 
             <div>
-              <label class="block text-slate-400 mb-1.5 font-medium">Credited to Wallet (USDT)</label>
+              <div class="flex justify-between items-center mb-1.5">
+                <label class="block text-slate-400 font-medium">Credited to Wallet (USDT)</label>
+                <span class="text-[10px] text-emerald-400 font-mono">Min: 5.00 USDT</span>
+              </div>
               <div class="relative">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-400 font-mono font-bold text-xs">USDT</span>
                 <input :value="computedUsdtAmount"
@@ -178,11 +185,11 @@
           <div>
             <label class="block text-slate-500 text-[11px] mb-2 font-medium">Quick Select Amount:</label>
             <div class="flex flex-wrap gap-2">
-              <button v-for="amt in [500, 1000, 1300, 2600, 5000, 10000]" :key="amt"
+              <button v-for="amt in [650, 1300, 2600, 6500, 13000, 26000]" :key="amt"
                       type="button"
                       @click="setQuickAmount(amt)"
                       class="bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 px-3 py-1.5 rounded-lg font-mono text-xs transition">
-                KES {{ amt.toLocaleString() }}
+                KES {{ amt.toLocaleString() }} (${{ (amt / exchangeRate).toFixed(0) }})
               </button>
             </div>
           </div>
@@ -242,8 +249,17 @@
             </div>
 
             <div>
-              <label class="block text-slate-400 mb-1 font-medium">Expected Deposit Amount</label>
-              <input v-model="form.amount" type="number" step="0.0001" required placeholder="e.g. 500.00" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500" />
+              <div class="flex justify-between items-center mb-1">
+                <label class="block text-slate-400 font-medium">Expected Deposit Amount</label>
+                <span v-if="form.currency === 'USDT'" class="text-[10px] text-amber-400 font-mono">Min: 5.00 USDT</span>
+              </div>
+              <input v-model="form.amount"
+                     type="number"
+                     step="0.0001"
+                     :min="form.currency === 'USDT' ? 5 : 0.0001"
+                     required
+                     :placeholder="form.currency === 'USDT' ? 'e.g. 50.00 (min 5.00)' : 'e.g. 0.50'"
+                     class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500" />
             </div>
 
             <div>
@@ -373,7 +389,7 @@ const errorMessage = ref('');
 // M-Pesa Form State
 const mpesaForm = ref({
   phone: '',
-  amount: '1300',
+  amount: '650',
 });
 const mpesaLoading = ref(false);
 const mpesaSuccessMessage = ref('');
@@ -387,6 +403,10 @@ let stkTimer = null;
 const depositHistory = ref([]);
 const wallets = ref([]);
 let pollTimer = null;
+
+const minKesAmount = computed(() => {
+  return Math.ceil(5 * exchangeRate.value);
+});
 
 const computedUsdtAmount = computed(() => {
   const kes = parseFloat(mpesaForm.value.amount) || 0;

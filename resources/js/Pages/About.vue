@@ -72,7 +72,7 @@ const isDark = ref(true);
 const values = [
   { icon: '🔐', title: 'Security First', desc: 'Cold wallet custody, double-entry accounting, and encrypted infrastructure protect every user.' },
   { icon: '⚡', title: 'Speed & Reliability', desc: 'Sub-millisecond order matching and 99.9% uptime SLA across all trading pairs.' },
-  { icon: '🌍', title: 'Global Access', desc: 'No KYC barriers. Minimum $10 deposit. Open to traders in 140+ countries.' },
+  { icon: '🌍', title: 'Global Access', desc: 'No KYC barriers. Minimum $5 deposit. Open to traders in 140+ countries.' },
 ];
 const stats = [
   { value: '$2.48B+', label: '24h Volume' },

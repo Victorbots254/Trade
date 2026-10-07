@@ -26,6 +26,12 @@ class DepositController extends Controller
             'tx_hash.unique' => 'This Transaction Hash (TxHash) has already been submitted for verification.',
         ]);
 
+        if ($request->currency === 'USDT' && (float) $request->amount < 5.0) {
+            return response()->json([
+                'message' => 'Minimum deposit amount for USDT is 5.00 USDT.',
+            ], 422);
+        }
+
         $receiptPath = null;
         if ($request->hasFile('receipt')) {
             $receiptPath = $request->file('receipt')->store('receipts', 'public');

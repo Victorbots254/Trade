@@ -17,10 +17,13 @@ class MegaPayController extends Controller
      */
     public function getSettings()
     {
+        $rate = MegaPayService::getExchangeRate();
+        $minKes = (int) ceil(5.0 * $rate);
+
         return response()->json([
-            'exchange_rate' => MegaPayService::getExchangeRate(),
-            'min_kes' => 10,
-            'min_usdt' => 0.1,
+            'exchange_rate' => $rate,
+            'min_kes' => $minKes,
+            'min_usdt' => 5.0,
             'currency' => 'KES',
             'is_configured' => !empty(config('services.megapay.api_key')) && !empty(config('services.megapay.email')),
         ]);
@@ -58,9 +61,10 @@ class MegaPayController extends Controller
             $usdtAmount = round($kesAmount / $exchangeRate, 4);
         }
 
-        if ($kesAmount < 10) {
+        $minKes = (int) ceil(5.0 * $exchangeRate);
+        if ($usdtAmount < 5.0 || $kesAmount < $minKes) {
             return response()->json([
-                'message' => 'Minimum deposit amount is 10 KES.',
+                'message' => "Minimum deposit amount is $5.00 USDT (approx. {$minKes} KES).",
             ], 422);
         }
 
