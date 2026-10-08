@@ -24,6 +24,9 @@
           <a href="/admin/deposits" class="bg-slate-900 text-slate-400 hover:text-slate-200 px-3.5 py-2 rounded-lg border border-slate-800">
             💰 Deposit Approvals
           </a>
+          <a href="/admin/p2p" class="bg-slate-900 hover:bg-slate-800 text-[#f0b90b] px-3.5 py-2 rounded-lg border border-slate-800 font-bold transition">
+            🛡️ P2P Center & Disputes
+          </a>
         </div>
       </div>
 

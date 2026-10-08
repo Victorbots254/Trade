@@ -19,7 +19,8 @@
             <div class="relative group">
               <button class="flex items-center space-x-1 hover:text-[#f0b90b] px-3 py-2 rounded transition"><span>Buy Crypto</span><span class="text-[10px]">▾</span></button>
               <div class="absolute top-full left-0 mt-1 w-48 rounded-xl shadow-2xl border py-2 z-50 hidden group-hover:block" :class="isDark ? 'bg-[#1e2329] border-[#2b3139]' : 'bg-white border-gray-100'">
-                <a href="/payments" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">USDT Deposit</a>
+                <a href="/p2p" class="block px-4 py-2 text-xs hover:text-[#f0b90b] text-[#f0b90b] font-bold transition">P2P Trading (M-Pesa)</a>
+                <a href="/deposit" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">M-Pesa / Crypto Deposit</a>
                 <a href="/payments/binance-guide" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">Binance BEP20 Guide</a>
               </div>
             </div>
@@ -37,6 +38,7 @@
               <div class="absolute top-full left-0 mt-1 w-44 rounded-xl shadow-2xl border py-2 z-50 hidden group-hover:block" :class="isDark ? 'bg-[#1e2329] border-[#2b3139]' : 'bg-white border-gray-100'">
                 <a href="/trade/BTC_USDT" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">Spot Trading</a>
                 <a href="/trade/options/BTC_USDT" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">Binary Options</a>
+                <a href="/p2p" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">P2P Marketplace</a>
               </div>
             </div>
             <a href="#security" class="hover:text-[#f0b90b] px-3 py-2 rounded transition">Security</a>

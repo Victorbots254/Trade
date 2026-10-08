@@ -18,6 +18,12 @@ class User extends Authenticatable
         'accepted_terms_at',
         'accepted_terms_ip',
         'is_admin',
+        'is_moderator',
+        'is_p2p_merchant',
+        'p2p_merchant_name',
+        'p2p_payment_details',
+        'p2p_completion_rate',
+        'p2p_completed_trades',
         'demo_balance',
         'trading_outcome_mode',
         'bep20_address',
@@ -34,6 +40,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'accepted_terms_at' => 'datetime',
             'is_admin' => 'boolean',
+            'is_moderator' => 'boolean',
+            'is_p2p_merchant' => 'boolean',
+            'p2p_completion_rate' => 'float',
+            'p2p_completed_trades' => 'integer',
             'demo_balance' => 'float',
             'password' => 'hashed',
         ];
@@ -57,5 +67,20 @@ class User extends Authenticatable
     public function binaryOptionContracts(): HasMany
     {
         return $this->hasMany(BinaryOptionContract::class);
+    }
+
+    public function p2pAds(): HasMany
+    {
+        return $this->hasMany(P2PAd::class);
+    }
+
+    public function p2pBuyerOrders(): HasMany
+    {
+        return $this->hasMany(P2POrder::class, 'buyer_id');
+    }
+
+    public function p2pSellerOrders(): HasMany
+    {
+        return $this->hasMany(P2POrder::class, 'seller_id');
     }
 }

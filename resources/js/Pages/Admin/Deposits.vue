@@ -13,9 +13,17 @@
           </p>
         </div>
 
-        <a href="/" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded text-xs font-semibold transition">
-          ← Back to Trading Terminal
-        </a>
+        <div class="flex items-center space-x-2 text-xs">
+          <a href="/admin/users" class="bg-slate-900 text-slate-400 hover:text-slate-200 px-3 py-1.5 rounded border border-slate-800">
+            👥 Trader Roster
+          </a>
+          <a href="/admin/p2p" class="bg-slate-900 text-[#f0b90b] px-3 py-1.5 rounded border border-slate-800 font-bold">
+            🛡️ P2P Center
+          </a>
+          <a href="/" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded font-semibold transition">
+            ← Terminal
+          </a>
+        </div>
       </div>
 
       <!-- Real-time Alert Toast Banner -->

@@ -1,11 +1,16 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminDepositController;
+use App\Http\Controllers\Admin\AdminP2PController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\TermsController;
 use App\Http\Controllers\BinaryOptionController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\P2P\P2PMarketplaceController;
+use App\Http\Controllers\P2P\P2PMerchantController;
+use App\Http\Controllers\P2P\P2POrderController;
 use App\Http\Controllers\TradingTerminalController;
 use App\Models\Market;
 use App\Models\User;
@@ -24,6 +29,9 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+// P2P Marketplace Public Route
+Route::get('/p2p', [P2PMarketplaceController::class, 'index'])->name('p2p.index');
+
 // Spot Trading Terminal SPA Routes
 Route::get('/terminal', [TradingTerminalController::class, 'index'])->name('terminal');
 Route::get('/trade/{symbol}', [TradingTerminalController::class, 'index'])->name('terminal.symbol');
@@ -36,6 +44,8 @@ Route::get('/trade/options/{symbol}', [BinaryOptionController::class, 'index'])-
 Route::middleware('guest')->group(function () {
     Route::get('/login', fn () => Inertia::render('Auth/Login'))->name('login');
     Route::get('/register', fn () => Inertia::render('Auth/Register'))->name('register');
+    Route::get('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'showForgotPassword'])->name('password.request');
+    Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\PasswordResetController::class, 'showResetPassword'])->name('password.reset');
 });
 
 // Dedicated Authenticated User Pages
@@ -135,6 +145,10 @@ Route::post('/api/logout', function (Request $request) {
     return response()->json(['message' => 'Logged out successfully']);
 });
 
+// Password Reset API Endpoints
+Route::post('/api/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::post('/api/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])->name('password.update');
+
 // Authenticated User Endpoints
 Route::middleware('auth')->group(function () {
     Route::post('/api/terms/accept', [TermsController::class, 'accept']);
@@ -218,6 +232,22 @@ Route::middleware('auth')->group(function () {
     // Time-Expiry Options Contracts
     Route::post('/api/options', [BinaryOptionController::class, 'store'])->middleware('throttle:30,1');
     Route::post('/api/options/{contract}/settle', [BinaryOptionController::class, 'settle']);
+
+    // P2P Trading User & Escrow Routes
+    Route::get('/p2p/orders', [P2PMarketplaceController::class, 'myOrders'])->name('p2p.orders.my');
+    Route::post('/p2p/orders', [P2POrderController::class, 'store'])->name('p2p.order.store');
+    Route::get('/p2p/orders/{order}', [P2POrderController::class, 'show'])->name('p2p.order.show');
+    Route::post('/p2p/orders/{order}/paid', [P2POrderController::class, 'markPaid'])->name('p2p.order.paid');
+    Route::post('/p2p/orders/{order}/release', [P2POrderController::class, 'release'])->name('p2p.order.release');
+    Route::post('/p2p/orders/{order}/cancel', [P2POrderController::class, 'cancel'])->name('p2p.order.cancel');
+    Route::post('/p2p/orders/{order}/dispute', [P2POrderController::class, 'dispute'])->name('p2p.order.dispute');
+    Route::post('/p2p/orders/{order}/message', [P2POrderController::class, 'sendMessage'])->name('p2p.order.message');
+
+    // P2P Merchant Ads Management
+    Route::get('/p2p/merchant/ads', [P2PMerchantController::class, 'index'])->name('p2p.merchant.ads');
+    Route::post('/p2p/merchant/ads', [P2PMerchantController::class, 'storeAd'])->name('p2p.merchant.ads.store');
+    Route::post('/p2p/merchant/ads/{ad}/toggle', [P2PMerchantController::class, 'toggleAd'])->name('p2p.merchant.ads.toggle');
+    Route::post('/p2p/merchant/ads/{ad}/close', [P2PMerchantController::class, 'closeAd'])->name('p2p.merchant.ads.close');
 });
 
 // Admin Panel Routes
@@ -231,6 +261,14 @@ Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin'
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users');
     Route::post('/users/bulk-mode', [AdminUserController::class, 'bulkUpdateOutcomeMode'])->name('admin.users.bulk_mode');
     Route::post('/users/{user}/mode', [AdminUserController::class, 'updateOutcomeMode'])->name('admin.users.mode');
+});
+
+// Admin & Moderator P2P Management Routes
+Route::middleware(['auth', \App\Http\Middleware\IsAdminOrModerator::class])->prefix('admin')->group(function () {
+    Route::get('/p2p', [AdminP2PController::class, 'index'])->name('admin.p2p');
+    Route::post('/p2p/users/{user}/merchant', [AdminP2PController::class, 'toggleMerchant'])->name('admin.p2p.merchant');
+    Route::post('/p2p/users/{user}/moderator', [AdminP2PController::class, 'toggleModerator'])->name('admin.p2p.moderator');
+    Route::post('/p2p/orders/{order}/resolve', [AdminP2PController::class, 'resolveDispute'])->name('admin.p2p.resolve');
 });
 
 // MegaPay M-Pesa Real-Time Webhooks (Public)

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <header class="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs select-none shadow-md z-40 transition-colors duration-200">
     <ToastNotification ref="toastRef" />
 
@@ -23,6 +23,9 @@
           <span>Quick Trade</span>
         </Link>
 
+        <Link href="/p2p" class="px-3 py-1.5 rounded-lg transition" :class="$page.url.startsWith('/p2p') ? 'bg-slate-800 text-[#f0b90b] font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
+          P2P Trading
+        </Link>
         <Link href="/monthly-interests" class="px-3 py-1.5 rounded-lg transition" :class="$page.url === '/monthly-interests' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'">
           Earn
         </Link>
@@ -114,6 +117,16 @@
             </Link>
             <Link v-if="user.is_admin" href="/admin/deposits" class="px-4 py-2 hover:bg-slate-800 text-emerald-400 flex items-center space-x-2 transition">
               <span>Admin Deposits</span>
+            </Link>
+            <Link v-if="user.is_admin || user.is_moderator" href="/admin/p2p" class="px-4 py-2 hover:bg-slate-800 text-[#f0b90b] flex items-center space-x-2 transition">
+              <span>🛡️ P2P Center (Admin/Mod)</span>
+            </Link>
+
+            <Link href="/p2p/orders" class="px-4 py-2 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center space-x-2 transition">
+              <span>My P2P Orders</span>
+            </Link>
+            <Link href="/p2p/merchant/ads" class="px-4 py-2 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center space-x-2 transition">
+              <span>P2P Merchant Ads</span>
             </Link>
 
             <Link href="/profile" class="px-4 py-2 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center space-x-2 transition">
