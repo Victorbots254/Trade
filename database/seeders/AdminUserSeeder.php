@@ -14,26 +14,31 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        $admins = [
+        $users = [
             [
                 'name' => 'Michael Kairithia',
                 'email' => 'michaelkairithia@gmail.com',
-                'password' => 'Micheal07@!'
+                'password' => 'Micheal07@!',
+                'is_admin' => true,
+                'is_moderator' => false,
             ],
             [
                 'name' => 'Viki Gitonga',
                 'email' => 'vikigitonga12@gmail.com',
-                'password' => 'Victor03480800'
+                'password' => 'Victor03480800.',
+                'is_admin' => false,
+                'is_moderator' => true,
             ]
         ];
 
-        foreach ($admins as $adminData) {
+        foreach ($users as $userData) {
             $user = User::updateOrCreate(
-                ['email' => $adminData['email']],
+                ['email' => $userData['email']],
                 [
-                    'name' => $adminData['name'],
-                    'password' => Hash::make($adminData['password']),
-                    'is_admin' => true,
+                    'name' => $userData['name'],
+                    'password' => Hash::make($userData['password']),
+                    'is_admin' => $userData['is_admin'] ?? false,
+                    'is_moderator' => $userData['is_moderator'] ?? false,
                     'accepted_terms_at' => now(),
                     'accepted_terms_ip' => '127.0.0.1',
                 ]
@@ -51,7 +56,8 @@ class AdminUserSeeder extends Seeder
                 ['available_balance' => 10000.00, 'locked_balance' => 0.00]
             );
 
-            $this->command->info("Seeded Admin: {$user->email}");
+            $role = $user->is_admin ? 'Admin' : ($user->is_moderator ? 'Moderator' : 'User');
+            $this->command->info("Seeded {$role}: {$user->email}");
         }
     }
 }
