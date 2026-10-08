@@ -48,41 +48,95 @@
         </div>
       </div>
 
-      <!-- Control Bar: BUY / SELL TABS & FILTERS -->
+      <!-- Active P2P Trades in Progress Banner -->
+      <div v-if="myActiveOrders && myActiveOrders.length > 0" class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 md:p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="text-amber-400 font-bold text-sm">🔔 Your Active P2P Trade(s) in Progress ({{ myActiveOrders.length }})</span>
+            <span class="bg-amber-500/20 text-amber-300 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase animate-pulse">In Progress</span>
+          </div>
+          <a href="/p2p/orders" class="text-xs text-[#f0b90b] hover:underline font-bold">All Orders ({{ myActiveOrders.length }}) →</a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <a v-for="order in myActiveOrders" :key="order.id" :href="'/p2p/orders/' + order.id"
+             class="bg-[#0b0e11] border border-[#2b3139] hover:border-amber-500/50 rounded-xl p-3.5 transition block space-y-1.5 group">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-white group-hover:text-[#f0b90b]">Order #{{ order.order_number }}</span>
+              <span :class="order.status === 'disputed' ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300'" class="font-mono text-[10px] px-2 py-0.5 rounded uppercase font-bold">
+                {{ order.status }}
+              </span>
+            </div>
+            <div class="text-[11px] text-[#848e9c] flex justify-between font-mono">
+              <span>Crypto: <strong class="text-white">{{ Number(order.crypto_amount).toFixed(2) }} USDT</strong></span>
+              <span>Fiat: <strong class="text-white">{{ Number(order.fiat_amount).toLocaleString() }} {{ order.fiat || 'KES' }}</strong></span>
+            </div>
+            <div class="text-[11px] text-amber-400 font-medium pt-1 flex items-center justify-between">
+              <span>Open Trade Chat & Escrow</span>
+              <span>→</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Control Bar: BUY / SELL TABS & CURRENCY FILTERS -->
       <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl p-4 space-y-4 shadow-lg">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <!-- Buy / Sell Toggle Tabs -->
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <!-- Left: Buy / Sell Toggle Tabs -->
           <div class="flex items-center bg-[#0b0e11] p-1 rounded-xl border border-[#2b3139] w-full sm:w-auto">
             <button
               @click="setTab('sell')"
               type="button"
               :class="activeType === 'sell' ? 'bg-[#0ecb81] text-[#1e2329] font-black shadow' : 'text-[#848e9c] hover:text-white'"
-              class="flex-1 sm:flex-initial px-6 py-2 rounded-lg text-xs md:text-sm font-bold transition flex items-center justify-center space-x-2">
+              class="flex-1 sm:flex-initial px-5 py-2 rounded-lg text-xs md:text-sm font-bold transition flex items-center justify-center space-x-1.5">
               <span>Buy USDT</span>
+              <span v-if="stats?.sellAdsCount !== undefined" class="text-[10px] opacity-80 bg-black/20 px-1.5 py-0.2 rounded-full">({{ stats.sellAdsCount }})</span>
             </button>
             <button
               @click="setTab('buy')"
               type="button"
               :class="activeType === 'buy' ? 'bg-[#f6465d] text-white font-black shadow' : 'text-[#848e9c] hover:text-white'"
-              class="flex-1 sm:flex-initial px-6 py-2 rounded-lg text-xs md:text-sm font-bold transition flex items-center justify-center space-x-2">
+              class="flex-1 sm:flex-initial px-5 py-2 rounded-lg text-xs md:text-sm font-bold transition flex items-center justify-center space-x-1.5">
               <span>Sell USDT</span>
+              <span v-if="stats?.buyAdsCount !== undefined" class="text-[10px] opacity-80 bg-black/20 px-1.5 py-0.2 rounded-full">({{ stats.buyAdsCount }})</span>
             </button>
           </div>
 
-          <!-- Filters: Fiat & Payment Method -->
+          <!-- Right: Currency Switcher (USDT vs KES) & Payment Filter -->
           <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto text-xs">
-            <div class="flex items-center space-x-2 bg-[#0b0e11] border border-[#2b3139] px-3 py-1.5 rounded-xl">
-              <span class="text-[#848e9c] text-[11px]">Fiat:</span>
-              <select v-model="selectedFiat" @change="applyFilters" class="bg-transparent text-white font-bold focus:outline-none">
-                <option value="KES" class="bg-[#181a20]">KES (Kenyan Shilling)</option>
-                <option value="USD" class="bg-[#181a20]">USD (US Dollar)</option>
-              </select>
+            <!-- Currency Filter Tabs -->
+            <div class="flex items-center bg-[#0b0e11] p-1 rounded-xl border border-[#2b3139]">
+              <button
+                @click="setCurrency('all')"
+                type="button"
+                :class="selectedFiat === 'all' ? 'bg-[#2b3139] text-white font-bold' : 'text-[#848e9c] hover:text-white'"
+                class="px-3 py-1.5 rounded-lg text-xs transition">
+                All
+              </button>
+              <button
+                @click="setCurrency('USDT')"
+                type="button"
+                :class="selectedFiat === 'USDT' || selectedFiat === 'USD' ? 'bg-[#f0b90b] text-[#1e2329] font-black shadow' : 'text-[#848e9c] hover:text-white'"
+                class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1">
+                <span>🪙</span>
+                <span>USDT</span>
+                <span v-if="stats?.usdtAdsCount !== undefined" class="text-[10px] opacity-80">({{ stats.usdtAdsCount }})</span>
+              </button>
+              <button
+                @click="setCurrency('KES')"
+                type="button"
+                :class="selectedFiat === 'KES' ? 'bg-[#0ecb81] text-[#1e2329] font-black shadow' : 'text-[#848e9c] hover:text-white'"
+                class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1">
+                <span>🇰🇪</span>
+                <span>KES</span>
+                <span v-if="stats?.kesAdsCount !== undefined" class="text-[10px] opacity-80">({{ stats.kesAdsCount }})</span>
+              </button>
             </div>
 
+            <!-- Payment Method Filter -->
             <div class="flex items-center space-x-2 bg-[#0b0e11] border border-[#2b3139] px-3 py-1.5 rounded-xl">
               <span class="text-[#848e9c] text-[11px]">Payment:</span>
               <select v-model="selectedPayment" @change="applyFilters" class="bg-transparent text-white font-bold focus:outline-none">
-                <option value="all" class="bg-[#181a20]">All Payment Methods</option>
+                <option value="all" class="bg-[#181a20]">All Methods</option>
                 <option value="mpesa" class="bg-[#181a20]">📱 M-Pesa</option>
                 <option value="bank_transfer" class="bg-[#181a20]">🏦 Bank Transfer</option>
               </select>
@@ -129,7 +183,9 @@
                 <!-- Price -->
                 <td class="py-4 px-4 font-mono">
                   <div class="text-base font-black text-white">
-                    {{ Number(ad.price).toFixed(2) }} <span class="text-xs text-[#848e9c] font-normal">{{ ad.fiat }}</span>
+                    <span v-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$ {{ Number(ad.price).toFixed(2) }}</span>
+                    <span v-else>{{ Number(ad.price).toFixed(2) }}</span>
+                    <span class="text-xs text-[#848e9c] font-normal ml-1">{{ ad.fiat }}</span>
                   </div>
                   <div class="text-[10px] text-[#848e9c]">per 1 USDT</div>
                 </td>
@@ -142,7 +198,12 @@
                   </div>
                   <div class="text-[11px] text-[#848e9c]">
                     <span>Limit: </span>
-                    <span class="text-white">{{ Number(ad.min_limit).toLocaleString() }} - {{ Number(ad.max_limit).toLocaleString() }} {{ ad.fiat }}</span>
+                    <span class="text-white">
+                      <span v-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$</span>
+                      {{ Number(ad.min_limit).toLocaleString() }} - 
+                      <span v-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$</span>
+                      {{ Number(ad.max_limit).toLocaleString() }} {{ ad.fiat }}
+                    </span>
                   </div>
                 </td>
 
@@ -172,8 +233,22 @@
               <tr v-if="ads.data.length === 0">
                 <td colspan="5" class="py-12 text-center text-[#848e9c]">
                   <div class="text-3xl mb-2">🔍</div>
-                  <p class="text-sm font-semibold text-slate-300">No active P2P ads matching your filters.</p>
-                  <p class="text-xs mt-1">Try switching currency, payment method, or check back shortly.</p>
+                  <p class="text-sm font-semibold text-slate-300">No active P2P ads matching your current filters.</p>
+                  <p class="text-xs mt-1 text-slate-400">
+                    <span v-if="selectedFiat !== 'all'">Currently filtering by {{ selectedFiat }}.</span>
+                    <span v-else>Looking for available market liquidity?</span>
+                  </p>
+                  <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+                    <button v-if="selectedFiat !== 'all'" @click="setCurrency('all')" class="bg-[#f0b90b] text-[#1e2329] font-bold text-xs px-4 py-2 rounded-xl transition hover:bg-[#d4a30b]">
+                      View All Currencies (USDT & KES)
+                    </button>
+                    <button v-if="activeType === 'sell' && (stats?.buyAdsCount || 0) > 0" @click="setTab('buy')" class="bg-slate-800 text-slate-200 hover:text-white border border-slate-700 text-xs px-4 py-2 rounded-xl transition font-semibold">
+                      Switch to Sell USDT ({{ stats.buyAdsCount }} ads available) →
+                    </button>
+                    <button v-else-if="activeType === 'buy' && (stats?.sellAdsCount || 0) > 0" @click="setTab('sell')" class="bg-slate-800 text-slate-200 hover:text-white border border-slate-700 text-xs px-4 py-2 rounded-xl transition font-semibold">
+                      Switch to Buy USDT ({{ stats.sellAdsCount }} ads available) →
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -289,13 +364,15 @@ import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
   ads: { type: Object, required: true },
-  filters: { type: Object, default: () => ({ type: 'sell', fiat: 'KES', payment_method: 'all' }) },
+  filters: { type: Object, default: () => ({ type: 'sell', fiat: 'all', payment_method: 'all' }) },
   user: { type: Object, default: null },
   usdtBalance: { type: Number, default: 0.00 },
+  myActiveOrders: { type: Array, default: () => [] },
+  stats: { type: Object, default: () => ({}) },
 });
 
 const activeType = ref(props.filters.type || 'sell');
-const selectedFiat = ref(props.filters.fiat || 'KES');
+const selectedFiat = ref(props.filters.fiat || 'all');
 const selectedPayment = ref(props.filters.payment_method || 'all');
 
 const selectedAd = ref(null);
@@ -307,6 +384,11 @@ const orderError = ref('');
 
 function setTab(type) {
   activeType.value = type;
+  applyFilters();
+}
+
+function setCurrency(fiat) {
+  selectedFiat.value = fiat;
   applyFilters();
 }
 

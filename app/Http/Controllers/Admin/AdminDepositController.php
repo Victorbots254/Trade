@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\Wallet;
 use App\Services\LedgerService;
+use App\Models\Setting;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,10 +28,41 @@ class AdminDepositController extends Controller
                 return $d;
             });
 
+        $custodialAddress = Setting::get(
+            'custodial_bep20_address',
+            config('app.bep20_custodial_address', '0x71C7656EC7ab88b098defB751B7401B5f6d8976F')
+        );
+        $depositQrImage = Setting::get('deposit_qr_image');
+
         return Inertia::render('Admin/Deposits', [
             'deposits' => $deposits,
-            'custodial_address' => config('app.bep20_custodial_address', '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'),
+            'custodial_address' => $custodialAddress,
+            'deposit_qr_image' => $depositQrImage,
         ]);
+    }
+
+    /**
+     * Update deposit custodial address & custom QR code image.
+     */
+    public function updateSettings(Request $request)
+    {
+        $request->validate([
+            'custodial_address' => ['nullable', 'string', 'regex:/^0x[a-fA-F0-9]{40}$/'],
+            'qr_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:5120'],
+        ], [
+            'custodial_address.regex' => 'Custodial address must be a valid Binance BEP-20 address (starts with 0x, 42 characters long).',
+        ]);
+
+        if ($request->filled('custodial_address')) {
+            Setting::set('custodial_bep20_address', trim($request->custodial_address));
+        }
+
+        if ($request->hasFile('qr_image')) {
+            $path = $request->file('qr_image')->store('deposit_qr', 'public');
+            Setting::set('deposit_qr_image', '/storage/' . $path);
+        }
+
+        return redirect()->back()->with('success', 'Deposit QR code and address updated successfully!');
     }
 
     /**

@@ -25,12 +25,16 @@ class P2PMerchantController extends Controller
         // Automatically reconcile user's live USDT wallet to release any stranded locked funds
         $wallet = \App\Services\WalletReconciliationService::reconcileUsdtWallet($user, false);
 
+        $marketRateKes = (float) \App\Services\MegaPayService::getExchangeRate();
+        if ($marketRateKes <= 0) $marketRateKes = 129.50;
+
         return Inertia::render('P2P/MerchantAds', [
             'isMerchant' => (bool) ($user->is_p2p_merchant || $user->is_admin),
             'merchantName' => $user->p2p_merchant_name ?: $user->name,
             'completionRate' => (float) $user->p2p_completion_rate,
             'completedTrades' => (int) $user->p2p_completed_trades,
             'usdtBalance' => (float) $wallet->available_balance,
+            'marketRateKes' => $marketRateKes,
             'ads' => $ads,
         ]);
     }
@@ -54,7 +58,7 @@ class P2PMerchantController extends Controller
         $request->validate([
             'type' => 'required|in:sell,buy',
             'asset' => 'required|string|in:USDT',
-            'fiat' => 'required|string|in:KES,USD',
+            'fiat' => 'required|string|in:KES,USD,USDT',
             'price' => 'required|numeric|min:0.01',
             'total_amount' => 'required|numeric|min:5',
             'min_limit' => 'required|numeric|min:1',

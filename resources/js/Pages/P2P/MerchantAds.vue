@@ -216,18 +216,58 @@
           </div>
 
           <!-- Currency & Price -->
-          <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-3">
             <div>
-              <label class="block text-[#848e9c] mb-1 font-semibold">Fiat Currency</label>
-              <select v-model="adForm.fiat" class="w-full bg-[#0b0e11] border border-[#2b3139] rounded-xl px-3 py-2 text-white">
-                <option value="KES">KES (Kenyan Shilling)</option>
-                <option value="USD">USD (US Dollar)</option>
-              </select>
+              <label class="block text-[#848e9c] mb-1.5 font-semibold">Trading Currency</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  @click="onFiatChanged('USDT')"
+                  :class="adForm.fiat === 'USDT' || adForm.fiat === 'USD' ? 'bg-[#f0b90b] text-[#1e2329] font-black shadow' : 'border border-[#2b3139] text-[#848e9c] hover:text-white bg-[#0b0e11]'"
+                  class="py-2.5 px-3 rounded-xl font-bold transition text-xs flex items-center justify-center space-x-1.5">
+                  <span>🪙</span>
+                  <span>USDT (Standard 1:1)</span>
+                </button>
+                <button
+                  type="button"
+                  @click="onFiatChanged('KES')"
+                  :class="adForm.fiat === 'KES' ? 'bg-[#0ecb81] text-[#1e2329] font-black shadow' : 'border border-[#2b3139] text-[#848e9c] hover:text-white bg-[#0b0e11]'"
+                  class="py-2.5 px-3 rounded-xl font-bold transition text-xs flex items-center justify-center space-x-1.5">
+                  <span>🇰🇪</span>
+                  <span>KES (Kenyan Shilling)</span>
+                </button>
+              </div>
             </div>
 
-            <div>
-              <label class="block text-[#848e9c] mb-1 font-semibold">Price per USDT ({{ adForm.fiat }})</label>
-              <input v-model="adForm.price" type="number" step="0.01" required placeholder="e.g. 132.50" class="w-full bg-[#0b0e11] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono" />
+            <!-- Price & Live Market Rate Reference -->
+            <div class="bg-[#0b0e11] border border-[#2b3139] rounded-xl p-3.5 space-y-2">
+              <div class="flex justify-between items-center">
+                <label class="block text-[#848e9c] font-semibold text-xs">
+                  Price per 1 USDT (in {{ adForm.fiat }})
+                </label>
+                <!-- Live Rate indicator -->
+                <div v-if="adForm.fiat === 'KES'" class="flex items-center space-x-1 text-[11px]">
+                  <span class="text-emerald-400 font-mono font-bold">⚡ Market: {{ currentMarketRate }} KES</span>
+                  <button type="button" @click="applyMarketRate" class="text-[10px] text-[#f0b90b] hover:underline ml-1">(Apply)</button>
+                </div>
+                <div v-else class="text-[11px] text-[#f0b90b] font-mono">
+                  1 USDT = $1.00 USD
+                </div>
+              </div>
+
+              <div class="relative">
+                <input
+                  v-model="adForm.price"
+                  type="number"
+                  step="0.01"
+                  required
+                  placeholder="e.g. 1.00"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3.5 py-2.5 text-white font-mono text-sm focus:border-[#f0b90b] focus:outline-none" />
+                <span class="absolute right-3 top-2.5 text-xs text-[#848e9c] font-mono font-bold">{{ adForm.fiat }}</span>
+              </div>
+              <p class="text-[10px] text-[#848e9c]">
+                {{ adForm.fiat === 'KES' ? 'Market price auto-fetched. You can customize your offer rate.' : 'Standard 1:1 stablecoin settlement rate.' }}
+              </p>
             </div>
           </div>
 
@@ -299,6 +339,7 @@
 <script setup>
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
+import axios from 'axios';
 
 const props = defineProps({
   isMerchant: { type: Boolean, default: false },
@@ -306,25 +347,58 @@ const props = defineProps({
   completionRate: { type: Number, default: 100.0 },
   completedTrades: { type: Number, default: 0 },
   usdtBalance: { type: Number, default: 0.00 },
+  marketRateKes: { type: Number, default: 129.50 },
   ads: { type: Array, default: () => [] },
 });
 
 const showCreateModal = ref(false);
 const creatingAd = ref(false);
+const currentMarketRate = ref(props.marketRateKes || 129.50);
 
 const adForm = ref({
   type: 'sell',
   asset: 'USDT',
-  fiat: 'KES',
-  price: '132.50',
+  fiat: 'USDT',
+  price: '1.00',
   total_amount: '50',
-  min_limit: '650',
-  max_limit: '25000',
-  payment_methods: ['mpesa'],
-  auto_reply: 'Hello, please send payment via M-Pesa and paste your transaction receipt here.',
-  terms: 'No third-party payments. The Safaricom M-Pesa name must match your TradeCo account.',
+  min_limit: '10',
+  max_limit: '5000',
+  payment_methods: ['bank_transfer', 'mpesa'],
+  auto_reply: 'Hello! I am online. Please follow payment instructions and confirm in chat.',
+  terms: 'Real-time escrow protected by TradeCo. Instant release upon verification.',
   time_limit_minutes: 15,
 });
+
+async function onFiatChanged(fiat) {
+  adForm.value.fiat = fiat;
+  if (fiat === 'KES') {
+    try {
+      const res = await axios.get('/api/p2p/market-price?fiat=KES');
+      if (res.data?.price) {
+        currentMarketRate.value = res.data.price;
+      }
+    } catch (e) {}
+    adForm.value.price = currentMarketRate.value.toFixed(2);
+    adForm.value.min_limit = '650';
+    adForm.value.max_limit = '50000';
+    adForm.value.payment_methods = ['mpesa'];
+    adForm.value.auto_reply = 'Hello, please send payment via M-Pesa and paste your transaction receipt here.';
+  } else {
+    adForm.value.price = '1.00';
+    adForm.value.min_limit = '10';
+    adForm.value.max_limit = '5000';
+    adForm.value.payment_methods = ['bank_transfer', 'mpesa'];
+    adForm.value.auto_reply = 'Hello! I am online. Please follow payment instructions and confirm in chat.';
+  }
+}
+
+function applyMarketRate() {
+  if (adForm.value.fiat === 'KES') {
+    adForm.value.price = currentMarketRate.value.toFixed(2);
+  } else {
+    adForm.value.price = '1.00';
+  }
+}
 
 function submitCreateAd() {
   creatingAd.value = true;

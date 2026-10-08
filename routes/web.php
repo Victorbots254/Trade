@@ -51,7 +51,8 @@ Route::middleware('guest')->group(function () {
 // Dedicated Authenticated User Pages
 Route::get('/trades', [TradingTerminalController::class, 'myTrades'])->middleware('auth')->name('trades');
 Route::get('/deposit', fn () => Inertia::render('Wallet/Deposit', [
-    'custodialAddress' => config('app.bep20_custodial_address', '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'),
+    'custodialAddress' => \App\Models\Setting::get('custodial_bep20_address', config('app.bep20_custodial_address', '0x71C7656EC7ab88b098defB751B7401B5f6d8976F')),
+    'depositQrImage' => \App\Models\Setting::get('deposit_qr_image'),
 ]))->middleware('auth')->name('deposit');
 Route::get('/payments', fn (Request $request) => Inertia::render('Wallet/Payments', [
     'user' => $request->user(),
@@ -268,6 +269,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/p2p/merchant/ads', [P2PMerchantController::class, 'storeAd'])->name('p2p.merchant.ads.store');
     Route::post('/p2p/merchant/ads/{ad}/toggle', [P2PMerchantController::class, 'toggleAd'])->name('p2p.merchant.ads.toggle');
     Route::post('/p2p/merchant/ads/{ad}/close', [P2PMerchantController::class, 'closeAd'])->name('p2p.merchant.ads.close');
+    Route::get('/api/p2p/market-price', [P2PMarketplaceController::class, 'getMarketPrice'])->name('p2p.market_price');
 });
 
 // Unified Admin Routes (P2P Management, Deposits Verification, User Controls)
@@ -276,8 +278,9 @@ Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin'
     Route::post('/p2p/users/{user}/merchant', [AdminP2PController::class, 'toggleMerchant'])->name('admin.p2p.merchant');
     Route::post('/p2p/orders/{order}/resolve', [AdminP2PController::class, 'resolveDispute'])->name('admin.p2p.resolve');
 
-    // Deposit Approvals
+    // Deposit Approvals & Settings
     Route::get('/deposits', [AdminDepositController::class, 'index'])->name('admin.deposits');
+    Route::post('/deposits/settings', [AdminDepositController::class, 'updateSettings'])->name('admin.deposits.settings');
     Route::post('/deposits/{deposit}/approve', [AdminDepositController::class, 'approve'])->name('admin.deposits.approve');
     Route::post('/deposits/{deposit}/reject', [AdminDepositController::class, 'reject'])->name('admin.deposits.reject');
 

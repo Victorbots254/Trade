@@ -211,13 +211,19 @@
       <div v-else class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 shadow-2xl">
         <!-- Left: QR Code & Custodial Address -->
         <div class="flex flex-col items-center justify-center space-y-4 border-b md:border-b-0 md:border-r border-slate-800 pb-6 md:pb-0 md:pr-8 text-center">
-          <div class="bg-white p-3 rounded-xl shadow-lg border border-slate-700">
-            <qrcode-vue :value="custodialAddress" :size="160" level="H" />
+          <div class="bg-white p-3 rounded-xl shadow-lg border border-slate-700 w-44 h-44 flex items-center justify-center overflow-hidden">
+            <img v-if="depositQrImage" :src="depositQrImage" alt="Deposit QR Code" class="w-full h-full object-contain" />
+            <qrcode-vue v-else :value="custodialAddress" :size="150" level="H" />
           </div>
           
           <div class="w-full space-y-1">
-            <span class="text-[11px] text-slate-400 uppercase font-mono tracking-wider font-semibold">Binance Custodial Address (BEP-20)</span>
-            <div class="bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-[11px] font-mono text-emerald-400 break-all select-all flex justify-between items-center">
+            <div class="flex justify-between items-center text-[11px] text-slate-400 uppercase font-mono tracking-wider font-semibold">
+              <span>Binance Custodial Address (BEP-20)</span>
+              <button @click="copyCustodialAddress" type="button" class="text-emerald-400 hover:text-emerald-300 font-bold lowercase">
+                {{ copiedAddress ? 'copied! ✓' : 'copy' }}
+              </button>
+            </div>
+            <div @click="copyCustodialAddress" class="bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-[11px] font-mono text-emerald-400 break-all select-all flex justify-between items-center cursor-pointer hover:border-emerald-500/40 transition">
               <span>{{ custodialAddress }}</span>
             </div>
           </div>
@@ -370,7 +376,21 @@ const props = defineProps({
     type: String,
     default: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
   },
+  depositQrImage: {
+    type: String,
+    default: null,
+  },
 });
+
+const copiedAddress = ref(false);
+
+function copyCustodialAddress() {
+  if (navigator.clipboard && props.custodialAddress) {
+    navigator.clipboard.writeText(props.custodialAddress);
+    copiedAddress.value = true;
+    setTimeout(() => { copiedAddress.value = false; }, 2000);
+  }
+}
 
 const activeMethod = ref('mpesa'); // 'mpesa' | 'crypto'
 const exchangeRate = ref(130);
