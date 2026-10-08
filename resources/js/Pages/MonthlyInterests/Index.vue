@@ -2,21 +2,8 @@
   <div class="min-h-screen bg-slate-950 text-slate-300 font-sans">
     <Head title="Monthly Interests" />
 
-    <!-- Navigation Header -->
-    <header class="bg-slate-900 border-b border-slate-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-        <div class="flex items-center space-x-4">
-          <Link href="/trade/BTCUSDT" class="text-emerald-400 font-bold text-xl hover:text-emerald-300 transition">
-            TRADING<span class="text-white">CORE</span>
-          </Link>
-          <span class="text-slate-600">|</span>
-          <h1 class="text-lg font-semibold text-slate-100">Monthly Interests</h1>
-        </div>
-        <div class="flex items-center space-x-4 text-sm">
-          <Link href="/profile" class="text-slate-400 hover:text-slate-200 transition">Back to Profile</Link>
-        </div>
-      </div>
-    </header>
+    <!-- Standard Trading Navigation Header -->
+    <TradingHeader :user="user" />
 
     <main class="max-w-5xl mx-auto px-4 py-8">
       <div v-if="$page.props.flash.message" class="mb-6 bg-emerald-500/10 border border-emerald-500/50 text-emerald-400 p-4 rounded-lg">
@@ -127,6 +114,7 @@
 <script setup>
 import { computed } from "vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
+import TradingHeader from "@/Components/TradingHeader.vue";
 
 const props = defineProps({
   subscriptions: Array,

@@ -13,7 +13,7 @@
           <a href="/options" class="text-[#848e9c] hover:text-[#f0b90b] transition">Options</a>
           <a href="/p2p" class="text-[#f0b90b] border-b-2 border-[#f0b90b] pb-1 font-bold">P2P Trading</a>
           <a href="/deposit" class="text-[#848e9c] hover:text-[#f0b90b] transition">Deposit</a>
-          <a href="/monthly-interests" class="text-[#848e9c] hover:text-[#f0b90b] transition">Earn 15%</a>
+          <a href="/monthly-interests" class="text-[#848e9c] hover:text-[#f0b90b] transition">Earn up to 15%</a>
         </nav>
       </div>
 
