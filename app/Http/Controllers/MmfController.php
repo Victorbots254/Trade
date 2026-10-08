@@ -16,10 +16,17 @@ class MmfController extends Controller
         $subscriptions = MmfSubscription::where("user_id", $user->id)->orderBy("created_at", "desc")->get();
         $logs = \App\Models\MmfInterestLog::where("user_id", $user->id)->orderBy("created_at", "desc")->get();
         
+        $wallet = Wallet::firstOrCreate(
+            ["user_id" => $user->id, "currency" => "USDT", "is_demo" => false],
+            ["available_balance" => 0, "locked_balance" => 0]
+        );
+
         return Inertia::render("MonthlyInterests/Index", [
             "subscriptions" => $subscriptions,
             "logs" => $logs,
             "user" => $user,
+            "wallet" => $wallet,
+            "custodialAddress" => config('app.bep20_custodial_address', '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'),
         ]);
     }
 

@@ -204,7 +204,7 @@ const props = defineProps({
   custodialAddress: { type: String, default: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F' },
 });
 
-const emit = defineEmits(['close', 'deposit-submitted']);
+const emit = defineEmits(['close', 'deposit-submitted', 'deposit-approved']);
 
 const activeTab = ref('mpesa'); // 'mpesa' | 'crypto'
 const exchangeRate = ref(130);
@@ -286,6 +286,7 @@ function pollMpesaStatus(depositId) {
         clearInterval(mpesaTimer);
         submittedDeposit.value = res.data.deposit;
         mpesaActivePrompt.value = null;
+        emit('deposit-approved', res.data.deposit);
       } else if (res.data.status === 'rejected') {
         clearInterval(mpesaTimer);
         mpesaError.value = res.data.message || 'Payment cancelled by user.';
