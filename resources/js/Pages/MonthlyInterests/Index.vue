@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-slate-950 text-slate-300 font-sans">
-    <Head title="Monthly Interests" />
+    <Head title="USDT MM (15%)" />
 
     <!-- Standard Trading Navigation Header -->
     <TradingHeader :user="user" />

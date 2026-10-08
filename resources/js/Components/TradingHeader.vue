@@ -35,12 +35,11 @@
             <span>P2P Trading</span>
           </Link>
 
-          <!-- Earn up to 15% with highlighted badge -->
+          <!-- USDT MM (15%) Navigation Link -->
           <Link href="/monthly-interests" 
-                class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5"
+                class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1"
                 :class="$page.url === '/monthly-interests' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
-            <span>Earn up to 15%</span>
-            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded-full font-bold">15%</span>
+            <span>USDT MM <span class="text-emerald-400 font-bold">(15%)</span></span>
           </Link>
 
           <Link href="/trades" 
@@ -246,9 +245,8 @@
           <span class="text-slate-600">→</span>
         </Link>
         <Link href="/monthly-interests" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-[#f0b90b] flex items-center justify-between font-semibold">
-          <div class="flex items-center space-x-2">
-            <span>Earn up to 15%</span>
-            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded-full font-bold">15%</span>
+          <div class="flex items-center space-x-1.5">
+            <span>USDT MM <span class="text-emerald-400 font-bold">(15%)</span></span>
           </div>
           <span class="text-slate-600">→</span>
         </Link>
