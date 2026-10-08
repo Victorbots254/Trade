@@ -291,7 +291,7 @@ const adForm = ref({
   max_limit: '25000',
   payment_methods: ['mpesa'],
   auto_reply: 'Hello, please send payment via M-Pesa and paste your transaction receipt here.',
-  terms: 'No third-party payments. The Safaricom M-Pesa name must match your TradePro account.',
+  terms: 'No third-party payments. The Safaricom M-Pesa name must match your TradeCo account.',
   time_limit_minutes: 15,
 });
 

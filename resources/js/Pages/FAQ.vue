@@ -3,7 +3,7 @@
     <header class="sticky top-0 z-50 border-b px-6 h-14 flex items-center justify-between" :class="isDark?'bg-[#0b0e11] border-[#1e2329]':'bg-white border-gray-200'">
       <a href="/" class="flex items-center space-x-2">
         <div class="w-7 h-7 bg-[#f0b90b] rounded-sm flex items-center justify-center font-black text-[#1e2329] text-sm">T</div>
-        <span class="font-bold text-lg" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">PRO</span></span>
+        <span class="font-bold text-lg" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">CO</span></span>
       </a>
       <div class="flex items-center space-x-4 text-[13px]">
         <button @click="isDark=!isDark" class="p-2 rounded-lg" :class="isDark?'text-[#b7bdc6]':'text-[#474d57]'"><span v-if="isDark">☀️</span><span v-else>🌙</span></button>
@@ -15,7 +15,7 @@
       <div class="text-center space-y-3">
         <div class="text-4xl">❓</div>
         <h1 class="text-4xl font-extrabold" :class="isDark?'text-white':'text-[#1e2329]'">FAQ Center</h1>
-        <p class="text-[14px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Everything you need to know about TradePro. Can't find an answer? <a href="/contact" class="text-[#f0b90b] hover:underline">Contact us →</a></p>
+        <p class="text-[14px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Everything you need to know about TradeCo. Can't find an answer? <a href="/contact" class="text-[#f0b90b] hover:underline">Contact us →</a></p>
       </div>
 
       <div v-for="cat in faqCategories" :key="cat.name" class="space-y-4">
@@ -41,7 +41,7 @@
     </div>
 
     <div class="border-t py-6 text-center text-[12px]" :class="isDark?'border-[#1e2329] text-[#848e9c]':'border-gray-200 text-[#707a8a]'">
-      © 2026 TradePro Inc. · <a href="/terms" class="hover:text-[#f0b90b]">Terms</a> · <a href="/privacy" class="hover:text-[#f0b90b]">Privacy</a>
+      © 2026 TradeCo Inc. · <a href="/terms" class="hover:text-[#f0b90b]">Terms</a> · <a href="/privacy" class="hover:text-[#f0b90b]">Privacy</a>
     </div>
   </div>
 </template>
@@ -55,7 +55,7 @@ const faqCategories = [
     { q:'What is the minimum deposit?', a:'Minimum deposit is $5 USDT via M-Pesa or BNB Smart Chain (BEP20). Credits appear almost instantly for M-Pesa and within 1-3 minutes for crypto.' },
     { q:'How do I deposit USDT?', a:'Go to Payments → Deposit. Copy your unique BEP20 deposit address and send USDT from any BEP20-compatible wallet or exchange (e.g., Binance, Trust Wallet).' },
     { q:'How fast are withdrawals?', a:'Within 10 minutes of admin approval. Funds arrive directly in your BEP20 wallet with a verifiable on-chain transaction hash.' },
-    { q:'Are there withdrawal fees?', a:'TradePro charges no platform withdrawal fee. Standard BNB Smart Chain gas fees (typically under $0.01) apply.' },
+    { q:'Are there withdrawal fees?', a:'TradeCo charges no platform withdrawal fee. Standard BNB Smart Chain gas fees (typically under $0.01) apply.' },
   ]},
   { icon:'📈', name:'Trading', faqs:[
     { q:'What is Spot Trading?', a:'Spot trading lets you buy and sell asset pairs (e.g., BTC/USDT) at current market prices in real time with full order book depth.' },
@@ -63,7 +63,7 @@ const faqCategories = [
     { q:'Can I trade without depositing real money?', a:'Yes. Every account has a free $10,000 demo practice balance. Trade Spot and Options risk-free. Reset your demo balance anytime from your Profile page.' },
   ]},
   { icon:'🔐', name:'Account & Security', faqs:[
-    { q:'Do I need to verify my identity (KYC)?', a:'No KYC is required to register and trade on TradePro. Simply sign up with an email address.' },
+    { q:'Do I need to verify my identity (KYC)?', a:'No KYC is required to register and trade on TradeCo. Simply sign up with an email address.' },
     { q:'How do I reset my password?', a:'On the login page, click "Forgot Password" and follow the email reset link. If you face issues, contact support.' },
     { q:'Is my balance safe?', a:'Yes. Real funds are held in cold wallet custody with strict double-entry accounting. Demo funds are completely separate and do not affect your real balance.' },
   ]},

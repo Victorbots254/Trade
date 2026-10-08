@@ -3,7 +3,7 @@
     <header class="sticky top-0 z-50 border-b px-6 h-14 flex items-center justify-between" :class="isDark?'bg-[#0b0e11] border-[#1e2329]':'bg-white border-gray-200'">
       <a href="/" class="flex items-center space-x-2">
         <div class="w-7 h-7 bg-[#f0b90b] rounded-sm flex items-center justify-center font-black text-[#1e2329] text-sm">T</div>
-        <span class="font-bold text-lg" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">PRO</span></span>
+        <span class="font-bold text-lg" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">CO</span></span>
       </a>
       <div class="flex items-center space-x-4 text-[13px]">
         <button @click="isDark=!isDark" class="p-2 rounded-lg" :class="isDark?'text-[#b7bdc6]':'text-[#474d57]'"><span v-if="isDark">☀️</span><span v-else>🌙</span></button>
@@ -15,7 +15,7 @@
       <div class="text-center space-y-3">
         <div class="text-4xl">🎨</div>
         <h1 class="text-4xl font-extrabold" :class="isDark?'text-white':'text-[#1e2329]'">Media Kit</h1>
-        <p class="text-[14px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Official TradePro brand assets, logos, color palettes, and usage guidelines for press and partners.</p>
+        <p class="text-[14px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Official TradeCo brand assets, logos, color palettes, and usage guidelines for press and partners.</p>
       </div>
 
       <!-- Logo section -->
@@ -25,13 +25,13 @@
           <div class="rounded-2xl p-8 border flex items-center justify-center" :class="isDark?'bg-[#181a20] border-[#2b3139]':'bg-gray-50 border-gray-200'">
             <div class="flex items-center space-x-2">
               <div class="w-10 h-10 bg-[#f0b90b] rounded-lg flex items-center justify-center font-black text-[#1e2329] text-xl">T</div>
-              <span class="font-bold text-2xl" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">PRO</span></span>
+              <span class="font-bold text-2xl" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">CO</span></span>
             </div>
           </div>
           <div class="rounded-2xl p-8 border flex items-center justify-center bg-[#1e2329]">
             <div class="flex items-center space-x-2">
               <div class="w-10 h-10 bg-[#f0b90b] rounded-lg flex items-center justify-center font-black text-[#1e2329] text-xl">T</div>
-              <span class="font-bold text-2xl text-white">TRADE<span class="text-[#f0b90b]">PRO</span></span>
+              <span class="font-bold text-2xl text-white">TRADE<span class="text-[#f0b90b]">CO</span></span>
             </div>
           </div>
         </div>
@@ -58,14 +58,14 @@
           <li>✔ Use the official logo on white, dark, or yellow backgrounds only.</li>
           <li>✔ Maintain a clear space of at least 16px around the logo on all sides.</li>
           <li>✕ Do not rotate, distort, recolor, or add effects to the logo.</li>
-          <li>✕ Do not use the TradePro name or logo to imply endorsement without written permission.</li>
+          <li>✕ Do not use the TradeCo name or logo to imply endorsement without written permission.</li>
         </ul>
-        <p class="text-[13px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">For press inquiries and asset requests, contact: <span class="text-[#f0b90b] font-semibold">press@tradepro.io</span></p>
+        <p class="text-[13px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">For press inquiries and asset requests, contact: <span class="text-[#f0b90b] font-semibold">press@tradeco.space</span></p>
       </div>
     </div>
 
     <div class="border-t py-6 text-center text-[12px]" :class="isDark?'border-[#1e2329] text-[#848e9c]':'border-gray-200 text-[#707a8a]'">
-      © 2026 TradePro Inc. · <a href="/terms" class="hover:text-[#f0b90b]">Terms</a> · <a href="/privacy" class="hover:text-[#f0b90b]">Privacy</a>
+      © 2026 TradeCo Inc. · <a href="/terms" class="hover:text-[#f0b90b]">Terms</a> · <a href="/privacy" class="hover:text-[#f0b90b]">Privacy</a>
     </div>
   </div>
 </template>

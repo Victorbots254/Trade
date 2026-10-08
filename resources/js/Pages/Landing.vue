@@ -13,7 +13,7 @@
         <div class="flex items-center space-x-8">
           <a href="/" class="flex items-center space-x-2">
             <div class="w-7 h-7 bg-[#f0b90b] rounded-sm flex items-center justify-center font-black text-[#1e2329] text-sm">T</div>
-            <span class="font-bold text-lg tracking-tight" :class="isDark ? 'text-[#f0b90b]' : 'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">PRO</span></span>
+            <span class="font-bold text-lg tracking-tight" :class="isDark ? 'text-[#f0b90b]' : 'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">CO</span></span>
           </a>
           <nav class="hidden lg:flex items-center space-x-1 text-[13px] font-medium" :class="isDark ? 'text-[#b7bdc6]' : 'text-[#474d57]'">
             <div class="relative group">
@@ -437,7 +437,7 @@
         <div class="col-span-2 sm:col-span-3 lg:col-span-2 space-y-4">
           <div class="flex items-center space-x-2">
             <div class="w-7 h-7 bg-[#f0b90b] rounded-sm flex items-center justify-center font-black text-[#1e2329] text-sm">T</div>
-            <span class="font-bold text-lg" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">PRO</span></span>
+            <span class="font-bold text-lg" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">CO</span></span>
           </div>
           <p class="text-[12px] leading-relaxed max-w-xs" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Institutional-grade cryptocurrency spot exchange with binary options, real-time settlements, and BEP20 USDT deposits. Built for serious traders worldwide.</p>
           <div class="flex items-center space-x-3">
@@ -493,7 +493,7 @@
       </div>
       <div class="border-t" :class="isDark?'border-[#1e2329]':'border-gray-200'">
         <div class="max-w-[1400px] mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">
-          <p>© 2026 TradePro Inc. All rights reserved. Trading involves risk. Please trade responsibly.</p>
+          <p>© 2026 TradeCo Inc. All rights reserved. Trading involves risk. Please trade responsibly.</p>
           <div class="flex items-center space-x-4">
             <a href="/terms" class="hover:text-[#f0b90b] transition">Terms</a>
             <a href="/privacy" class="hover:text-[#f0b90b] transition">Privacy</a>
@@ -506,7 +506,7 @@
         <div class="max-w-[1400px] mx-auto px-4 py-5 text-[10px] leading-relaxed" :class="isDark?'text-[#636e80]':'text-[#9ea8b5]'">
           <strong class="text-[11px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Risk Disclaimer:</strong>
           Cryptocurrency and derivative trading carries substantial risk of loss and is not suitable for all investors. The value of digital assets can fluctuate greatly, and you may lose some or all of your investment.
-          TradePro does not provide investment, financial, tax, or legal advice. Past performance is not indicative of future results. Binary options are high-risk financial instruments. Please ensure compliance with local laws before trading.
+          TradeCo does not provide investment, financial, tax, or legal advice. Past performance is not indicative of future results. Binary options are high-risk financial instruments. Please ensure compliance with local laws before trading.
         </div>
       </div>
     </footer>

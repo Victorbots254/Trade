@@ -154,10 +154,10 @@ class BlogController extends Controller
             "category" => "Platform",
             "read_time" => "6 min read",
             "image" => "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&q=80&w=1000",
-            "excerpt" => "BEP20 USDT offers near-instant finality, sub-cent fees, and universal wallet support. Here is why it is the ideal deposit currency for TradePro.",
+            "excerpt" => "BEP20 USDT offers near-instant finality, sub-cent fees, and universal wallet support. Here is why it is the ideal deposit currency for TradeCo.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
-                    <p class=\"text-lg leading-relaxed text-slate-300\">At TradePro, our primary base currency is Tether (USDT). However, USDT exists on dozens of different blockchains (Ethereum ERC20, Tron TRC20, Solana, etc.). We exclusively built our infrastructure around <strong>Binance Smart Chain (BEP20)</strong>. Here is why.</p>
+                    <p class=\"text-lg leading-relaxed text-slate-300\">At TradeCo, our primary base currency is Tether (USDT). However, USDT exists on dozens of different blockchains (Ethereum ERC20, Tron TRC20, Solana, etc.). We exclusively built our infrastructure around <strong>Binance Smart Chain (BEP20)</strong>. Here is why.</p>
                     
                     <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">The Problem with Ethereum (ERC20)</h3>
                     <p>While Ethereum is the most decentralized smart contract network, it suffers from severe congestion. During a bull market, transferring USDT over ERC20 can cost upwards of $20 to $50 in gas fees, and take up to 15 minutes to confirm. For a high-frequency trading platform, this friction is unacceptable.</p>
@@ -170,12 +170,12 @@ class BlogController extends Controller
                         <li><strong class=\"text-emerald-400\">Ecosystem Integration:</strong> It is natively supported by Binance, Trust Wallet, MetaMask, and hardware wallets like Ledger.</li>
                     </ul>
 
-                    <p class=\"mt-8\">When you deposit to your TradePro wallet, ensure your sending exchange or wallet has selected the <strong>BSC / BEP20</strong> network. Sending funds via the wrong network will result in permanent loss.</p>
+                    <p class=\"mt-8\">When you deposit to your TradeCo wallet, ensure your sending exchange or wallet has selected the <strong>BSC / BEP20</strong> network. Sending funds via the wrong network will result in permanent loss.</p>
                 </div>
             "
         ],
         "cold-storage-security" => [
-            "title" => "How TradePro Secures Your Funds: Cold Storage Architecture",
+            "title" => "How TradeCo Secures Your Funds: Cold Storage Architecture",
             "slug" => "cold-storage-security",
             "category" => "Security",
             "read_time" => "7 min read",
@@ -183,10 +183,10 @@ class BlogController extends Controller
             "excerpt" => "We store 98% of user funds in offline cold wallets with multi-signature signing requirements. Here is exactly how your money is protected.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
-                    <p class=\"text-lg leading-relaxed text-slate-300\">In the cryptocurrency industry, security is not a feature; it is the entire foundation of trust. TradePro utilizes institutional-grade security architectures to ensure that client assets are immune to hot-wallet breaches, server compromises, and physical attacks.</p>
+                    <p class=\"text-lg leading-relaxed text-slate-300\">In the cryptocurrency industry, security is not a feature; it is the entire foundation of trust. TradeCo utilizes institutional-grade security architectures to ensure that client assets are immune to hot-wallet breaches, server compromises, and physical attacks.</p>
                     
                     <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">The 98 / 2 Distribution Rule</h3>
-                    <p>TradePro keeps a maximum of <strong>2%</strong> of total platform assets in internet-connected \"Hot Wallets\". These hot wallets are used solely to facilitate automated daily withdrawals and immediate liquidity for users.</p>
+                    <p>TradeCo keeps a maximum of <strong>2%</strong> of total platform assets in internet-connected \"Hot Wallets\". These hot wallets are used solely to facilitate automated daily withdrawals and immediate liquidity for users.</p>
                     <p>The remaining <strong>98%</strong> of assets are swept daily into our Air-Gapped Cold Storage system. These wallets reside on specialized hardware that has never, and will never, touch the internet.</p>
                     
                     <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">Multi-Signature (Multi-Sig) Authentication</h3>
@@ -210,7 +210,7 @@ class BlogController extends Controller
             "excerpt" => "Both have merit — but they suit very different trading styles and risk tolerances. We break down the differences with real examples.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
-                    <p class=\"text-lg leading-relaxed text-slate-300\">TradePro offers two distinct avenues for market speculation: traditional Spot Trading and fast-paced Binary Options. Understanding the mechanical and psychological differences between them is crucial to finding your edge as a trader.</p>
+                    <p class=\"text-lg leading-relaxed text-slate-300\">TradeCo offers two distinct avenues for market speculation: traditional Spot Trading and fast-paced Binary Options. Understanding the mechanical and psychological differences between them is crucial to finding your edge as a trader.</p>
                     
                     <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">Spot Trading: The Investor's Approach</h3>
                     <p>Spot trading involves taking direct ownership of the asset. If Bitcoin is $60,000 and you buy 1 BTC, your portfolio value fluctuates exactly 1:1 with Bitcoin's price.</p>
@@ -232,7 +232,7 @@ class BlogController extends Controller
             "
         ],
         "global-infrastructure" => [
-            "title" => "TradePro Now Serves Traders in 140+ Countries",
+            "title" => "TradeCo Now Serves Traders in 140+ Countries",
             "slug" => "global-infrastructure",
             "category" => "Announcement",
             "read_time" => "4 min read",
@@ -240,7 +240,7 @@ class BlogController extends Controller
             "excerpt" => "We have completed our global infrastructure expansion. No KYC barriers, no geographic restrictions. Open to all serious traders.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
-                    <p class=\"text-lg leading-relaxed text-slate-300\">We are thrilled to announce that TradePro has successfully deployed decentralized matching engine nodes across 14 global server regions, reducing trade execution latency to sub-10 milliseconds for users across 140+ countries.</p>
+                    <p class=\"text-lg leading-relaxed text-slate-300\">We are thrilled to announce that TradeCo has successfully deployed decentralized matching engine nodes across 14 global server regions, reducing trade execution latency to sub-10 milliseconds for users across 140+ countries.</p>
                     
                     <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">Decentralized Access</h3>
                     <p>Our philosophy is simple: financial tools should be globally accessible. By utilizing non-custodial decentralized bridging protocols and Web3 architecture, we have eliminated traditional geographic boundaries.</p>
@@ -250,7 +250,7 @@ class BlogController extends Controller
                         <li>Privacy-first architecture.</li>
                     </ul>
                     
-                    <p class=\"mt-6\">Whether you are trading from Tokyo, London, or São Paulo, TradePro guarantees institutional liquidity, fixed-payout binary contracts, and 24/7 uptime.</p>
+                    <p class=\"mt-6\">Whether you are trading from Tokyo, London, or São Paulo, TradeCo guarantees institutional liquidity, fixed-payout binary contracts, and 24/7 uptime.</p>
                 </div>
             "
         ],
@@ -263,7 +263,7 @@ class BlogController extends Controller
             "excerpt" => "Sub-millisecond matching is not a marketing claim — it is a direct result of our atomic Lua scripts running on Redis sorted sets.",
             "content" => "
                 <div class=\"prose prose-invert max-w-none space-y-6\">
-                    <p class=\"text-lg leading-relaxed text-slate-300\">When volatility strikes and Bitcoin dumps $2,000 in a minute, traditional database-backed exchanges freeze. Order books lock up, liquidations fail to process, and users are left with API timeouts. At TradePro, we solved this by moving our entire matching engine into in-memory architecture.</p>
+                    <p class=\"text-lg leading-relaxed text-slate-300\">When volatility strikes and Bitcoin dumps $2,000 in a minute, traditional database-backed exchanges freeze. Order books lock up, liquidations fail to process, and users are left with API timeouts. At TradeCo, we solved this by moving our entire matching engine into in-memory architecture.</p>
                     
                     <h3 class=\"text-xl font-bold text-emerald-400 mt-8 mb-4\">Why Relational Databases Fail at Scale</h3>
                     <p>MySQL and PostgreSQL are brilliant for storing persistent ledger data, but they are absolutely terrible for live order book matching. Reading from a disk, acquiring row-level locks, and calculating spread crosses across millions of active orders causes a bottleneck.</p>

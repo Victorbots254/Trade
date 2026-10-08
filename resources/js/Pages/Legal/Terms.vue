@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
       <a href="/" class="flex items-center space-x-2 font-bold text-lg text-emerald-400 tracking-wider">
-        <span>TRADE<span class="text-slate-400 font-normal">PRO</span></span>
+        <span>TRADE<span class="text-slate-400 font-normal">CO</span></span>
       </a>
       <a href="/" class="text-xs text-slate-400 hover:text-slate-200 transition">← Back to Home</a>
     </header>
@@ -18,7 +18,7 @@
       <section class="space-y-3">
         <h2 class="text-sm font-bold text-emerald-400 uppercase tracking-wider">1. Acceptance of Terms</h2>
         <p>
-          By creating an account, accessing the trading terminal, or utilizing the custodial BEP-20 deposit protocol on TradePro ("Platform"), you acknowledge that you have read, understood, and agreed to be legally bound by these Terms of Service ("Terms"). If you do not agree, you must cease all access to the Platform immediately.
+          By creating an account, accessing the trading terminal, or utilizing the custodial BEP-20 deposit protocol on TradeCo ("Platform"), you acknowledge that you have read, understood, and agreed to be legally bound by these Terms of Service ("Terms"). If you do not agree, you must cease all access to the Platform immediately.
         </p>
       </section>
 
@@ -51,7 +51,7 @@
       <section class="space-y-3">
         <h2 class="text-sm font-bold text-emerald-400 uppercase tracking-wider">5. Systemic Latency & Service Availability</h2>
         <p>
-          While TradePro strives for 99.99% system availability, you acknowledge that electronic trading services may experience periodic delays, WebSocket reconnections, or API outages due to market volatility or network congestion. TradePro shall not be held liable for losses incurred due to systemic latency or connectivity failures.
+          While TradeCo strives for 99.99% system availability, you acknowledge that electronic trading services may experience periodic delays, WebSocket reconnections, or API outages due to market volatility or network congestion. TradeCo shall not be held liable for losses incurred due to systemic latency or connectivity failures.
         </p>
       </section>
 
@@ -63,7 +63,7 @@
       </section>
 
       <div class="border-t border-slate-800 pt-6 text-slate-500 text-[11px]">
-        For legal inquiries or compliance verification, contact legal@tradepro.io.
+        For legal inquiries or compliance verification, contact legal@tradeco.space.
       </div>
     </main>
   </div>

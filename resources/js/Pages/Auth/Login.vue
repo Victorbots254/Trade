@@ -20,7 +20,7 @@
     <a href="/" class="flex items-center space-x-2.5 mb-10 z-10 group">
       <div class="w-9 h-9 rounded-lg flex items-center justify-center font-black text-[#1e2329] text-sm shadow-lg shadow-[#f0b90b]/30"
         style="background: linear-gradient(135deg, #f0b90b 0%, #e6a800 100%);">T</div>
-      <span class="font-black text-white text-xl tracking-tight">TRADE<span class="text-[#f0b90b]">PRO</span></span>
+      <span class="font-black text-white text-xl tracking-tight">TRADE<span class="text-[#f0b90b]">CO</span></span>
     </a>
 
     <!-- Login Form Card -->
@@ -32,7 +32,7 @@
 
       <div class="space-y-1">
         <h2 class="text-2xl font-bold text-white">Welcome Back</h2>
-        <p class="text-xs text-[#848e9c]">Sign in to your TradePro account to continue trading.</p>
+        <p class="text-xs text-[#848e9c]">Sign in to your TradeCo account to continue trading.</p>
       </div>
 
       <div v-if="errorMessage" class="bg-[#f6465d]/10 border border-[#f6465d]/30 text-[#f6465d] p-3 rounded-lg text-xs font-medium flex items-center space-x-2">
@@ -87,7 +87,7 @@
       </form>
 
       <div class="border-t pt-5 text-center text-xs text-[#848e9c]" style="border-color: rgba(43,49,57,0.6);">
-        New to TradePro?
+        New to TradeCo?
         <a href="/register" class="font-bold ml-1 hover:underline" style="color: #f0b90b;">Create Free Account →</a>
       </div>
     </div>

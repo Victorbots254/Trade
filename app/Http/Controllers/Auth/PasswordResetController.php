@@ -56,11 +56,11 @@ class PasswordResetController extends Controller
         try {
             Mail::send([], [], function ($message) use ($user, $resetUrl) {
                 $message->to($user->email)
-                    ->subject('Reset Your TradePro Password')
+                    ->subject('Reset Your TradeCo Password')
                     ->html("
                         <div style='background-color:#0b0e11; color:#eaecef; padding:32px; font-family:sans-serif;'>
                             <div style='max-width:480px; margin:0 auto; background-color:#1e2329; border-radius:12px; padding:24px; border:1px solid #2b3139;'>
-                                <h2 style='color:#f0b90b; margin-top:0;'>TradePro Password Reset</h2>
+                                <h2 style='color:#f0b90b; margin-top:0;'>TradeCo Password Reset</h2>
                                 <p style='font-size:14px; color:#848e9c;'>Hello {$user->name},</p>
                                 <p style='font-size:14px; line-height:1.6;'>You requested to reset your password. Click the button below to choose a new password. This link will expire in 60 minutes.</p>
                                 <div style='text-align:center; margin:28px 0;'>

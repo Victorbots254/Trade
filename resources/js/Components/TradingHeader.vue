@@ -11,7 +11,7 @@
             T
           </div>
           <span class="font-bold text-slate-100 text-sm tracking-wide">
-            TRADE<span class="text-[#f0b90b]">PRO</span>
+            TRADE<span class="text-[#f0b90b]">CO</span>
           </span>
         </Link>
 

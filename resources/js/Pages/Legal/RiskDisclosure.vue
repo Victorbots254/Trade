@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
       <a href="/" class="flex items-center space-x-2 font-bold text-lg text-emerald-400 tracking-wider">
-        <span>TRADE<span class="text-slate-400 font-normal">PRO</span></span>
+        <span>TRADE<span class="text-slate-400 font-normal">CO</span></span>
       </a>
       <a href="/" class="text-xs text-slate-400 hover:text-slate-200 transition">← Back to Home</a>
     </header>
@@ -48,7 +48,7 @@
       </section>
 
       <div class="border-t border-slate-800 pt-6 text-slate-500 text-[11px]">
-        By proceeding to trade on TradePro, you explicitly accept all inherent financial and technological risks.
+        By proceeding to trade on TradeCo, you explicitly accept all inherent financial and technological risks.
       </div>
     </main>
   </div>

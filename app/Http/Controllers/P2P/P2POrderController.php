@@ -136,7 +136,7 @@ class P2POrderController extends Controller
                 'order_id' => $order->id,
                 'user_id' => null,
                 'is_system' => true,
-                'message' => "🛡️ Trade started. {$cryptoAmount} USDT is safely locked in TradePro Escrow. Buyer has {$timeLimit} minutes to send payment.",
+                'message' => "🛡️ Trade started. {$cryptoAmount} USDT is safely locked in TradeCo Escrow. Buyer has {$timeLimit} minutes to send payment.",
             ]);
 
             return redirect()->route('p2p.order.show', ['order' => $order->id]);

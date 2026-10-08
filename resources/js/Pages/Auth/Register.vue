@@ -18,7 +18,7 @@
     <a href="/" class="flex items-center space-x-2.5 mb-10 z-10">
       <div class="w-9 h-9 rounded-lg flex items-center justify-center font-black text-[#1e2329] text-sm shadow-lg shadow-[#f0b90b]/30"
         style="background: linear-gradient(135deg, #f0b90b 0%, #e6a800 100%);">T</div>
-      <span class="font-black text-white text-xl tracking-tight">TRADE<span class="text-[#f0b90b]">PRO</span></span>
+      <span class="font-black text-white text-xl tracking-tight">TRADE<span class="text-[#f0b90b]">CO</span></span>
     </a>
 
     <!-- Register Form Card -->

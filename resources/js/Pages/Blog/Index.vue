@@ -15,13 +15,13 @@
       <div class="relative max-w-5xl mx-auto px-4 py-14 text-center space-y-4">
         <div class="inline-flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
           <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
-          <span>TradePro Trading Academy</span>
+          <span>TradeCo Trading Academy</span>
         </div>
         <h1 class="text-4xl md:text-5xl font-black tracking-tight">
           Master the <span style="background: linear-gradient(135deg, #0ecb81, #f0b90b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Markets</span>
         </h1>
         <p class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
-          Read our official guides to learn the most effective strategies for yield farming, spot trading, and quick options on TradePro.
+          Read our official guides to learn the most effective strategies for yield farming, spot trading, and quick options on TradeCo.
         </p>
       </div>
     </div>

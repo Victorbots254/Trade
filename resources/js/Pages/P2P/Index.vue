@@ -5,7 +5,7 @@
       <div class="flex items-center space-x-6">
         <a href="/" class="flex items-center space-x-2 font-black text-lg text-[#f0b90b] tracking-wider">
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#f0b90b] to-[#d4a30b] text-[#1e2329] flex items-center justify-center text-sm font-black shadow-md">T</div>
-          <span class="text-white">TRADE<span class="text-[#f0b90b]">PRO</span> <span class="text-xs bg-[#f0b90b]/10 text-[#f0b90b] px-2 py-0.5 rounded ml-1 border border-[#f0b90b]/20 font-bold uppercase">P2P</span></span>
+          <span class="text-white">TRADE<span class="text-[#f0b90b]">CO</span> <span class="text-xs bg-[#f0b90b]/10 text-[#f0b90b] px-2 py-0.5 rounded ml-1 border border-[#f0b90b]/20 font-bold uppercase">P2P</span></span>
         </a>
 
         <nav class="hidden md:flex items-center space-x-4 text-xs font-semibold">
@@ -41,7 +41,7 @@
           <div class="inline-flex items-center space-x-2 bg-[#f0b90b]/10 border border-[#f0b90b]/30 text-[#f0b90b] text-[11px] font-bold px-2.5 py-0.5 rounded-full">
             <span>🛡️ 100% Escrow Protection</span>
           </div>
-          <h1 class="text-xl md:text-2xl font-black text-white">TradePro P2P Crypto Marketplace</h1>
+          <h1 class="text-xl md:text-2xl font-black text-white">TradeCo P2P Crypto Marketplace</h1>
           <p class="text-xs text-[#848e9c] leading-relaxed">
             Buy and sell USDT directly with verified local traders using M-Pesa and Bank Transfers with 0% platform trading fees. Crypto is locked in secure escrow until payment is confirmed.
           </p>

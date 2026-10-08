@@ -155,7 +155,7 @@
 
           <!-- Warning Notice -->
           <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl text-[11px] leading-relaxed">
-            ⚠️ <strong>Important Security Reminder:</strong> Do not include crypto-related words (e.g. "USDT", "TradePro", "Crypto") in your bank or M-Pesa transaction reference. Only use the order number or your real name.
+            ⚠️ <strong>Important Security Reminder:</strong> Do not include crypto-related words (e.g. "USDT", "TradeCo", "Crypto") in your bank or M-Pesa transaction reference. Only use the order number or your real name.
           </div>
 
           <!-- Action Controls for Buyer / Seller -->

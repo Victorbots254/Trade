@@ -3,7 +3,7 @@
     <header class="sticky top-0 z-50 border-b px-6 h-14 flex items-center justify-between" :class="isDark?'bg-[#0b0e11] border-[#1e2329]':'bg-white border-gray-200'">
       <a href="/" class="flex items-center space-x-2">
         <div class="w-7 h-7 bg-[#f0b90b] rounded-sm flex items-center justify-center font-black text-[#1e2329] text-sm">T</div>
-        <span class="font-bold text-lg" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">PRO</span></span>
+        <span class="font-bold text-lg" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">CO</span></span>
       </a>
       <div class="flex items-center space-x-4 text-[13px]">
         <button @click="isDark=!isDark" class="p-2 rounded-lg" :class="isDark?'text-[#b7bdc6]':'text-[#474d57]'"><span v-if="isDark">☀️</span><span v-else>🌙</span></button>
@@ -46,12 +46,12 @@
       <div class="rounded-2xl border p-8 text-center space-y-4" :class="isDark?'bg-[#181a20] border-[#2b3139]':'bg-gray-50 border-gray-200'">
         <div class="text-2xl">💌</div>
         <div class="font-bold text-[16px]" :class="isDark?'text-white':'text-[#1e2329]'">Don't see your role?</div>
-        <p class="text-[13px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">We are always looking for exceptional talent. Send your CV and a short note to <span class="text-[#f0b90b]">careers@tradepro.io</span></p>
+        <p class="text-[13px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">We are always looking for exceptional talent. Send your CV and a short note to <span class="text-[#f0b90b]">careers@tradeco.space</span></p>
       </div>
     </div>
 
     <div class="border-t py-6 text-center text-[12px]" :class="isDark?'border-[#1e2329] text-[#848e9c]':'border-gray-200 text-[#707a8a]'">
-      © 2026 TradePro Inc. · <a href="/terms" class="hover:text-[#f0b90b]">Terms</a> · <a href="/privacy" class="hover:text-[#f0b90b]">Privacy</a>
+      © 2026 TradeCo Inc. · <a href="/terms" class="hover:text-[#f0b90b]">Terms</a> · <a href="/privacy" class="hover:text-[#f0b90b]">Privacy</a>
     </div>
   </div>
 </template>
