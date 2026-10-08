@@ -68,12 +68,54 @@ Route::get('/profile', function (Request $request) {
     \App\Services\WalletReconciliationService::reconcileUsdtWallet($request->user(), false);
     \App\Services\WalletReconciliationService::reconcileUsdtWallet($request->user(), true);
 
+    $user = $request->user()->fresh();
+
+    $mmfLocked = (float) \App\Models\MmfSubscription::where('user_id', $user->id)
+        ->where('status', 'locked')
+        ->sum('amount');
+
+    $mmfActiveCount = (int) \App\Models\MmfSubscription::where('user_id', $user->id)
+        ->where('status', 'locked')
+        ->count();
+
+    $mmfInterestEarned = (float) \App\Models\MmfInterestLog::where('user_id', $user->id)
+        ->sum('amount');
+
     return Inertia::render('Profile/Show', [
-        'user' => $request->user()->fresh(),
-        'wallets' => Wallet::where('user_id', $request->user()->id)->get(),
+        'user' => $user,
+        'wallets' => Wallet::where('user_id', $user->id)->get(),
         'markets' => Market::where('status', 'active')->get(),
+        'mmf_locked' => $mmfLocked,
+        'mmf_active_count' => $mmfActiveCount,
+        'mmf_interest_earned' => $mmfInterestEarned,
+        'custodialAddress' => \App\Models\Setting::get('custodial_bep20_address', config('app.bep20_custodial_address', '0x71C7656EC7ab88b098defB751B7401B5f6d8976F')),
     ]);
 })->middleware('auth')->name('profile');
+
+Route::post('/api/profile/update', function (Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'current_password' => 'nullable|string',
+        'new_password' => 'nullable|string|min:8|confirmed',
+    ]);
+
+    $user = $request->user();
+
+    if ($request->filled('new_password')) {
+        if (!$request->filled('current_password') || !\Illuminate\Support\Facades\Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Current password does not match.'], 422);
+        }
+        $user->password = \Illuminate\Support\Facades\Hash::make($request->new_password);
+    }
+
+    $user->name = $request->name;
+    $user->save();
+
+    return response()->json([
+        'message' => 'Profile updated successfully!',
+        'user' => $user->fresh(),
+    ]);
+})->middleware('auth');
 
 Route::post('/api/wallet/reconcile-funds', function (Request $request) {
     $wallet = \App\Services\WalletReconciliationService::reconcileUsdtWallet($request->user(), false);
