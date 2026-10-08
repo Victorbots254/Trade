@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-[#0b0e11] text-slate-300 font-sans selection:bg-emerald-500/30 flex flex-col">
     <!-- Header -->
-    <TradingHeader :user="$page.props.auth.user" />
+    <TradingHeader :user="$page.props.auth.user" :wallets="wallets" :markets="markets" />
     <ToastNotification ref="toastRef" />
 
     <div class="flex-1 max-w-[1400px] w-full mx-auto px-4 py-8 space-y-6 overflow-y-auto pb-24">

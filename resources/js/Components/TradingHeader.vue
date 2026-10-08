@@ -16,37 +16,71 @@
         </Link>
 
         <!-- Navigation Links (Desktop) -->
-        <nav class="hidden md:flex items-center space-x-1 font-medium text-[13px]">
-          <Link href="/terminal" 
-                class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5"
-                :class="$page.url === '/terminal' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
-            <span>Spot Trade</span>
-          </Link>
+        <nav class="hidden md:flex items-center space-x-1.5 font-medium text-[13px]">
+          <!-- ADMIN & MODERATOR NAVIGATION -->
+          <template v-if="user?.is_admin || user?.is_moderator">
+            <Link href="/admin/p2p" 
+                  class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 font-bold text-xs"
+                  :class="$page.url.startsWith('/admin/p2p') ? 'bg-[#f0b90b] text-[#1e2329] shadow' : 'text-[#f0b90b] bg-[#f0b90b]/10 border border-[#f0b90b]/30 hover:bg-[#f0b90b]/20'">
+              <span>🛡️</span>
+              <span>P2P Dispute Center</span>
+            </Link>
 
-          <Link href="/trade/options/BTC_USDT" 
-                class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5"
-                :class="$page.url.includes('/trade/options') || $page.url === '/options' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
-            <span>Quick Options</span>
-          </Link>
+            <Link v-if="user?.is_admin" href="/admin/users" 
+                  class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 font-bold text-xs"
+                  :class="$page.url.startsWith('/admin/users') ? 'bg-amber-500 text-slate-950 shadow' : 'text-amber-300 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60'">
+              <span>👥</span>
+              <span>Trader Controls</span>
+            </Link>
 
-          <Link href="/p2p" 
-                class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5"
-                :class="$page.url.startsWith('/p2p') ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
-            <span>P2P Trading</span>
-          </Link>
+            <Link href="/admin/deposits" 
+                  class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 font-bold text-xs"
+                  :class="$page.url.startsWith('/admin/deposits') ? 'bg-emerald-600 text-white shadow' : 'text-emerald-400 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60'">
+              <span>💰</span>
+              <span>Deposit Approvals</span>
+            </Link>
 
-          <!-- USDT MM (15%) Navigation Link -->
-          <Link href="/monthly-interests" 
-                class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1"
-                :class="$page.url === '/monthly-interests' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
-            <span>USDT MM <span class="text-emerald-400 font-bold">(15%)</span></span>
-          </Link>
+            <div class="h-4 w-px bg-slate-700 mx-1"></div>
 
-          <Link href="/trades" 
-                class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5"
-                :class="$page.url === '/trades' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
-            <span>Past Trades</span>
-          </Link>
+            <Link href="/terminal" 
+                  class="px-2.5 py-1.5 rounded-lg transition flex items-center space-x-1 text-xs text-slate-400 hover:text-white hover:bg-slate-800">
+              <span>Terminal ↗</span>
+            </Link>
+          </template>
+
+          <!-- REGULAR TRADER NAVIGATION -->
+          <template v-else>
+            <Link href="/terminal" 
+                  class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5"
+                  :class="$page.url === '/terminal' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
+              <span>Spot Trade</span>
+            </Link>
+
+            <Link href="/trade/options/BTC_USDT" 
+                  class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5"
+                  :class="$page.url.includes('/trade/options') || $page.url === '/options' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
+              <span>Quick Options</span>
+            </Link>
+
+            <Link href="/p2p" 
+                  class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5"
+                  :class="$page.url.startsWith('/p2p') ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
+              <span>P2P Trading</span>
+            </Link>
+
+            <!-- USDT MM (15%) Navigation Link -->
+            <Link href="/monthly-interests" 
+                  class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1"
+                  :class="$page.url === '/monthly-interests' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
+              <span>USDT MM <span class="text-emerald-400 font-bold">(15%)</span></span>
+            </Link>
+
+            <Link href="/trades" 
+                  class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5"
+                  :class="$page.url === '/trades' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
+              <span>Past Trades</span>
+            </Link>
+          </template>
         </nav>
       </div>
 
@@ -232,28 +266,48 @@
 
       <!-- Navigation Links -->
       <div class="grid grid-cols-1 gap-1 text-[13px] font-medium">
-        <Link href="/terminal" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200 flex items-center justify-between">
-          <span>Spot Trade</span>
-          <span class="text-slate-600">→</span>
-        </Link>
-        <Link href="/trade/options/BTC_USDT" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200 flex items-center justify-between">
-          <span>Quick Options</span>
-          <span class="text-slate-600">→</span>
-        </Link>
-        <Link href="/p2p" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200 flex items-center justify-between">
-          <span>P2P Trading</span>
-          <span class="text-slate-600">→</span>
-        </Link>
-        <Link href="/monthly-interests" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-[#f0b90b] flex items-center justify-between font-semibold">
-          <div class="flex items-center space-x-1.5">
-            <span>USDT MM <span class="text-emerald-400 font-bold">(15%)</span></span>
-          </div>
-          <span class="text-slate-600">→</span>
-        </Link>
-        <Link href="/trades" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200 flex items-center justify-between">
-          <span>Past Trades</span>
-          <span class="text-slate-600">→</span>
-        </Link>
+        <template v-if="user?.is_admin || user?.is_moderator">
+          <Link href="/admin/p2p" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg bg-[#f0b90b]/10 text-[#f0b90b] font-bold flex items-center justify-between border border-[#f0b90b]/20">
+            <span>🛡️ P2P Dispute Center</span>
+            <span>→</span>
+          </Link>
+          <Link v-if="user?.is_admin" href="/admin/users" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-amber-300 font-bold flex items-center justify-between">
+            <span>👥 Trader Controls</span>
+            <span>→</span>
+          </Link>
+          <Link href="/admin/deposits" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-emerald-400 font-bold flex items-center justify-between">
+            <span>💰 Deposit Approvals</span>
+            <span>→</span>
+          </Link>
+          <Link href="/terminal" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center justify-between">
+            <span>Spot Terminal ↗</span>
+            <span>→</span>
+          </Link>
+        </template>
+        <template v-else>
+          <Link href="/terminal" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200 flex items-center justify-between">
+            <span>Spot Trade</span>
+            <span class="text-slate-600">→</span>
+          </Link>
+          <Link href="/trade/options/BTC_USDT" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200 flex items-center justify-between">
+            <span>Quick Options</span>
+            <span class="text-slate-600">→</span>
+          </Link>
+          <Link href="/p2p" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200 flex items-center justify-between">
+            <span>P2P Trading</span>
+            <span class="text-slate-600">→</span>
+          </Link>
+          <Link href="/monthly-interests" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-[#f0b90b] flex items-center justify-between font-semibold">
+            <div class="flex items-center space-x-1.5">
+              <span>USDT MM <span class="text-emerald-400 font-bold">(15%)</span></span>
+            </div>
+            <span class="text-slate-600">→</span>
+          </Link>
+          <Link href="/trades" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200 flex items-center justify-between">
+            <span>Past Trades</span>
+            <span class="text-slate-600">→</span>
+          </Link>
+        </template>
       </div>
 
       <!-- Mobile CTAs -->
@@ -271,7 +325,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import axios from "axios";
 import ToastNotification from "@/Components/ToastNotification.vue";
 
@@ -283,10 +337,12 @@ const props = defineProps({
 
 const emit = defineEmits(["select-market", "account-mode-changed"]);
 
+const page = usePage();
 const toastRef = ref(null);
 const resetting = ref(false);
 const showProfileDropdown = ref(false);
 const mobileMenuOpen = ref(false);
+const liveWallets = ref([]);
 
 const accountMode = ref(localStorage.getItem("trade_account_mode") || "demo");
 const currentTheme = ref(localStorage.getItem("trade_theme") || "dark");
@@ -316,11 +372,26 @@ function switchAccountMode(mode) {
   emit("account-mode-changed", mode);
 }
 
-const usdtWallet = computed(() => (props.wallets || []).find(w => w.currency === "USDT" && !w.is_demo));
-const demoWallet = computed(() => (props.wallets || []).find(w => w.currency === "USDT" && w.is_demo));
+const activeWallets = computed(() => {
+  if (liveWallets.value.length > 0) return liveWallets.value;
+  if (props.wallets && props.wallets.length > 0) return props.wallets;
+  return page.props.auth?.wallets || [];
+});
+
+const usdtWallet = computed(() => activeWallets.value.find(w => w.currency === "USDT" && !w.is_demo));
+const demoWallet = computed(() => activeWallets.value.find(w => w.currency === "USDT" && w.is_demo));
 
 const demoBalance = computed(() => {
-  return demoWallet.value !== undefined ? parseFloat(demoWallet.value.available_balance) : (props.user?.demo_balance !== undefined ? parseFloat(props.user.demo_balance) : 10000.00);
+  if (demoWallet.value?.available_balance !== undefined) {
+    return parseFloat(demoWallet.value.available_balance);
+  }
+  if (page.props.auth?.user?.demo_balance !== undefined) {
+    return parseFloat(page.props.auth.user.demo_balance);
+  }
+  if (props.user?.demo_balance !== undefined) {
+    return parseFloat(props.user.demo_balance);
+  }
+  return 10000.00;
 });
 
 const liveBalance = computed(() => {
@@ -351,7 +422,15 @@ async function logout() {
   window.location.href = "/";
 }
 
-onMounted(() => {
+onMounted(async () => {
   applyTheme(currentTheme.value);
+  if (props.user || page.props.auth?.user) {
+    try {
+      const res = await axios.get("/api/deposits");
+      if (res.data?.wallets) {
+        liveWallets.value = res.data.wallets;
+      }
+    } catch (e) {}
+  }
 });
 </script>

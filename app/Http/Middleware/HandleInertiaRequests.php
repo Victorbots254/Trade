@@ -41,9 +41,12 @@ class HandleInertiaRequests extends Middleware
                     'id' => $request->user()->id,
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
-                    'is_admin' => $request->user()->is_admin,
+                    'is_admin' => (bool) $request->user()->is_admin,
+                    'is_moderator' => (bool) ($request->user()->is_moderator ?? false),
+                    'demo_balance' => (float) (\App\Models\Wallet::where('user_id', $request->user()->id)->where('currency', 'USDT')->where('is_demo', true)->value('available_balance') ?? $request->user()->demo_balance ?? 10000.00),
                     'accepted_terms_at' => $request->user()->accepted_terms_at,
                 ] : null,
+                'wallets' => fn () => $request->user() ? \App\Models\Wallet::where('user_id', $request->user()->id)->get() : [],
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

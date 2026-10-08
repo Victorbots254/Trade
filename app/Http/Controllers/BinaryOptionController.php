@@ -42,7 +42,7 @@ class BinaryOptionController extends Controller
                     'is_demo' => true,
                 ]);
             } else {
-                $user->update(['demo_balance' => $demoUsdtWallet->available_balance + $demoUsdtWallet->locked_balance]);
+                $user->update(['demo_balance' => $demoUsdtWallet->available_balance]);
             }
 
             $userWallets = Wallet::where('user_id', $user->id)->get();
@@ -129,7 +129,7 @@ class BinaryOptionController extends Controller
                 // Keep users.demo_balance in sync
                 $userObj = User::where('id', $user->id)->lockForUpdate()->first();
                 if ($userObj) {
-                    $userObj->demo_balance = max(0, $demoWallet->available_balance + $demoWallet->locked_balance);
+                    $userObj->demo_balance = max(0, (float) $demoWallet->available_balance);
                     $userObj->save();
                 }
 
@@ -260,7 +260,7 @@ class BinaryOptionController extends Controller
                 if ($contract->is_demo) {
                     $userObj = User::where('id', $contract->user_id)->lockForUpdate()->first();
                     if ($userObj) {
-                        $userObj->demo_balance = max(0, $usdtWallet->available_balance + $usdtWallet->locked_balance);
+                        $userObj->demo_balance = max(0, (float) $usdtWallet->available_balance);
                         $userObj->save();
                     }
                 }

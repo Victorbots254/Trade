@@ -85,7 +85,7 @@ class TradingTerminalController extends Controller
                     'is_demo' => true,
                 ]);
             } else {
-                $user->update(['demo_balance' => $demoUsdtWallet->available_balance + $demoUsdtWallet->locked_balance]);
+                $user->update(['demo_balance' => $demoUsdtWallet->available_balance]);
             }
 
             $userWallets = Wallet::where('user_id', $user->id)->get();
@@ -134,7 +134,7 @@ class TradingTerminalController extends Controller
                 'is_demo' => true,
             ]);
         } else {
-            $user->update(['demo_balance' => $demoUsdtWallet->available_balance + $demoUsdtWallet->locked_balance]);
+            $user->update(['demo_balance' => $demoUsdtWallet->available_balance]);
         }
 
         $openOrders = Order::with('market:id,symbol')

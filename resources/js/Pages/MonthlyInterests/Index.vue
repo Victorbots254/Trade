@@ -3,7 +3,7 @@
     <Head title="USDT MM (15%)" />
 
     <!-- Standard Trading Navigation Header -->
-    <TradingHeader :user="user" />
+    <TradingHeader :user="user" :wallets="wallet ? [wallet] : []" />
 
     <main class="max-w-6xl mx-auto px-4 py-8">
       <!-- Flash / Success / Error Messages -->

@@ -36,26 +36,56 @@
             <div class="relative group">
               <button class="flex items-center space-x-1 hover:text-[#f0b90b] px-3 py-2 rounded transition"><span>Trade</span><span class="text-[10px]">▾</span></button>
               <div class="absolute top-full left-0 mt-1 w-44 rounded-xl shadow-2xl border py-2 z-50 hidden group-hover:block" :class="isDark ? 'bg-[#1e2329] border-[#2b3139]' : 'bg-white border-gray-100'">
-                <a href="/trade/BTC_USDT" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">Spot Trading</a>
+                <a href="/terminal" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">Spot Trading</a>
                 <a href="/trade/options/BTC_USDT" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">Binary Options</a>
                 <a href="/p2p" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">P2P Marketplace</a>
               </div>
             </div>
+            <!-- USDT MM (15%) -->
+            <a href="/monthly-interests" class="hover:text-[#f0b90b] px-3 py-2 rounded transition flex items-center space-x-1 font-semibold"
+               :class="isDark ? 'text-emerald-400' : 'text-emerald-700'">
+              <span>USDT MM</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.2 rounded"
+                    :class="isDark ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-800'">(15%)</span>
+            </a>
             <a href="#security" class="hover:text-[#f0b90b] px-3 py-2 rounded transition">Security</a>
             <a href="#withdrawals" class="hover:text-[#f0b90b] px-3 py-2 rounded transition">Community</a>
           </nav>
         </div>
         <div class="flex items-center space-x-2 text-[13px]">
-          <button @click="isDark = !isDark" class="p-2 rounded-lg transition" :class="isDark ? 'hover:bg-[#1e2329] text-[#b7bdc6]' : 'hover:bg-gray-100 text-[#474d57]'">
+          <button @click="toggleTheme" class="p-2 rounded-lg transition" :class="isDark ? 'hover:bg-[#1e2329] text-[#b7bdc6]' : 'hover:bg-gray-100 text-[#474d57]'">
             <span v-if="isDark">☀️</span><span v-else>🌙</span>
           </button>
-          <template v-if="user">
-            <a href="/trade/BTC_USDT" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-4 py-1.5 rounded-lg text-xs transition">Open Terminal</a>
+          <template v-if="$page.props.auth?.user || user">
+            <a href="/terminal" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-4 py-1.5 rounded-lg text-xs transition shadow-md flex items-center space-x-1">
+              <span>Go to Dashboard</span>
+              <span>→</span>
+            </a>
           </template>
           <template v-else>
             <a href="/login" class="font-semibold hover:text-[#f0b90b] px-3 py-1.5 transition" :class="isDark ? 'text-[#b7bdc6]' : 'text-[#474d57]'">Log In</a>
             <a href="/register" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-4 py-1.5 rounded-lg transition">Register</a>
           </template>
+          <!-- Mobile Hamburger -->
+          <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 rounded-lg" :class="isDark ? 'text-slate-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Drawer for Landing -->
+      <div v-if="mobileMenuOpen" class="lg:hidden border-t px-4 py-3 space-y-2" :class="isDark ? 'bg-[#181a20] border-[#2b3139]' : 'bg-white border-gray-200'">
+        <a href="/terminal" class="block py-2 text-xs font-semibold" :class="isDark ? 'text-slate-200' : 'text-gray-800'">Spot Trading</a>
+        <a href="/trade/options/BTC_USDT" class="block py-2 text-xs font-semibold" :class="isDark ? 'text-slate-200' : 'text-gray-800'">Binary Options</a>
+        <a href="/p2p" class="block py-2 text-xs font-semibold text-[#f0b90b]">P2P Trading</a>
+        <a href="/monthly-interests" class="block py-2 text-xs font-bold text-emerald-400">USDT MM (15% Yield)</a>
+        <a href="/deposit" class="block py-2 text-xs font-semibold" :class="isDark ? 'text-slate-200' : 'text-gray-800'">Deposit Funds</a>
+        <div v-if="$page.props.auth?.user || user" class="pt-2 border-t" :class="isDark ? 'border-slate-800' : 'border-gray-200'">
+          <a href="/terminal" class="block w-full bg-[#f0b90b] text-[#1e2329] text-center font-bold py-2 rounded-lg text-xs">Go to Dashboard →</a>
+        </div>
+        <div v-else class="pt-2 border-t flex space-x-2" :class="isDark ? 'border-slate-800' : 'border-gray-200'">
+          <a href="/login" class="flex-1 text-center py-2 text-xs font-bold" :class="isDark ? 'bg-slate-800 text-slate-200' : 'bg-gray-100 text-gray-800'">Log In</a>
+          <a href="/register" class="flex-1 text-center py-2 text-xs font-bold bg-[#f0b90b] text-[#1e2329] rounded">Register</a>
         </div>
       </div>
     </header>
@@ -100,7 +130,15 @@
             Access 14+ spot markets with real-time pricing, binary options up to 88% ROI, and <strong>earn guaranteed up to 15% monthly interest</strong> with TradeCo USDT Money Market.
           </p>
           <div class="flex flex-col sm:flex-row gap-3 pt-2">
-            <a href="/register" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-7 py-3.5 rounded-xl text-sm transition shadow-xl flex items-center justify-center">Get Started — Free</a>
+            <template v-if="$page.props.auth?.user || user">
+              <a href="/terminal" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-7 py-3.5 rounded-xl text-sm transition shadow-xl flex items-center justify-center space-x-2">
+                <span>Go to Dashboard</span>
+                <span>→</span>
+              </a>
+            </template>
+            <template v-else>
+              <a href="/register" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-7 py-3.5 rounded-xl text-sm transition shadow-xl flex items-center justify-center">Get Started — Free</a>
+            </template>
             <a href="/monthly-interests" class="border font-bold px-6 py-3.5 rounded-xl text-sm transition flex items-center justify-center space-x-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 shadow-lg shadow-emerald-500/10">
               <span>💰</span>
               <span>Earn 15% (USDT MM)</span>
@@ -633,7 +671,22 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({ user: Object, markets: Array });
 
-const isDark = ref(true);
+const mobileMenuOpen = ref(false);
+const isDark = ref(localStorage.getItem('trade_theme') !== 'light');
+
+function toggleTheme() {
+  isDark.value = !isDark.value;
+  const theme = isDark.value ? 'dark' : 'light';
+  localStorage.setItem('trade_theme', theme);
+  if (theme === 'light') {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  } else {
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
+  }
+}
+
 const activeCategory = ref('all');
 const openFaq = ref(null);
 
@@ -682,6 +735,15 @@ function startSliderTimer() {
 }
 
 onMounted(() => {
+  if (localStorage.getItem('trade_theme') === 'light') {
+    isDark.value = false;
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  } else {
+    isDark.value = true;
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
+  }
   updateVisibleCards();
   window.addEventListener('resize', updateVisibleCards);
   startSliderTimer();

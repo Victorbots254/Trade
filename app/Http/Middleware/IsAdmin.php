@@ -15,8 +15,16 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || !$request->user()->is_admin) {
-            abort(403, 'Unauthorized. Admin access only.');
+        $user = $request->user();
+
+        if (!$user || !$user->is_admin) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthorized. Admin access only.'], 403);
+            }
+            if ($user && $user->is_moderator) {
+                return redirect('/admin/p2p')->with('error', 'This section is restricted to Master Administrators.');
+            }
+            return redirect('/terminal')->with('error', 'Unauthorized. Admin access only.');
         }
 
         return $next($request);

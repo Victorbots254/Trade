@@ -104,75 +104,67 @@ class OrderController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        // If this is a demo order, execute locally and do not broadcast to public orderbooks
-        if ($isDemo) {
-            $shouldFill = false;
-            if ($request->type === 'market') {
-                $shouldFill = true;
-            } else {
-                if ($request->side === 'buy') {
-                    $shouldFill = ($price >= $market->last_price);
-                } else {
-                    $shouldFill = ($price <= $market->last_price);
-                }
-            }
+        // Execute spot order against liquidity (instant market execution into user holdings)
+        DB::beginTransaction();
+        try {
+            $targetCurrency = $request->side === 'buy' ? $market->base_currency : $market->quote_currency;
+            $targetAmount = $request->side === 'buy' ? $quantity : bcmul((string)$price, (string)$quantity, 8);
 
-            if ($shouldFill) {
-                DB::beginTransaction();
-                try {
-                    $targetCurrency = $request->side === 'buy' ? $market->base_currency : $market->quote_currency;
-                    $targetAmount = $request->side === 'buy' ? $quantity : bcmul((string)$price, (string)$quantity, 8);
+            $sourceWallet = Wallet::where('user_id', $user->id)
+                ->where('currency', $currencyToLock)
+                ->where('is_demo', $isDemo)
+                ->lockForUpdate()
+                ->first();
 
-                    $sourceWallet = Wallet::where('user_id', $user->id)
-                        ->where('currency', $currencyToLock)
-                        ->where('is_demo', true)
-                        ->first();
+            $destWallet = Wallet::firstOrCreate(
+                ['user_id' => $user->id, 'currency' => $targetCurrency, 'is_demo' => $isDemo],
+                ['available_balance' => 0, 'locked_balance' => 0]
+            );
+            $destWallet = Wallet::where('id', $destWallet->id)->lockForUpdate()->first();
 
-                    $destWallet = Wallet::firstOrCreate(
-                        ['user_id' => $user->id, 'currency' => $targetCurrency, 'is_demo' => true],
-                        ['available_balance' => 0, 'locked_balance' => 0]
-                    );
+            // Unlock locked balance from source wallet
+            $sourceWallet->locked_balance = max(0, (float) bcsub((string)$sourceWallet->locked_balance, (string)$amountToLock, 8));
+            $sourceWallet->save();
 
-                    // Unlock locked balance from source wallet
-                    $sourceWallet->locked_balance = bcsub((string)$sourceWallet->locked_balance, (string)$amountToLock, 8);
-                    $sourceWallet->save();
+            // Credit destination wallet
+            $destWallet->available_balance = (float) bcadd((string)$destWallet->available_balance, (string)$targetAmount, 8);
+            $destWallet->save();
 
-                    // Credit destination wallet
-                    $destWallet->available_balance = bcadd((string)$destWallet->available_balance, (string)$targetAmount, 8);
-                    $destWallet->save();
+            $order->filled_quantity = $quantity;
+            $order->status = 'filled';
+            $order->save();
 
-                    $order->filled_quantity = $quantity;
-                    $order->status = 'filled';
-                    $order->save();
-
-                    // Sync user.demo_balance if USDT wallet is modified
-                    if ($currencyToLock === 'USDT') {
-                        $user->update(['demo_balance' => $sourceWallet->available_balance + $sourceWallet->locked_balance]);
-                    }
-                    if ($targetCurrency === 'USDT') {
-                        $user->update(['demo_balance' => $destWallet->available_balance + $destWallet->locked_balance]);
-                    }
-
-                    DB::commit();
-                } catch (\Exception $ex) {
-                    DB::rollBack();
-                }
-            }
-
-            return response()->json([
-                'message' => $order->status === 'filled' ? 'Demo order filled instantly!' : 'Demo limit order placed.',
-                'order' => $order->fresh(),
-                'trades' => [],
+            // Record Trade in database
+            Trade::create([
+                'market_id' => $market->id,
+                'buy_order_id' => $request->side === 'buy' ? $order->id : 0,
+                'sell_order_id' => $request->side === 'sell' ? $order->id : 0,
+                'buyer_id' => $request->side === 'buy' ? $user->id : 0,
+                'seller_id' => $request->side === 'sell' ? $user->id : 0,
+                'price' => $price,
+                'quantity' => $quantity,
+                'side' => $request->side,
+                'is_demo' => $isDemo,
             ]);
+
+            // Sync user.demo_balance if USDT wallet is modified
+            if ($isDemo) {
+                $demoUsdt = Wallet::where('user_id', $user->id)->where('currency', 'USDT')->where('is_demo', true)->first();
+                if ($demoUsdt) {
+                    $user->update(['demo_balance' => (float) $demoUsdt->available_balance]);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Spot order fill error: ' . $ex->getMessage());
         }
 
-        // Process matching engine in Redis
-        $trades = OrderBookEngine::processOrder($order);
-
         return response()->json([
-            'message' => 'Order submitted successfully!',
+            'message' => 'Spot order filled instantly! Added to your positions & holdings.',
             'order' => $order->fresh(),
-            'trades' => $trades,
+            'trades' => [],
         ]);
     }
 

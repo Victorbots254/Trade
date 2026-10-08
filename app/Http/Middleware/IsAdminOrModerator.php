@@ -18,7 +18,10 @@ class IsAdminOrModerator
         $user = $request->user();
 
         if (!$user || (!$user->is_admin && !$user->is_moderator)) {
-            abort(403, 'Unauthorized. Admin or Moderator access required.');
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthorized. Admin or Moderator access required.'], 403);
+            }
+            return redirect('/terminal')->with('error', 'Unauthorized. Admin or Moderator access required.');
         }
 
         return $next($request);
