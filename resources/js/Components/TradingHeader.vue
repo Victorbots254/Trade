@@ -68,11 +68,11 @@
               <span>P2P Trading</span>
             </Link>
 
-            <!-- USDT MM (15%) Navigation Link -->
+            <!-- USDT MMF (15%) Navigation Link -->
             <Link href="/monthly-interests" 
                   class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1"
                   :class="$page.url === '/monthly-interests' ? 'bg-slate-800 text-[#f0b90b] font-semibold' : 'text-slate-300 hover:text-white hover:bg-slate-800/60'">
-              <span>USDT MM <span class="text-emerald-400 font-bold">(15%)</span></span>
+              <span>USDT MMF <span class="text-emerald-400 font-bold">(15%)</span></span>
             </Link>
 
             <Link href="/trades" 
@@ -299,7 +299,7 @@
           </Link>
           <Link href="/monthly-interests" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-[#f0b90b] flex items-center justify-between font-semibold">
             <div class="flex items-center space-x-1.5">
-              <span>USDT MM <span class="text-emerald-400 font-bold">(15%)</span></span>
+              <span>USDT MMF <span class="text-emerald-400 font-bold">(15%)</span></span>
             </div>
             <span class="text-slate-600">→</span>
           </Link>

@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-slate-950 text-slate-300 font-sans">
-    <Head title="USDT MM (15%)" />
+    <Head title="USDT MMF (15%)" />
 
     <!-- Standard Trading Navigation Header -->
     <TradingHeader :user="user" :wallets="wallet ? [wallet] : []" />
