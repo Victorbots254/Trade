@@ -16,11 +16,11 @@ use Inertia\Inertia;
 class AdminP2PController extends Controller
 {
     /**
-     * Display P2P Admin / Moderator Management Console.
+     * Display P2P Admin Management Console.
      */
     public function index(Request $request)
     {
-        $users = User::select('id', 'name', 'email', 'is_admin', 'is_moderator', 'is_p2p_merchant', 'p2p_merchant_name', 'p2p_completion_rate', 'p2p_completed_trades', 'created_at')
+        $users = User::select('id', 'name', 'email', 'is_admin', 'is_p2p_merchant', 'p2p_merchant_name', 'p2p_completion_rate', 'p2p_completed_trades', 'created_at')
             ->latest()
             ->get();
 
@@ -67,27 +67,6 @@ class AdminP2PController extends Controller
         ]);
 
         $action = $request->is_p2p_merchant ? 'granted P2P Merchant status' : 'revoked P2P Merchant status';
-        return redirect()->back()->with('message', "Successfully {$action} for {$user->name}.");
-    }
-
-    /**
-     * Appoint or remove Moderator privileges (Admin only).
-     */
-    public function toggleModerator(Request $request, User $user)
-    {
-        if (!$request->user()->is_admin) {
-            abort(403, 'Only master administrators can appoint moderators.');
-        }
-
-        $request->validate([
-            'is_moderator' => 'required|boolean',
-        ]);
-
-        $user->update([
-            'is_moderator' => $request->is_moderator,
-        ]);
-
-        $action = $request->is_moderator ? 'promoted to Moderator' : 'removed from Moderator';
         return redirect()->back()->with('message', "Successfully {$action} for {$user->name}.");
     }
 

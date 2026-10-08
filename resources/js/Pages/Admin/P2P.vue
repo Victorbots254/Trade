@@ -8,7 +8,7 @@
         <h1 class="text-base font-bold text-white flex items-center space-x-2">
           <span>🛡️ P2P Administration & Dispute Center</span>
           <span class="bg-[#f0b90b]/10 text-[#f0b90b] border border-[#f0b90b]/30 text-[10px] px-2 py-0.5 rounded font-mono uppercase font-bold">
-            {{ currentUser.is_admin ? 'Master Admin' : 'Moderator' }}
+            Admin Console
           </span>
         </h1>
       </div>
@@ -123,7 +123,6 @@
                 <td class="py-3 px-3 text-[#848e9c]">{{ u.email }}</td>
                 <td class="py-3 px-3 font-sans">
                   <span v-if="u.is_admin" class="bg-[#f0b90b]/10 text-[#f0b90b] border border-[#f0b90b]/30 text-[10px] px-2 py-0.5 rounded font-bold">Admin</span>
-                  <span v-else-if="u.is_moderator" class="bg-[#1e88e5]/10 text-[#64b5f6] border border-[#1e88e5]/30 text-[10px] px-2 py-0.5 rounded font-bold">Moderator</span>
                   <span v-else class="text-[#848e9c] text-[11px]">User</span>
                 </td>
                 <td class="py-3 px-3 font-sans">
@@ -137,7 +136,7 @@
                   <span class="text-white">{{ u.p2p_completed_trades || 0 }}</span>
                   <span class="text-[#848e9c] text-[10px]"> ({{ Number(u.p2p_completion_rate || 100).toFixed(1) }}%)</span>
                 </td>
-                <td class="py-3 px-3 text-right font-sans space-x-2">
+                <td class="py-3 px-3 text-right font-sans">
                   <!-- Toggle Merchant Button -->
                   <button
                     @click="toggleMerchantStatus(u)"
@@ -145,16 +144,6 @@
                     :class="u.is_p2p_merchant ? 'bg-[#f6465d]/10 hover:bg-[#f6465d]/20 text-[#f6465d] border border-[#f6465d]/30' : 'bg-[#0ecb81]/10 hover:bg-[#0ecb81]/20 text-[#0ecb81] border border-[#0ecb81]/30'"
                     class="px-2.5 py-1 rounded-lg text-xs font-bold transition">
                     {{ u.is_p2p_merchant ? 'Revoke Merchant' : 'Approve Merchant' }}
-                  </button>
-
-                  <!-- Toggle Moderator Button (Admin only) -->
-                  <button
-                    v-if="currentUser.is_admin && !u.is_admin"
-                    @click="toggleModeratorStatus(u)"
-                    type="button"
-                    :class="u.is_moderator ? 'bg-[#1e88e5]/20 text-[#64b5f6]' : 'border border-[#2b3139] text-[#848e9c] hover:text-white'"
-                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition">
-                    {{ u.is_moderator ? 'Remove Mod' : 'Make Mod' }}
                   </button>
                 </td>
               </tr>
@@ -373,16 +362,6 @@ function toggleMerchantStatus(user) {
     router.post(`/admin/p2p/users/${user.id}/merchant`, {
       is_p2p_merchant: willBeMerchant,
       p2p_merchant_name: user.p2p_merchant_name || user.name,
-    });
-  }
-}
-
-function toggleModeratorStatus(user) {
-  const willBeMod = !user.is_moderator;
-  const verb = willBeMod ? 'promote to Moderator' : 'remove Moderator role from';
-  if (confirm(`Are you sure you want to ${verb} ${user.name}?`)) {
-    router.post(`/admin/p2p/users/${user.id}/moderator`, {
-      is_moderator: willBeMod,
     });
   }
 }

@@ -147,7 +147,7 @@ Route::post('/api/login', function (Request $request) {
     if (Auth::attempt($request->only('email', 'password'))) {
         $request->session()->regenerate();
         $user = Auth::user();
-        $redirectUrl = ($user->is_admin || $user->is_moderator) ? '/admin/p2p' : '/terminal';
+        $redirectUrl = $user->is_admin ? '/admin/p2p' : '/terminal';
         return response()->json([
             'user' => $user,
             'redirect' => $redirectUrl,
@@ -270,21 +270,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/p2p/merchant/ads/{ad}/close', [P2PMerchantController::class, 'closeAd'])->name('p2p.merchant.ads.close');
 });
 
-// Admin & Moderator Shared Routes (P2P Management & Deposits Verification)
-Route::middleware(['auth', \App\Http\Middleware\IsAdminOrModerator::class])->prefix('admin')->group(function () {
+// Unified Admin Routes (P2P Management, Deposits Verification, User Controls)
+Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin')->group(function () {
     Route::get('/p2p', [AdminP2PController::class, 'index'])->name('admin.p2p');
     Route::post('/p2p/users/{user}/merchant', [AdminP2PController::class, 'toggleMerchant'])->name('admin.p2p.merchant');
-    Route::post('/p2p/users/{user}/moderator', [AdminP2PController::class, 'toggleModerator'])->name('admin.p2p.moderator');
     Route::post('/p2p/orders/{order}/resolve', [AdminP2PController::class, 'resolveDispute'])->name('admin.p2p.resolve');
 
     // Deposit Approvals
     Route::get('/deposits', [AdminDepositController::class, 'index'])->name('admin.deposits');
     Route::post('/deposits/{deposit}/approve', [AdminDepositController::class, 'approve'])->name('admin.deposits.approve');
     Route::post('/deposits/{deposit}/reject', [AdminDepositController::class, 'reject'])->name('admin.deposits.reject');
-});
 
-// Master Admin Only Routes (User Roster & Trading Controls)
-Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin')->group(function () {
+    // User Roster & Trading Controls
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users');
     Route::post('/users/bulk-mode', [AdminUserController::class, 'bulkUpdateOutcomeMode'])->name('admin.users.bulk_mode');
     Route::post('/users/{user}/mode', [AdminUserController::class, 'updateOutcomeMode'])->name('admin.users.mode');

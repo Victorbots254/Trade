@@ -21,9 +21,6 @@ class IsAdmin
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthorized. Admin access only.'], 403);
             }
-            if ($user && $user->is_moderator) {
-                return redirect('/admin/p2p')->with('error', 'This section is restricted to Master Administrators.');
-            }
             return redirect('/terminal')->with('error', 'Unauthorized. Admin access only.');
         }
 

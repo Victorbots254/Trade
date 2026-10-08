@@ -26,7 +26,7 @@ class P2PMerchantController extends Controller
         $wallet = \App\Services\WalletReconciliationService::reconcileUsdtWallet($user, false);
 
         return Inertia::render('P2P/MerchantAds', [
-            'isMerchant' => (bool) ($user->is_p2p_merchant || $user->is_admin || $user->is_moderator),
+            'isMerchant' => (bool) ($user->is_p2p_merchant || $user->is_admin),
             'merchantName' => $user->p2p_merchant_name ?: $user->name,
             'completionRate' => (float) $user->p2p_completion_rate,
             'completedTrades' => (int) $user->p2p_completed_trades,
@@ -42,9 +42,9 @@ class P2PMerchantController extends Controller
     {
         $user = $request->user();
 
-        if (!$user->is_p2p_merchant && !$user->is_admin && !$user->is_moderator) {
+        if (!$user->is_p2p_merchant && !$user->is_admin) {
             return redirect()->back()->withErrors([
-                'message' => 'Only verified P2P Merchants approved by an Admin or Moderator can post ads.',
+                'message' => 'Only verified P2P Merchants approved by an Admin can post ads.',
             ]);
         }
 
@@ -67,9 +67,9 @@ class P2PMerchantController extends Controller
             'time_limit_minutes' => 'nullable|integer|min:10|max:60',
         ]);
 
-        // If Merchant is selling USDT, verify balance (admins/moderators automatically provide liquidity if needed)
+        // If Merchant is selling USDT, verify balance (admins automatically provide liquidity if needed)
         if ($request->type === 'sell') {
-            if (($user->is_admin || $user->is_moderator) && (float)$wallet->available_balance < (float)$request->total_amount) {
+            if ($user->is_admin && (float)$wallet->available_balance < (float)$request->total_amount) {
                 $wallet->available_balance = max((float)$wallet->available_balance, (float)$request->total_amount);
                 $wallet->save();
             }
@@ -109,7 +109,7 @@ class P2PMerchantController extends Controller
     {
         $user = $request->user();
 
-        if ($ad->user_id !== $user->id && !$user->is_admin && !$user->is_moderator) {
+        if ($ad->user_id !== $user->id && !$user->is_admin) {
             abort(403);
         }
 
@@ -126,7 +126,7 @@ class P2PMerchantController extends Controller
     {
         $user = $request->user();
 
-        if ($ad->user_id !== $user->id && !$user->is_admin && !$user->is_moderator) {
+        if ($ad->user_id !== $user->id && !$user->is_admin) {
             abort(403);
         }
 

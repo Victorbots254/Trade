@@ -17,8 +17,8 @@
 
         <!-- Navigation Links (Desktop) -->
         <nav class="hidden md:flex items-center space-x-1.5 font-medium text-[13px]">
-          <!-- ADMIN & MODERATOR NAVIGATION -->
-          <template v-if="user?.is_admin || user?.is_moderator">
+          <!-- ADMIN NAVIGATION -->
+          <template v-if="user?.is_admin">
             <Link href="/admin/p2p" 
                   class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 font-bold text-xs"
                   :class="$page.url.startsWith('/admin/p2p') ? 'bg-[#f0b90b] text-[#1e2329] shadow' : 'text-[#f0b90b] bg-[#f0b90b]/10 border border-[#f0b90b]/30 hover:bg-[#f0b90b]/20'">
@@ -26,7 +26,7 @@
               <span>P2P Dispute Center</span>
             </Link>
 
-            <Link v-if="user?.is_admin" href="/admin/users" 
+            <Link href="/admin/users" 
                   class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 font-bold text-xs"
                   :class="$page.url.startsWith('/admin/users') ? 'bg-amber-500 text-slate-950 shadow' : 'text-amber-300 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60'">
               <span>👥</span>
@@ -166,22 +166,21 @@
                 <div class="flex items-center justify-between mb-1">
                   <span class="text-slate-100 font-bold truncate">{{ user.name }}</span>
                   <span v-if="user.is_admin" class="bg-[#f0b90b]/15 text-[#f0b90b] text-[10px] px-1.5 py-0.5 rounded font-bold border border-[#f0b90b]/30">Admin</span>
-                  <span v-else-if="user.is_moderator" class="bg-blue-500/15 text-blue-400 text-[10px] px-1.5 py-0.5 rounded font-bold border border-blue-500/30">Moderator</span>
                 </div>
                 <div class="text-slate-400 text-[11px] truncate">{{ user.email }}</div>
               </div>
 
-              <!-- Admin & Mod Links -->
-              <div v-if="user.is_admin || user.is_moderator" class="py-1">
+              <!-- Admin Links -->
+              <div v-if="user.is_admin" class="py-1">
                 <Link href="/admin/p2p" class="px-4 py-2 hover:bg-slate-800 text-[#f0b90b] flex items-center space-x-2 transition font-semibold">
                   <span>🛡️</span>
-                  <span>P2P Center (Admin/Mod)</span>
+                  <span>P2P Dispute Center</span>
                 </Link>
-                <Link v-if="user.is_admin" href="/admin/users" class="px-4 py-2 hover:bg-slate-800 text-amber-300 flex items-center space-x-2 transition">
+                <Link href="/admin/users" class="px-4 py-2 hover:bg-slate-800 text-amber-300 flex items-center space-x-2 transition">
                   <span>⚙️</span>
                   <span>Admin Users Control</span>
                 </Link>
-                <Link v-if="user.is_admin" href="/admin/deposits" class="px-4 py-2 hover:bg-slate-800 text-emerald-400 flex items-center space-x-2 transition">
+                <Link href="/admin/deposits" class="px-4 py-2 hover:bg-slate-800 text-emerald-400 flex items-center space-x-2 transition">
                   <span>💰</span>
                   <span>Admin Deposits</span>
                 </Link>
@@ -266,12 +265,12 @@
 
       <!-- Navigation Links -->
       <div class="grid grid-cols-1 gap-1 text-[13px] font-medium">
-        <template v-if="user?.is_admin || user?.is_moderator">
+        <template v-if="user?.is_admin">
           <Link href="/admin/p2p" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg bg-[#f0b90b]/10 text-[#f0b90b] font-bold flex items-center justify-between border border-[#f0b90b]/20">
             <span>🛡️ P2P Dispute Center</span>
             <span>→</span>
           </Link>
-          <Link v-if="user?.is_admin" href="/admin/users" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-amber-300 font-bold flex items-center justify-between">
+          <Link href="/admin/users" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-amber-300 font-bold flex items-center justify-between">
             <span>👥 Trader Controls</span>
             <span>→</span>
           </Link>

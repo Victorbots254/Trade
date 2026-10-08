@@ -350,7 +350,7 @@
     <div v-if="showDisputeModal" class="fixed inset-0 z-50 bg-[#0b0e11]/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl text-xs">
         <h3 class="font-bold text-white text-sm">Open Dispute / Appeal</h3>
-        <p class="text-[#848e9c]">Explain the issue clearly. An Admin or Moderator will review evidence in the trade chat.</p>
+        <p class="text-[#848e9c]">Explain the issue clearly. An Admin will review evidence in the trade chat.</p>
 
         <div>
           <label class="block text-[#848e9c] mb-1 font-semibold">Reason for Appeal</label>

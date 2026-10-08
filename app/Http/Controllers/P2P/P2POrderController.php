@@ -150,8 +150,8 @@ class P2POrderController extends Controller
     {
         $user = $request->user();
 
-        // Check authorization (buyer, seller, admin, or moderator)
-        if ($order->buyer_id !== $user->id && $order->seller_id !== $user->id && !$user->is_admin && !$user->is_moderator) {
+        // Check authorization (buyer, seller, or admin)
+        if ($order->buyer_id !== $user->id && $order->seller_id !== $user->id && !$user->is_admin) {
             abort(403, 'Unauthorized access to this P2P order.');
         }
 
@@ -173,7 +173,8 @@ class P2POrderController extends Controller
             'currentUser' => $user,
             'isBuyer' => $order->buyer_id === $user->id,
             'isSeller' => $order->seller_id === $user->id,
-            'isAdminOrMod' => (bool) ($user->is_admin || $user->is_moderator),
+            'isAdminOrMod' => (bool) $user->is_admin,
+            'isAdmin' => (bool) $user->is_admin,
         ]);
     }
 
@@ -214,7 +215,7 @@ class P2POrderController extends Controller
     {
         $user = $request->user();
 
-        if ($order->seller_id !== $user->id && !$user->is_admin && !$user->is_moderator) {
+        if ($order->seller_id !== $user->id && !$user->is_admin) {
             abort(403, 'Only the seller can release crypto.');
         }
 
@@ -275,7 +276,7 @@ class P2POrderController extends Controller
     {
         $user = $request->user();
 
-        if ($order->buyer_id !== $user->id && !$user->is_admin && !$user->is_moderator) {
+        if ($order->buyer_id !== $user->id && !$user->is_admin) {
             abort(403, 'Only the buyer or admin can cancel the order.');
         }
 
@@ -324,10 +325,10 @@ class P2POrderController extends Controller
             'order_id' => $order->id,
             'user_id' => null,
             'is_system' => true,
-            'message' => "⚠️ Dispute opened by {$user->name}. Reason: {$request->reason}. An Admin or Moderator will review evidence in this chat and resolve.",
+            'message' => "⚠️ Dispute opened by {$user->name}. Reason: {$request->reason}. An Admin will review evidence in this chat and resolve.",
         ]);
 
-        return redirect()->back()->with('message', 'Dispute reported. Trade locked for moderator review.');
+        return redirect()->back()->with('message', 'Dispute reported. Trade locked for admin review.');
     }
 
     /**
@@ -342,7 +343,7 @@ class P2POrderController extends Controller
 
         $user = $request->user();
 
-        if ($order->buyer_id !== $user->id && $order->seller_id !== $user->id && !$user->is_admin && !$user->is_moderator) {
+        if ($order->buyer_id !== $user->id && $order->seller_id !== $user->id && !$user->is_admin) {
             abort(403);
         }
 

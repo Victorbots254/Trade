@@ -34,7 +34,7 @@
         <div class="space-y-2">
           <h2 class="text-xl font-bold text-white">P2P Merchant Authorization Required</h2>
           <p class="text-xs text-[#848e9c] leading-relaxed max-w-md mx-auto">
-            To prevent fraud and maintain the highest safety standards (like Binance P2P), only traders vetted and authorized by an <strong>Admin or Moderator</strong> can publish P2P advertisements.
+            To prevent fraud and maintain the highest safety standards (like Binance P2P), only traders vetted and authorized by an <strong>Admin</strong> can publish P2P advertisements.
           </p>
         </div>
 

@@ -17,11 +17,11 @@ class IsAdminOrModerator
     {
         $user = $request->user();
 
-        if (!$user || (!$user->is_admin && !$user->is_moderator)) {
+        if (!$user || !$user->is_admin) {
             if ($request->expectsJson()) {
-                return response()->json(['message' => 'Unauthorized. Admin or Moderator access required.'], 403);
+                return response()->json(['message' => 'Unauthorized. Admin access required.'], 403);
             }
-            return redirect('/terminal')->with('error', 'Unauthorized. Admin or Moderator access required.');
+            return redirect('/terminal')->with('error', 'Unauthorized. Admin access required.');
         }
 
         return $next($request);

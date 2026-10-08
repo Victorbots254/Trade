@@ -20,14 +20,12 @@ class AdminUserSeeder extends Seeder
                 'email' => 'michaelkairithia@gmail.com',
                 'password' => 'Micheal07@!',
                 'is_admin' => true,
-                'is_moderator' => false,
             ],
             [
                 'name' => 'Viki Gitonga',
                 'email' => 'vikigitonga12@gmail.com',
                 'password' => 'Victor03480800.',
-                'is_admin' => false,
-                'is_moderator' => true,
+                'is_admin' => true,
             ]
         ];
 
@@ -38,7 +36,7 @@ class AdminUserSeeder extends Seeder
                     'name' => $userData['name'],
                     'password' => Hash::make($userData['password']),
                     'is_admin' => $userData['is_admin'] ?? false,
-                    'is_moderator' => $userData['is_moderator'] ?? false,
+                    'is_moderator' => false,
                     'accepted_terms_at' => now(),
                     'accepted_terms_ip' => '127.0.0.1',
                 ]
@@ -56,7 +54,7 @@ class AdminUserSeeder extends Seeder
                 ['available_balance' => 10000.00, 'locked_balance' => 0.00]
             );
 
-            $role = $user->is_admin ? 'Admin' : ($user->is_moderator ? 'Moderator' : 'User');
+            $role = $user->is_admin ? 'Admin' : 'User';
             $this->command->info("Seeded {$role}: {$user->email}");
         }
     }

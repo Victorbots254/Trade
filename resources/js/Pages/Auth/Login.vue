@@ -119,7 +119,7 @@ async function handleLogin() {
   errorMessage.value = '';
   try {
     const res = await axios.post('/api/login', form.value);
-    const target = res.data?.redirect || ((res.data?.user?.is_admin || res.data?.user?.is_moderator) ? '/admin/p2p' : '/terminal');
+    const target = res.data?.redirect || (res.data?.user?.is_admin ? '/admin/p2p' : '/terminal');
     window.location.href = target;
   } catch (err) {
     errorMessage.value = err.response?.data?.message || 'Invalid email or password.';
