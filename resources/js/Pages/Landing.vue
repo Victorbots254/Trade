@@ -83,24 +83,34 @@
       </div>
       <div class="relative max-w-[1400px] mx-auto px-4 pt-16 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div class="space-y-6">
-          <div class="inline-flex items-center space-x-2 border rounded-full px-3.5 py-1.5 text-[11px] font-semibold" :class="isDark?'border-[#f0b90b]/30 bg-[#f0b90b]/10 text-[#f0b90b]':'border-[#f0b90b]/40 bg-[#f0b90b]/10 text-[#b07e00]'">
-            <span class="w-2 h-2 bg-[#f0b90b] rounded-full animate-pulse"></span>
-            <span>LIVE MARKETS · INSTITUTIONAL-GRADE EXCHANGE</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="inline-flex items-center space-x-2 border rounded-full px-3.5 py-1.5 text-[11px] font-semibold" :class="isDark?'border-[#f0b90b]/30 bg-[#f0b90b]/10 text-[#f0b90b]':'border-[#f0b90b]/40 bg-[#f0b90b]/10 text-[#b07e00]'">
+              <span class="w-2 h-2 bg-[#f0b90b] rounded-full animate-pulse"></span>
+              <span>LIVE MARKETS · INSTITUTIONAL EXCHANGE</span>
+            </div>
+            <a href="/monthly-interests" class="inline-flex items-center space-x-1.5 border rounded-full px-3.5 py-1.5 text-[11px] font-bold transition hover:scale-105" :class="isDark?'border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20':'border-emerald-600/40 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'">
+              <span>💰</span>
+              <span>EARN UP TO 15% MONTHLY (USDT MM) →</span>
+            </a>
           </div>
           <h1 class="text-4xl sm:text-5xl xl:text-6xl font-extrabold leading-tight" :class="isDark?'text-white':'text-[#1e2329]'">
             Trade Crypto,<br>Gold &amp; Stocks<br><span class="text-[#f0b90b]">With Confidence.</span>
           </h1>
           <p class="text-[15px] leading-relaxed max-w-lg" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">
-            Access 14+ spot markets with real-time pricing, binary options up to 88% ROI, and instant USDT deposits via BNB Smart Chain.
+            Access 14+ spot markets with real-time pricing, binary options up to 88% ROI, and <strong>earn guaranteed up to 15% monthly interest</strong> with TradeCo USDT Money Market.
           </p>
           <div class="flex flex-col sm:flex-row gap-3 pt-2">
-            <a href="/register" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-8 py-3.5 rounded-xl text-sm transition shadow-xl flex items-center justify-center">Get Started — It's Free</a>
-            <a href="/trade/BTC_USDT" class="border font-semibold px-8 py-3.5 rounded-xl text-sm transition flex items-center justify-center" :class="isDark?'border-[#2b3139] text-white hover:border-[#f0b90b]':'border-gray-200 text-[#1e2329] hover:border-[#f0b90b]'">📊 View Markets</a>
+            <a href="/register" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-7 py-3.5 rounded-xl text-sm transition shadow-xl flex items-center justify-center">Get Started — Free</a>
+            <a href="/monthly-interests" class="border font-bold px-6 py-3.5 rounded-xl text-sm transition flex items-center justify-center space-x-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 shadow-lg shadow-emerald-500/10">
+              <span>💰</span>
+              <span>Earn 15% (USDT MM)</span>
+            </a>
+            <a href="#markets" class="border font-semibold px-5 py-3.5 rounded-xl text-sm transition flex items-center justify-center" :class="isDark?'border-[#2b3139] text-white hover:border-[#f0b90b]':'border-gray-200 text-[#1e2329] hover:border-[#f0b90b]'">📊 Markets</a>
           </div>
           <div class="flex flex-wrap items-center gap-4 pt-2 text-[11px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">
             <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>No KYC Required</span></div>
+            <div class="flex items-center space-x-1.5 text-emerald-400 font-bold"><span class="text-[#0ecb81]">✔</span><span>Earn 15% Monthly Yield</span></div>
             <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>USDT BEP20 Deposits</span></div>
-            <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>Instant Settlements</span></div>
             <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>$10,000 Demo Account</span></div>
           </div>
         </div>
@@ -162,6 +172,83 @@
       </div>
     </div>
 
+    <!-- USDT MONEY MARKET (EARN UP TO 15%) SECTION -->
+    <section id="earn" class="py-12 px-4 border-b relative overflow-hidden" :class="isDark?'bg-[#0e1217] border-[#2b3139]':'bg-emerald-50/40 border-gray-200'">
+      <div class="max-w-[1400px] mx-auto space-y-6">
+        <!-- Main Highlight Banner -->
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 bg-gradient-to-r from-emerald-500/15 via-[#181a20] to-[#181a20] border border-emerald-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+          <div class="space-y-2.5 max-w-2xl relative z-10">
+            <div class="inline-flex items-center space-x-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>💰 TradeCo Money Market Fund (USDT MM)</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black text-white leading-tight">
+              Earn Up to <span class="text-emerald-400 underline decoration-emerald-500/50">15% Monthly Yield</span> on Idle USDT
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Don't leave your capital idle. Lock your USDT for 30 days and earn guaranteed 15% fixed return. Zero market exposure, automated daily accounting, and 100% capital returned to your wallet upon maturity.
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 relative z-10 w-full lg:w-auto">
+            <div class="bg-black/50 border border-emerald-500/40 rounded-xl px-5 py-3 text-center sm:text-left font-mono shadow-inner">
+              <div class="text-[11px] text-slate-400 uppercase font-sans font-semibold">Guaranteed Yield</div>
+              <div class="text-2xl sm:text-3xl font-black text-emerald-400">15.0% <span class="text-xs text-slate-400 font-normal font-sans">/ 30 Days</span></div>
+            </div>
+            <a href="/monthly-interests" class="bg-gradient-to-r from-[#0ecb81] to-emerald-500 hover:from-emerald-400 hover:to-emerald-500 text-[#0b0e11] font-black px-7 py-3.5 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 text-center group">
+              <span>Start Earning 15%</span>
+              <span class="group-hover:translate-x-1 transition-transform font-bold">→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 3 Feature Highlight Cards with Real Return Examples -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="rounded-xl p-5 border transition" :class="isDark?'bg-[#181a20] border-[#2b3139] hover:border-emerald-500/40':'bg-white border-gray-200 hover:border-emerald-500/40'">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-2xl">📈</span>
+              <span class="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">15% Profit</span>
+            </div>
+            <div class="font-bold text-sm text-white mb-1">Fixed Monthly Profit</div>
+            <p class="text-xs text-[#848e9c] leading-relaxed mb-3">
+              Lock $1,000 USDT and receive $1,150 USDT at the end of 30 days. No floating rates or unexpected drawdowns.
+            </p>
+            <div class="text-[11px] font-mono text-emerald-400 bg-emerald-500/5 p-2 rounded border border-emerald-500/15">
+              Example: $1,000 lock → +$150.00 USDT profit
+            </div>
+          </div>
+
+          <div class="rounded-xl p-5 border transition" :class="isDark?'bg-[#181a20] border-[#2b3139] hover:border-emerald-500/40':'bg-white border-gray-200 hover:border-emerald-500/40'">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-2xl">🛡️</span>
+              <span class="text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Principal Guard</span>
+            </div>
+            <div class="font-bold text-sm text-white mb-1">Principal Guaranteed</div>
+            <p class="text-xs text-[#848e9c] leading-relaxed mb-3">
+              Your initial principal and earned interests are backed by exchange liquidity and cold-storage vaults.
+            </p>
+            <div class="text-[11px] font-mono text-amber-400 bg-amber-500/5 p-2 rounded border border-amber-500/15">
+              Example: $5,000 lock → +$750.00 USDT profit
+            </div>
+          </div>
+
+          <div class="rounded-xl p-5 border transition" :class="isDark?'bg-[#181a20] border-[#2b3139] hover:border-emerald-500/40':'bg-white border-gray-200 hover:border-emerald-500/40'">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-2xl">⚡</span>
+              <span class="text-[11px] font-bold text-[#f0b90b] bg-[#f0b90b]/10 px-2 py-0.5 rounded border border-[#f0b90b]/20">Start with $10</span>
+            </div>
+            <div class="font-bold text-sm text-white mb-1">Low Minimum Entry</div>
+            <p class="text-xs text-[#848e9c] leading-relaxed mb-3">
+              Start earning passive returns from just $10 USDT. Deposit via M-Pesa or BEP20 and lock in one click.
+            </p>
+            <div class="text-[11px] font-mono text-[#f0b90b] bg-[#f0b90b]/5 p-2 rounded border border-[#f0b90b]/15">
+              Min lock: $10.00 USDT · 30 Days term
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- MARKETS TABLE -->
     <section id="markets" class="py-16 px-4" :class="isDark?'bg-[#0b0e11]':'bg-white'">
       <div class="max-w-[1400px] mx-auto space-y-6">
@@ -171,13 +258,13 @@
               <h2 class="text-2xl font-bold" :class="isDark?'text-white':'text-[#1e2329]'">Market Overview</h2>
               <span class="text-[11px] px-2.5 py-0.5 rounded-full font-semibold font-mono"
                 :class="isDark ? 'bg-[#f0b90b]/10 text-[#f0b90b] border border-[#f0b90b]/20' : 'bg-amber-100 text-amber-800 border border-amber-200'">
-                {{ showAllMarkets ? 'All (' + filteredMarkets.length + ')' : 'Top 20' }}
+                {{ showAllMarkets ? 'All (' + filteredMarkets.length + ')' : 'Top 10' }}
               </span>
             </div>
             <p class="text-[13px] mt-1" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Real-time prices across all spot pairs.</p>
           </div>
 
-          <!-- Controls: Categories, Search, and Top 20 / View All Toggle -->
+          <!-- Controls: Categories, Search, and Top 10 / View All Toggle -->
           <div class="flex flex-wrap items-center gap-3 text-[12px] font-semibold w-full lg:w-auto">
             <!-- Category Tabs -->
             <div class="flex items-center space-x-1">
@@ -198,13 +285,13 @@
               <button v-if="marketSearch" @click="marketSearch=''" class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 hover:text-white">✕</button>
             </div>
 
-            <!-- Top 20 vs View All Toggle Button Group -->
+            <!-- Top 10 vs View All Toggle Button Group -->
             <div class="flex items-center space-x-1 p-0.5 rounded-lg border text-[11px]"
               :class="isDark ? 'bg-[#181a20] border-[#2b3139]' : 'bg-gray-100 border-gray-200'">
               <button @click="showAllMarkets = false"
                 class="px-3 py-1 rounded-md transition font-medium"
                 :class="!showAllMarkets ? 'bg-[#f0b90b] text-[#1e2329] font-bold shadow-sm' : isDark ? 'text-[#848e9c] hover:text-white' : 'text-[#474d57] hover:text-[#1e2329]'">
-                Top 20
+                Top 10
               </button>
               <button @click="showAllMarkets = true"
                 class="px-3 py-1 rounded-md transition font-medium"
@@ -261,8 +348,8 @@
             </tbody>
           </table>
 
-          <!-- Bottom Action Bar: Show 20 vs View All -->
-          <div v-if="filteredMarkets.length > 20" class="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"
+          <!-- Bottom Action Bar: Show 10 vs View All -->
+          <div v-if="filteredMarkets.length > 10" class="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"
             :class="isDark ? 'border-[#2b3139] bg-[#181a20]/60 text-[#848e9c]' : 'border-gray-200 bg-gray-50 text-[#707a8a]'">
             <div class="flex items-center space-x-2">
               <span>Showing</span>
@@ -274,7 +361,7 @@
                 {{ filteredMarkets.length }}
               </span>
               <span>markets</span>
-              <span v-if="!showAllMarkets" class="text-[11px] text-[#f0b90b] font-medium">(First 20)</span>
+              <span v-if="!showAllMarkets" class="text-[11px] text-[#f0b90b] font-medium">(Top 10)</span>
             </div>
 
             <div class="flex items-center space-x-3">
@@ -285,10 +372,10 @@
                 <span class="transition-transform group-hover:translate-y-0.5 font-bold">▾</span>
               </button>
               <button v-else
-                @click="collapseTo20"
+                @click="collapseTo10"
                 class="border px-5 py-2.5 rounded-xl text-xs font-semibold transition flex items-center space-x-2 group"
                 :class="isDark ? 'border-[#2b3139] text-[#848e9c] hover:text-white hover:border-[#f0b90b]' : 'border-gray-300 text-[#474d57] hover:text-[#1e2329] hover:border-[#f0b90b]'">
-                <span>Show Just 20</span>
+                <span>Show Top 10</span>
                 <span class="transition-transform group-hover:-translate-y-0.5 font-bold">▴</span>
               </button>
             </div>
@@ -598,7 +685,7 @@ const cryptoSymbols = ['BTC/USDT','ETH/USDT','BNB/USDT','SOL/USDT','XRP/USDT','D
 const commoditySymbols = ['GOLD','GOLD/USDT','SILVER/USDT','OIL/USDT','USOIL'];
 const stockSymbols = ['NVDA/USDT','AAPL/USDT','TSLA/USDT','MSFT/USDT','SPY/USDT','AAPLB/USDT','NVDAB/USDT','SPYB/USDT','TSLAB/USDT'];
 
-// 20 vs View All mode: Defaults to showing 20 at first round
+// 10 vs View All mode: Defaults to showing 10 at first round
 const showAllMarkets = ref(false);
 const marketSearch = ref('');
 
@@ -627,10 +714,10 @@ const displayedMarkets = computed(() => {
   if (showAllMarkets.value) {
     return filteredMarkets.value;
   }
-  return filteredMarkets.value.slice(0, 20);
+  return filteredMarkets.value.slice(0, 10);
 });
 
-function collapseTo20() {
+function collapseTo10() {
   showAllMarkets.value = false;
   const el = document.getElementById('markets');
   if (el) {
