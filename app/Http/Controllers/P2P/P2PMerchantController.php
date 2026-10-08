@@ -85,12 +85,15 @@ class P2PMerchantController extends Controller
             }
         }
 
+        // Force 1:1 parity rate when settling in USDT or USD
+        $unitPrice = in_array($request->fiat, ['USDT', 'USD']) ? 1.00 : (float) $request->price;
+
         $ad = P2PAd::create([
             'user_id' => $user->id,
             'type' => $request->type,
             'asset' => $request->asset,
             'fiat' => $request->fiat,
-            'price' => $request->price,
+            'price' => $unitPrice,
             'total_amount' => $request->total_amount,
             'available_amount' => $request->total_amount,
             'min_limit' => $request->min_limit,

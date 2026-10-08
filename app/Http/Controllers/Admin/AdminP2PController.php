@@ -106,8 +106,11 @@ class AdminP2PController extends Controller
                     throw new Exception('Seller locked balance is insufficient to complete release.');
                 }
 
+                $escrowFee = (float) ($order->escrow_fee ?? 0);
+                $netCrypto = max(0, round($order->crypto_amount - $escrowFee, 4));
+
                 $sellerWallet->decrement('locked_balance', $order->crypto_amount);
-                $buyerWallet->increment('available_balance', $order->crypto_amount);
+                $buyerWallet->increment('available_balance', $netCrypto);
 
                 $order->update([
                     'status' => 'completed',
@@ -118,11 +121,12 @@ class AdminP2PController extends Controller
                 $order->seller->increment('p2p_completed_trades');
 
                 // System message
+                $feeNote = $escrowFee > 0 ? " (Fee: {$escrowFee} USDT)" : " (Free escrow)";
                 P2PMessage::create([
                     'order_id' => $order->id,
                     'user_id' => null,
                     'is_system' => true,
-                    'message' => "⚖️ Dispute resolved by Staff ({$request->user()->name}): Crypto ({$order->crypto_amount} USDT) has been forcibly released to the Buyer. Staff Note: {$request->admin_notes}",
+                    'message' => "⚖️ Dispute resolved by Staff ({$request->user()->name}): Crypto ({$netCrypto} USDT net{$feeNote}) has been forcibly released to the Buyer. Staff Note: {$request->admin_notes}",
                 ]);
             } else {
                 // Refund seller

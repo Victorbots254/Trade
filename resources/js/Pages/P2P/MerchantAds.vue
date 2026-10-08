@@ -255,18 +255,22 @@
                 </div>
               </div>
 
-              <div class="relative">
+              <div v-if="adForm.fiat === 'USDT' || adForm.fiat === 'USD'" class="bg-[#181a20] border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-white font-mono text-sm flex justify-between items-center">
+                <span class="text-emerald-400 font-bold text-base">1.00 {{ adForm.fiat }}</span>
+                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded font-sans font-semibold">Fixed 1:1 Parity</span>
+              </div>
+              <div v-else class="relative">
                 <input
                   v-model="adForm.price"
                   type="number"
                   step="0.01"
                   required
-                  placeholder="e.g. 1.00"
+                  placeholder="e.g. 129.50"
                   class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3.5 py-2.5 text-white font-mono text-sm focus:border-[#f0b90b] focus:outline-none" />
                 <span class="absolute right-3 top-2.5 text-xs text-[#848e9c] font-mono font-bold">{{ adForm.fiat }}</span>
               </div>
               <p class="text-[10px] text-[#848e9c]">
-                {{ adForm.fiat === 'KES' ? 'Market price auto-fetched. You can customize your offer rate.' : 'Standard 1:1 stablecoin settlement rate.' }}
+                {{ adForm.fiat === 'KES' ? 'Market price auto-fetched. You can customize your offer rate.' : 'Standard 1:1 stablecoin settlement rate (1 USDT = $1.00).' }}
               </p>
             </div>
           </div>
@@ -401,6 +405,9 @@ function applyMarketRate() {
 }
 
 function submitCreateAd() {
+  if (adForm.value.fiat === 'USDT' || adForm.value.fiat === 'USD') {
+    adForm.value.price = '1.00';
+  }
   creatingAd.value = true;
   router.post('/p2p/merchant/ads', adForm.value, {
     onSuccess: () => {

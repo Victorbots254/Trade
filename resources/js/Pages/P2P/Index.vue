@@ -183,7 +183,7 @@
                 <!-- Price -->
                 <td class="py-4 px-4 font-mono">
                   <div class="text-base font-black text-white">
-                    <span v-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$ {{ Number(ad.price).toFixed(2) }}</span>
+                    <span v-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$ {{ Number(getEffectivePrice(ad)).toFixed(2) }}</span>
                     <span v-else>{{ Number(ad.price).toFixed(2) }}</span>
                     <span class="text-xs text-[#848e9c] font-normal ml-1">{{ ad.fiat }}</span>
                   </div>
@@ -276,15 +276,21 @@
 
         <!-- Ad Summary Details -->
         <div class="bg-[#0b0e11] border border-[#2b3139] rounded-xl p-3 space-y-2 font-mono text-[11px]">
-          <div class="flex justify-between">
+          <div class="flex justify-between items-center">
             <span class="text-[#848e9c]">Unit Price:</span>
-            <span class="font-bold text-white">{{ Number(selectedAd.price).toFixed(2) }} {{ selectedAd.fiat }}</span>
+            <span class="font-bold text-white text-xs">
+              <span v-if="selectedAd.fiat === 'USDT' || selectedAd.fiat === 'USD'">$1.00 {{ selectedAd.fiat }} (1:1 Fixed)</span>
+              <span v-else>{{ Number(selectedAd.price).toFixed(2) }} {{ selectedAd.fiat }}</span>
+            </span>
           </div>
-          <div class="flex justify-between">
+          <div class="flex justify-between items-center">
             <span class="text-[#848e9c]">Order Limits:</span>
-            <span class="text-white">{{ Number(selectedAd.min_limit).toLocaleString() }} - {{ Number(selectedAd.max_limit).toLocaleString() }} {{ selectedAd.fiat }}</span>
+            <span class="text-white">
+              <span v-if="selectedAd.fiat === 'USDT' || selectedAd.fiat === 'USD'">$</span>{{ Number(selectedAd.min_limit).toLocaleString() }} - 
+              <span v-if="selectedAd.fiat === 'USDT' || selectedAd.fiat === 'USD'">$</span>{{ Number(selectedAd.max_limit).toLocaleString() }} {{ selectedAd.fiat }}
+            </span>
           </div>
-          <div class="flex justify-between">
+          <div class="flex justify-between items-center">
             <span class="text-[#848e9c]">Payment Window:</span>
             <span class="text-[#f0b90b]">{{ selectedAd.time_limit_minutes || 15 }} Minutes</span>
           </div>
@@ -299,7 +305,7 @@
                 v-model="tradeFiatInput"
                 @input="calculateFromFiat"
                 type="number"
-                step="1"
+                step="any"
                 :min="selectedAd.min_limit"
                 :max="selectedAd.max_limit"
                 placeholder="0.00"
@@ -308,16 +314,23 @@
             </div>
           </div>
 
-          <div>
-            <label class="block text-[#848e9c] mb-1 font-semibold">I will receive (USDT)</label>
-            <div class="relative">
-              <input
-                v-model="tradeCryptoInput"
-                @input="calculateFromCrypto"
-                type="number"
-                step="0.0001"
-                placeholder="0.00"
-                class="w-full bg-[#0b0e11] border border-[#2b3139] rounded-xl px-4 py-3 text-[#0ecb81] font-mono text-sm font-bold focus:outline-none focus:border-[#f0b90b]" />
+          <!-- Escrow & Fee Breakdown Box -->
+          <div class="bg-[#0b0e11] border border-[#2b3139] rounded-xl p-3.5 space-y-2 font-mono text-xs">
+            <div class="flex justify-between items-center text-[11px]">
+              <span class="text-[#848e9c]">Platform Escrow Fee:</span>
+              <span v-if="computedFee === 0" class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+                🎉 FREE ($0.00)
+              </span>
+              <span v-else class="text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                0.50 USDT
+              </span>
+            </div>
+            <div class="text-[10px] text-[#848e9c]">
+              ✨ Free escrow for trades up to $50 · Flat 0.50 USDT fee for trades over $50
+            </div>
+            <div class="border-t border-[#2b3139] pt-2 flex justify-between items-center">
+              <span class="text-white font-sans font-bold">Net Deposited into Wallet:</span>
+              <span class="text-emerald-400 font-black text-base">{{ computedNetReceive.toFixed(4) }} USDT</span>
             </div>
           </div>
 
@@ -359,7 +372,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -377,10 +390,28 @@ const selectedPayment = ref(props.filters.payment_method || 'all');
 
 const selectedAd = ref(null);
 const tradeFiatInput = ref('');
-const tradeCryptoInput = ref('');
+const tradeGrossCrypto = ref(0);
 const selectedOrderPaymentMethod = ref('mpesa');
 const orderLoading = ref(false);
 const orderError = ref('');
+
+function getEffectivePrice(ad) {
+  if (!ad) return 1.0;
+  if (ad.fiat === 'USDT' || ad.fiat === 'USD') return 1.0;
+  return parseFloat(ad.price) || 1.0;
+}
+
+const computedFee = computed(() => {
+  const gross = parseFloat(tradeGrossCrypto.value) || 0;
+  if (gross <= 0) return 0;
+  return gross > 50.0 ? 0.50 : 0.0;
+});
+
+const computedNetReceive = computed(() => {
+  const gross = parseFloat(tradeGrossCrypto.value) || 0;
+  if (gross <= 0) return 0;
+  return Math.max(0, gross - computedFee.value);
+});
 
 function setTab(type) {
   activeType.value = type;
@@ -416,26 +447,18 @@ function calculateFromFiat() {
   if (!selectedAd.value) return;
   const fiat = parseFloat(tradeFiatInput.value) || 0;
   if (fiat <= 0) {
-    tradeCryptoInput.value = '';
+    tradeGrossCrypto.value = 0;
     return;
   }
-  tradeCryptoInput.value = (fiat / selectedAd.value.price).toFixed(4);
-}
-
-function calculateFromCrypto() {
-  if (!selectedAd.value) return;
-  const crypto = parseFloat(tradeCryptoInput.value) || 0;
-  if (crypto <= 0) {
-    tradeFiatInput.value = '';
-    return;
-  }
-  tradeFiatInput.value = (crypto * selectedAd.value.price).toFixed(2);
+  const price = getEffectivePrice(selectedAd.value);
+  tradeGrossCrypto.value = fiat / price;
 }
 
 function setMaxAmount() {
   if (!selectedAd.value) return;
-  const maxFiat = Math.min(selectedAd.value.max_limit, selectedAd.value.available_amount * selectedAd.value.price);
-  tradeFiatInput.value = maxFiat.toFixed(2);
+  const price = getEffectivePrice(selectedAd.value);
+  const maxFiat = Math.min(selectedAd.value.max_limit, selectedAd.value.available_amount * price);
+  tradeFiatInput.value = maxFiat.toString();
   calculateFromFiat();
 }
 

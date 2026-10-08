@@ -19,6 +19,7 @@ class P2POrder extends Model
         'buyer_id',
         'seller_id',
         'crypto_amount',
+        'escrow_fee',
         'fiat_amount',
         'price',
         'payment_method',
@@ -38,6 +39,7 @@ class P2POrder extends Model
     {
         return [
             'crypto_amount' => 'float',
+            'escrow_fee' => 'float',
             'fiat_amount' => 'float',
             'price' => 'float',
             'payment_details' => 'array',

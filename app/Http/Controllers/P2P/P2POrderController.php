@@ -40,14 +40,20 @@ class P2POrderController extends Controller
                 return redirect()->back()->withErrors(['message' => 'You cannot trade with your own advertisement.']);
             }
 
+            // Effective unit price: If fiat is USDT or USD, unit price is strictly 1:1 ($1.00)
+            $effectivePrice = (in_array($ad->fiat, ['USDT', 'USD']) || (float)$ad->price <= 0) ? 1.00 : (float)$ad->price;
+
             // Calculate exact crypto and fiat amounts
             if ($request->amount_type === 'crypto') {
                 $cryptoAmount = round((float) $request->amount, 4);
-                $fiatAmount = round($cryptoAmount * $ad->price, 2);
+                $fiatAmount = in_array($ad->fiat, ['USDT', 'USD']) ? round($cryptoAmount, 2) : round($cryptoAmount * $effectivePrice, 2);
             } else {
                 $fiatAmount = round((float) $request->amount, 2);
-                $cryptoAmount = round($fiatAmount / $ad->price, 4);
+                $cryptoAmount = in_array($ad->fiat, ['USDT', 'USD']) ? round($fiatAmount, 4) : round($fiatAmount / $effectivePrice, 4);
             }
+
+            // Calculate escrow fee: Free up to $50.00; 0.50 USDT fee for amounts > $50.00
+            $escrowFee = ($cryptoAmount > 50.00) ? 0.5000 : 0.0000;
 
             // Enforce ad limits
             if ($fiatAmount < $ad->min_limit) {
@@ -113,8 +119,9 @@ class P2POrderController extends Controller
                 'buyer_id' => $buyerId,
                 'seller_id' => $sellerId,
                 'crypto_amount' => $cryptoAmount,
+                'escrow_fee' => $escrowFee,
                 'fiat_amount' => $fiatAmount,
-                'price' => $ad->price,
+                'price' => $effectivePrice,
                 'payment_method' => $request->payment_method,
                 'payment_details' => $ad->payment_details ?: [],
                 'status' => 'pending_payment',
@@ -132,11 +139,13 @@ class P2POrderController extends Controller
             }
 
             // Initial system notice
+            $feeNotice = $escrowFee > 0 ? " (Platform Escrow Fee: {$escrowFee} USDT upon completion)" : " (Platform Escrow Fee: Free $0.00)";
+            $netReceive = max(0, round($cryptoAmount - $escrowFee, 4));
             P2PMessage::create([
                 'order_id' => $order->id,
                 'user_id' => null,
                 'is_system' => true,
-                'message' => "🛡️ Trade started. {$cryptoAmount} USDT is safely locked in TradeCo Escrow. Buyer has {$timeLimit} minutes to send payment.",
+                'message' => "🛡️ Trade started. {$cryptoAmount} USDT is safely locked in TradeCo Escrow. Buyer receives {$netReceive} USDT{$feeNotice}. Buyer has {$timeLimit} minutes to send payment.",
             ]);
 
             return redirect()->route('p2p.order.show', ['order' => $order->id]);
@@ -242,9 +251,13 @@ class P2POrderController extends Controller
                 throw new Exception('Insufficient escrow funds locked.');
             }
 
+            // Calculate net crypto for buyer deducting platform escrow fee
+            $escrowFee = (float) ($order->escrow_fee ?? 0);
+            $netCrypto = max(0, round($order->crypto_amount - $escrowFee, 4));
+
             // Transfer escrow from seller to buyer
             $sellerWallet->decrement('locked_balance', $order->crypto_amount);
-            $buyerWallet->increment('available_balance', $order->crypto_amount);
+            $buyerWallet->increment('available_balance', $netCrypto);
 
             $order->update([
                 'status' => 'completed',
@@ -254,11 +267,12 @@ class P2POrderController extends Controller
             // Increment seller completed trades
             $order->seller->increment('p2p_completed_trades');
 
+            $feeMsg = $escrowFee > 0 ? " ({$escrowFee} USDT escrow fee deducted)" : " (Zero escrow fee)";
             P2PMessage::create([
                 'order_id' => $order->id,
                 'user_id' => null,
                 'is_system' => true,
-                'message' => "🎉 Crypto successfully released! {$order->crypto_amount} USDT has been deposited into Buyer's wallet.",
+                'message' => "🎉 Crypto successfully released! {$netCrypto} USDT deposited into Buyer's wallet{$feeMsg}.",
             ]);
 
             DB::commit();

@@ -94,23 +94,31 @@
         <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl p-5 space-y-4 shadow-xl text-xs">
           <h2 class="text-sm font-bold text-white border-b border-[#2b3139] pb-3">Order Details</h2>
 
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 font-mono text-[11px]">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-[11px]">
             <div class="bg-[#0b0e11] p-3 rounded-xl border border-[#2b3139]/60">
-              <span class="text-[#848e9c] block text-[10px] uppercase font-sans">Fiat Amount to Pay</span>
+              <span class="text-[#848e9c] block text-[10px] uppercase font-sans">Fiat Amount</span>
               <span class="text-base font-black text-white">{{ Number(order.fiat_amount).toLocaleString() }}</span>
               <span class="text-xs text-[#848e9c] ml-1">{{ order.ad?.fiat || 'KES' }}</span>
             </div>
 
             <div class="bg-[#0b0e11] p-3 rounded-xl border border-[#2b3139]/60">
-              <span class="text-[#848e9c] block text-[10px] uppercase font-sans">Crypto to Receive</span>
-              <span class="text-base font-black text-[#0ecb81]">{{ Number(order.crypto_amount).toFixed(4) }}</span>
+              <span class="text-[#848e9c] block text-[10px] uppercase font-sans">Locked Escrow</span>
+              <span class="text-base font-black text-white">{{ Number(order.crypto_amount).toFixed(4) }}</span>
               <span class="text-xs text-[#848e9c] ml-1">USDT</span>
             </div>
 
-            <div class="bg-[#0b0e11] p-3 rounded-xl border border-[#2b3139]/60 col-span-2 sm:col-span-1">
-              <span class="text-[#848e9c] block text-[10px] uppercase font-sans">Locked Unit Price</span>
-              <span class="text-base font-black text-white">{{ Number(order.price).toFixed(2) }}</span>
-              <span class="text-xs text-[#848e9c] ml-1">{{ order.ad?.fiat || 'KES' }}</span>
+            <div class="bg-[#0b0e11] p-3 rounded-xl border border-[#2b3139]/60">
+              <span class="text-[#848e9c] block text-[10px] uppercase font-sans">Escrow Fee</span>
+              <span v-if="!order.escrow_fee || Number(order.escrow_fee) === 0" class="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 inline-block mt-1">FREE ($0.00)</span>
+              <div v-else class="text-base font-black text-amber-400">
+                {{ Number(order.escrow_fee).toFixed(2) }} <span class="text-xs text-[#848e9c]">USDT</span>
+              </div>
+            </div>
+
+            <div class="bg-[#0b0e11] p-3 rounded-xl border border-emerald-500/40">
+              <span class="text-emerald-400 block text-[10px] uppercase font-sans font-bold">Net to Buyer</span>
+              <span class="text-base font-black text-emerald-400">{{ Math.max(0, Number(order.crypto_amount) - Number(order.escrow_fee || 0)).toFixed(4) }}</span>
+              <span class="text-xs text-emerald-400/80 ml-1">USDT</span>
             </div>
           </div>
         </div>
