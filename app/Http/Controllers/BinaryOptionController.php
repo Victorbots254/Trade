@@ -209,7 +209,13 @@ class BinaryOptionController extends Controller
 
             $entryPrice = (float) $contract->entry_price;
             $direction = $contract->direction;
-            $strikePrice = (float) ($request->strike_price ?? $entryPrice);
+            $strikePrice = (float) ($request->strike_price ?? 0);
+            if ($strikePrice <= 0) {
+                $strikePrice = (float) ($contract->market->last_price ?? $entryPrice);
+            }
+            if ($strikePrice <= 0) {
+                $strikePrice = $entryPrice;
+            }
             $win = false;
 
             $precision = $contract->market->price_precision ?? 2;

@@ -36,6 +36,33 @@ class BinaryOptionContract extends Model
         'is_demo' => 'boolean',
     ];
 
+    protected $appends = [
+        'amount',
+        'payout',
+        'settle_price',
+        'settled_at',
+    ];
+
+    public function getAmountAttribute(): float
+    {
+        return (float) ($this->investment_amount ?? 0);
+    }
+
+    public function getPayoutAttribute(): float
+    {
+        return $this->status === 'win' ? (float) ($this->payout_amount ?? 0) : 0.0;
+    }
+
+    public function getSettlePriceAttribute(): float
+    {
+        return (float) ($this->strike_price ?? $this->entry_price ?? 0);
+    }
+
+    public function getSettledAtAttribute()
+    {
+        return $this->updated_at ?? $this->expires_at;
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

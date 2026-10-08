@@ -138,7 +138,7 @@
                   <td class="px-5 py-4 font-bold" :class="isContractWinning(o) ? 'text-[#0ecb81]' : 'text-[#f6465d]'">
                     ${{ formatPrice(getContractCurrentPrice(o)) }}
                   </td>
-                  <td class="px-5 py-4 text-white font-bold">${{ formatPrice(o.amount) }}</td>
+                  <td class="px-5 py-4 text-white font-bold">${{ formatPrice(o.investment_amount ?? o.amount) }}</td>
                   <td class="px-5 py-4">
                     <span class="bg-[#2b3139] text-[#f0b90b] px-2 py-1 rounded font-bold shadow-inner">
                       {{ formatCountdown(o.remaining_seconds) }}
@@ -237,11 +237,13 @@
                   </td>
                   <td class="px-5 py-4 text-slate-300">
                     <span class="line-through opacity-70">${{ formatPrice(o.entry_price) }}</span> &rarr; 
-                    <span class="font-bold">${{ formatPrice(o.settle_price) }}</span>
+                    <span class="font-bold text-white">${{ formatPrice(o.strike_price ?? o.settle_price ?? o.entry_price) }}</span>
                   </td>
-                  <td class="px-5 py-4 text-white">${{ formatPrice(o.amount) }}</td>
-                  <td class="px-5 py-4 font-bold text-white">${{ formatPrice(o.payout || 0) }}</td>
-                  <td class="px-5 py-4 text-[#848e9c] text-sm">{{ formatDate(o.settled_at) }}</td>
+                  <td class="px-5 py-4 text-white">${{ formatPrice(o.investment_amount ?? o.amount) }}</td>
+                  <td class="px-5 py-4 font-bold" :class="o.status === 'win' ? 'text-[#0ecb81]' : 'text-[#848e9c]'">
+                    ${{ formatPrice(o.status === 'win' ? (o.payout_amount ?? o.payout ?? 0) : 0) }}
+                  </td>
+                  <td class="px-5 py-4 text-[#848e9c] text-sm">{{ formatDate(o.updated_at || o.settled_at || o.expires_at) }}</td>
                   <td class="px-5 py-4 text-right">
                     <span :class="o.status === 'win' ? 'bg-[#0ecb81]/10 text-[#0ecb81]' : 'bg-[#f6465d]/10 text-[#f6465d]'"
                           class="px-2.5 py-1 rounded font-bold uppercase tracking-wider text-xs">
