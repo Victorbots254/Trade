@@ -303,17 +303,149 @@
           </div>
 
           <!-- Payment Methods Checkboxes -->
-          <div>
-            <label class="block text-[#848e9c] mb-1.5 font-semibold">Accepted Payment Methods</label>
-            <div class="flex items-center space-x-4">
-              <label class="flex items-center space-x-2 text-white cursor-pointer">
-                <input type="checkbox" value="mpesa" v-model="adForm.payment_methods" class="rounded bg-[#0b0e11] border-[#2b3139]" />
-                <span>📱 Safaricom M-Pesa</span>
+          <div class="space-y-3">
+            <label class="block text-[#848e9c] mb-1 font-semibold">Accepted Payment Methods</label>
+            <div class="flex items-center space-x-5">
+              <label class="flex items-center space-x-2 text-white cursor-pointer select-none">
+                <input type="checkbox" value="mpesa" v-model="adForm.payment_methods" class="rounded bg-[#0b0e11] border-[#2b3139] text-[#0ecb81] focus:ring-0" />
+                <span class="font-bold text-xs">📱 Safaricom M-Pesa</span>
               </label>
-              <label class="flex items-center space-x-2 text-white cursor-pointer">
-                <input type="checkbox" value="bank_transfer" v-model="adForm.payment_methods" class="rounded bg-[#0b0e11] border-[#2b3139]" />
-                <span>🏦 Bank Transfer</span>
+              <label class="flex items-center space-x-2 text-white cursor-pointer select-none">
+                <input type="checkbox" value="bank_transfer" v-model="adForm.payment_methods" class="rounded bg-[#0b0e11] border-[#2b3139] text-[#38bdf8] focus:ring-0" />
+                <span class="font-bold text-xs">🏦 Bank Transfer</span>
               </label>
+            </div>
+
+            <!-- M-PESA PAYMENT DETAILS FORM -->
+            <div v-if="adForm.payment_methods.includes('mpesa')" class="bg-[#0b0e11] border border-emerald-500/30 rounded-xl p-3.5 space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2b3139] pb-2.5">
+                <span class="text-emerald-400 font-bold text-xs flex items-center space-x-1.5">
+                  <span>📱</span>
+                  <span>M-Pesa Payout Settings</span>
+                </span>
+
+                <div class="flex items-center bg-[#181a20] p-0.5 rounded-lg border border-[#2b3139] text-[11px]">
+                  <button
+                    type="button"
+                    @click="adForm.payment_details.mpesa.type = 'phone'"
+                    :class="adForm.payment_details.mpesa.type === 'phone' ? 'bg-[#0ecb81] text-[#1e2329] font-black' : 'text-[#848e9c] hover:text-white'"
+                    class="px-2.5 py-1 rounded transition">
+                    Send Money (Phone)
+                  </button>
+                  <button
+                    type="button"
+                    @click="adForm.payment_details.mpesa.type = 'paybill'"
+                    :class="adForm.payment_details.mpesa.type === 'paybill' ? 'bg-[#0ecb81] text-[#1e2329] font-black' : 'text-[#848e9c] hover:text-white'"
+                    class="px-2.5 py-1 rounded transition">
+                    Lipa Na M-Pesa (Paybill / Till)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Option A: Send Money (Phone Number) -->
+              <div v-if="adForm.payment_details.mpesa.type === 'phone'" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[#848e9c] text-[11px] mb-1 font-semibold">M-Pesa Mobile Number *</label>
+                  <input
+                    v-model="adForm.payment_details.mpesa.phone"
+                    type="text"
+                    required
+                    placeholder="e.g. 0712345678 or 254712345678"
+                    class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[#848e9c] text-[11px] mb-1 font-semibold">Registered Recipient Name *</label>
+                  <input
+                    v-model="adForm.payment_details.mpesa.account_name"
+                    type="text"
+                    required
+                    placeholder="e.g. Victor Ochieng"
+                    class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+                </div>
+              </div>
+
+              <!-- Option B: Paybill or Till Number -->
+              <div v-else class="space-y-2.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label class="block text-[#848e9c] text-[11px] mb-1 font-semibold">Business Number (Paybill / Till) *</label>
+                    <input
+                      v-model="adForm.payment_details.mpesa.business_number"
+                      type="text"
+                      required
+                      placeholder="e.g. 247247 or Till 882910"
+                      class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+                  </div>
+                  <div>
+                    <label class="block text-[#848e9c] text-[11px] mb-1 font-semibold">Account Number (Optional for Till)</label>
+                    <input
+                      v-model="adForm.payment_details.mpesa.account_number"
+                      type="text"
+                      placeholder="e.g. 0123456789 or Account Name"
+                      class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[#848e9c] text-[11px] mb-1 font-semibold">Business / Account Name *</label>
+                  <input
+                    v-model="adForm.payment_details.mpesa.account_name"
+                    type="text"
+                    required
+                    placeholder="e.g. Victor Trade Solutions"
+                    class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+                </div>
+              </div>
+            </div>
+
+            <!-- BANK TRANSFER PAYMENT DETAILS FORM -->
+            <div v-if="adForm.payment_methods.includes('bank_transfer')" class="bg-[#0b0e11] border border-sky-500/30 rounded-xl p-3.5 space-y-2.5">
+              <div class="border-b border-[#2b3139] pb-2">
+                <span class="text-sky-400 font-bold text-xs flex items-center space-x-1.5">
+                  <span>🏦</span>
+                  <span>Bank Transfer Payout Settings</span>
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[#848e9c] text-[11px] mb-1 font-semibold">Bank Name *</label>
+                  <input
+                    v-model="adForm.payment_details.bank.bank_name"
+                    type="text"
+                    required
+                    placeholder="e.g. Equity Bank, KCB, NCBA, Co-op"
+                    class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-sky-400 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[#848e9c] text-[11px] mb-1 font-semibold">Bank Account Number *</label>
+                  <input
+                    v-model="adForm.payment_details.bank.account_number"
+                    type="text"
+                    required
+                    placeholder="e.g. 0120293847561"
+                    class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-sky-400 focus:outline-none" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[#848e9c] text-[11px] mb-1 font-semibold">Account Holder Name *</label>
+                  <input
+                    v-model="adForm.payment_details.bank.account_name"
+                    type="text"
+                    required
+                    placeholder="e.g. Victor Ochieng"
+                    class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-sky-400 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[#848e9c] text-[11px] mb-1 font-semibold">Branch Name (Optional)</label>
+                  <input
+                    v-model="adForm.payment_details.bank.branch"
+                    type="text"
+                    placeholder="e.g. Westlands / Nairobi"
+                    class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-sky-400 focus:outline-none" />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -371,7 +503,22 @@ const adForm = ref({
   total_amount: '50',
   min_limit: '10',
   max_limit: '5000',
-  payment_methods: ['bank_transfer', 'mpesa'],
+  payment_methods: ['mpesa'],
+  payment_details: {
+    mpesa: {
+      type: 'phone',
+      phone: '',
+      business_number: '',
+      account_number: '',
+      account_name: props.merchantName || '',
+    },
+    bank: {
+      bank_name: '',
+      account_number: '',
+      account_name: props.merchantName || '',
+      branch: '',
+    },
+  },
   auto_reply: 'Hello! I am online. Please follow payment instructions and confirm in chat.',
   terms: 'Real-time escrow protected by TradeCo. Instant release upon verification.',
   time_limit_minutes: 15,

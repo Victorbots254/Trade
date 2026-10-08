@@ -155,27 +155,146 @@
 
           <!-- Payment Info Box -->
           <div class="bg-[#0b0e11] border border-[#2b3139] rounded-xl p-4 space-y-3 font-mono text-xs">
-            <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
-              <span class="text-[#848e9c]">Recipient Name:</span>
-              <span class="font-bold text-white select-all">{{ order.seller?.p2p_merchant_name || order.seller?.name }}</span>
-            </div>
+            <!-- M-PESA PAYMENT DETAILS -->
+            <template v-if="order.payment_method === 'mpesa'">
+              <!-- Option A: Paybill / Till -->
+              <template v-if="order.payment_details?.mpesa?.type === 'paybill'">
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Payment Channel:</span>
+                  <span class="font-bold text-[#0ecb81]">Lipa Na M-Pesa (Paybill / Till)</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Business / Till No:</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-white text-sm select-all">{{ order.payment_details.mpesa.business_number }}</span>
+                    <button type="button" @click="copyField(order.payment_details.mpesa.business_number)" class="text-[#f0b90b] text-[10px] bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-sans font-bold">
+                      {{ copiedValue === order.payment_details.mpesa.business_number ? 'Copied!' : 'Copy' }}
+                    </button>
+                  </div>
+                </div>
+                <div v-if="order.payment_details.mpesa.account_number" class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Account Number:</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-white select-all">{{ order.payment_details.mpesa.account_number }}</span>
+                    <button type="button" @click="copyField(order.payment_details.mpesa.account_number)" class="text-[#f0b90b] text-[10px] bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-sans font-bold">
+                      {{ copiedValue === order.payment_details.mpesa.account_number ? 'Copied!' : 'Copy' }}
+                    </button>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Business / Recipient Name:</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-white select-all">{{ order.payment_details.mpesa.account_name || order.seller?.p2p_merchant_name || order.seller?.name }}</span>
+                    <button type="button" @click="copyField(order.payment_details.mpesa.account_name || order.seller?.p2p_merchant_name || order.seller?.name)" class="text-[#f0b90b] text-[10px] bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-sans font-bold">
+                      {{ copiedValue === (order.payment_details.mpesa.account_name || order.seller?.p2p_merchant_name || order.seller?.name) ? 'Copied!' : 'Copy' }}
+                    </button>
+                  </div>
+                </div>
+              </template>
 
-            <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
-              <span class="text-[#848e9c]">Payment Method:</span>
-              <span class="font-bold text-[#0ecb81] uppercase">{{ order.payment_method === 'mpesa' ? 'Safaricom M-Pesa' : 'Bank Transfer' }}</span>
-            </div>
+              <!-- Option B: Direct Send Money (Phone Number) -->
+              <template v-else-if="order.payment_details?.mpesa?.phone">
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Payment Channel:</span>
+                  <span class="font-bold text-[#0ecb81]">M-Pesa (Send Money)</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">M-Pesa Mobile Number:</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-white text-sm select-all">{{ order.payment_details.mpesa.phone }}</span>
+                    <button type="button" @click="copyField(order.payment_details.mpesa.phone)" class="text-[#f0b90b] text-[10px] bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-sans font-bold">
+                      {{ copiedValue === order.payment_details.mpesa.phone ? 'Copied!' : 'Copy' }}
+                    </button>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Recipient Name:</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-white select-all">{{ order.payment_details.mpesa.account_name || order.seller?.p2p_merchant_name || order.seller?.name }}</span>
+                    <button type="button" @click="copyField(order.payment_details.mpesa.account_name || order.seller?.p2p_merchant_name || order.seller?.name)" class="text-[#f0b90b] text-[10px] bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-sans font-bold">
+                      {{ copiedValue === (order.payment_details.mpesa.account_name || order.seller?.p2p_merchant_name || order.seller?.name) ? 'Copied!' : 'Copy' }}
+                    </button>
+                  </div>
+                </div>
+              </template>
 
-            <!-- Custom payment instructions or phone -->
+              <!-- Fallback M-Pesa if not structured -->
+              <template v-else>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Recipient Name:</span>
+                  <span class="font-bold text-white select-all">{{ order.seller?.p2p_merchant_name || order.seller?.name }}</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Payment Channel:</span>
+                  <span class="font-bold text-[#0ecb81]">Safaricom M-Pesa</span>
+                </div>
+              </template>
+            </template>
+
+            <!-- BANK TRANSFER DETAILS -->
+            <template v-else-if="order.payment_method === 'bank_transfer'">
+              <template v-if="order.payment_details?.bank">
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Bank Name:</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-white text-sm select-all">{{ order.payment_details.bank.bank_name }}</span>
+                    <button type="button" @click="copyField(order.payment_details.bank.bank_name)" class="text-[#f0b90b] text-[10px] bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-sans font-bold">
+                      {{ copiedValue === order.payment_details.bank.bank_name ? 'Copied!' : 'Copy' }}
+                    </button>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Account Number:</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-white text-sm select-all">{{ order.payment_details.bank.account_number }}</span>
+                    <button type="button" @click="copyField(order.payment_details.bank.account_number)" class="text-[#f0b90b] text-[10px] bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-sans font-bold">
+                      {{ copiedValue === order.payment_details.bank.account_number ? 'Copied!' : 'Copy' }}
+                    </button>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Account Holder Name:</span>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-white select-all">{{ order.payment_details.bank.account_name || order.seller?.p2p_merchant_name || order.seller?.name }}</span>
+                    <button type="button" @click="copyField(order.payment_details.bank.account_name || order.seller?.p2p_merchant_name || order.seller?.name)" class="text-[#f0b90b] text-[10px] bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-sans font-bold">
+                      {{ copiedValue === (order.payment_details.bank.account_name || order.seller?.p2p_merchant_name || order.seller?.name) ? 'Copied!' : 'Copy' }}
+                    </button>
+                  </div>
+                </div>
+                <div v-if="order.payment_details.bank.branch" class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Branch:</span>
+                  <span class="font-bold text-white select-all">{{ order.payment_details.bank.branch }}</span>
+                </div>
+              </template>
+              <template v-else>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Recipient Name:</span>
+                  <span class="font-bold text-white select-all">{{ order.seller?.p2p_merchant_name || order.seller?.name }}</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-[#2b3139]/50">
+                  <span class="text-[#848e9c]">Payment Method:</span>
+                  <span class="font-bold text-[#38bdf8] uppercase">Bank Transfer</span>
+                </div>
+              </template>
+            </template>
+
+            <!-- Custom merchant notes / instructions -->
             <div v-if="order.seller?.p2p_payment_details" class="py-1 border-b border-[#2b3139]/50 space-y-1">
-              <span class="text-[#848e9c] block text-[11px]">Payment Instructions / Account Number:</span>
+              <span class="text-[#848e9c] block text-[11px]">Seller Notes:</span>
               <p class="font-bold text-white whitespace-pre-wrap select-all bg-[#181a20] p-2.5 rounded-lg border border-[#2b3139]">
                 {{ order.seller.p2p_payment_details }}
               </p>
             </div>
 
+            <!-- Payment Reference -->
             <div class="flex justify-between items-center py-1">
               <span class="text-[#848e9c]">Payment Reference:</span>
-              <span class="font-bold text-[#f0b90b] select-all">{{ order.order_number }}</span>
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-[#f0b90b] select-all">{{ order.order_number }}</span>
+                <button type="button" @click="copyField(order.order_number)" class="text-[#f0b90b] text-[10px] bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-sans font-bold">
+                  {{ copiedValue === order.order_number ? 'Copied!' : 'Copy' }}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -422,6 +541,20 @@ const showDisputeModal = ref(false);
 const disputeReason = ref('');
 const releasingCrypto = ref(false);
 const actionError = ref('');
+const copiedValue = ref('');
+
+function copyField(text) {
+  if (!text) return;
+  try {
+    navigator.clipboard.writeText(text);
+    copiedValue.value = text;
+    setTimeout(() => {
+      if (copiedValue.value === text) {
+        copiedValue.value = '';
+      }
+    }, 2000);
+  } catch (e) {}
+}
 
 // Chat
 const chatInput = ref('');
