@@ -148,6 +148,9 @@ class P2POrderController extends Controller
                 'message' => "🛡️ Trade started. {$cryptoAmount} USDT is safely locked in TradeCo Escrow. Buyer receives {$netReceive} USDT{$feeNotice}. Buyer has {$timeLimit} minutes to send payment.",
             ]);
 
+            // Dispatch email notification to seller
+            \App\Services\P2PNotificationService::notifyOrderCreated($order);
+
             return redirect()->route('p2p.order.show', ['order' => $order->id]);
         });
     }
@@ -214,6 +217,9 @@ class P2POrderController extends Controller
             'message' => "💸 Buyer marked payment as sent! Seller, please confirm receipt of {$order->fiat_amount} {$order->ad->fiat} in your account before releasing.",
         ]);
 
+        // Dispatch email notification to seller
+        \App\Services\P2PNotificationService::notifyPaymentSent($order);
+
         return redirect()->back()->with('message', 'Payment marked as sent! Waiting for seller to release crypto.');
     }
 
@@ -276,6 +282,10 @@ class P2POrderController extends Controller
             ]);
 
             DB::commit();
+
+            // Dispatch email notification to buyer
+            \App\Services\P2PNotificationService::notifyCryptoReleased($order);
+
             return redirect()->back()->with('message', 'Crypto released successfully! Trade complete.');
         } catch (Exception $e) {
             DB::rollBack();
@@ -370,13 +380,16 @@ class P2POrderController extends Controller
             return redirect()->back();
         }
 
-        P2PMessage::create([
+        $msg = P2PMessage::create([
             'order_id' => $order->id,
             'user_id' => $user->id,
             'message' => $request->message,
             'attachment_path' => $attachmentPath,
             'is_system' => false,
         ]);
+
+        // Dispatch email notification to other party
+        \App\Services\P2PNotificationService::notifyNewMessage($order, $msg, $user);
 
         return redirect()->back();
     }
@@ -427,5 +440,73 @@ class P2POrderController extends Controller
         DB::transaction(function () use ($order) {
             $this->executeOrderCancellation($order, 'system_timeout');
         });
+    }
+
+    /**
+     * Poll active P2P trade notifications and new chat messages for the logged-in user.
+     */
+    public function pollNotifications(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['orders' => [], 'latest_message' => null]);
+        }
+
+        $activeOrders = P2POrder::with(['buyer:id,name', 'seller:id,name', 'ad'])
+            ->where(function ($q) use ($user) {
+                $q->where('buyer_id', $user->id)
+                    ->orWhere('seller_id', $user->id);
+            })
+            ->whereIn('status', ['pending_payment', 'paid', 'disputed'])
+            ->latest()
+            ->get();
+
+        $orderIds = $activeOrders->pluck('id')->toArray();
+
+        $latestMessage = null;
+        if (!empty($orderIds)) {
+            $msg = P2PMessage::with('user:id,name')
+                ->whereIn('order_id', $orderIds)
+                ->where('is_system', false)
+                ->where(function ($q) use ($user) {
+                    $q->where('user_id', '!=', $user->id)
+                        ->orWhereNull('user_id');
+                })
+                ->latest()
+                ->first();
+
+            if ($msg) {
+                $order = $activeOrders->firstWhere('id', $msg->order_id);
+                $latestMessage = [
+                    'id' => $msg->id,
+                    'order_id' => $msg->order_id,
+                    'order_number' => $order ? $order->order_number : '',
+                    'sender_name' => $msg->user ? $msg->user->name : 'Trader',
+                    'message' => $msg->message ?: '[Image attachment]',
+                    'created_at' => $msg->created_at->toISOString(),
+                ];
+            }
+        }
+
+        $formattedOrders = $activeOrders->map(function ($o) use ($user) {
+            $isSeller = $o->seller_id === $user->id;
+            return [
+                'id' => $o->id,
+                'order_number' => $o->order_number,
+                'status' => $o->status,
+                'is_seller' => $isSeller,
+                'counterparty_name' => $isSeller ? ($o->buyer->name ?? 'Buyer') : ($o->seller->name ?? 'Seller'),
+                'crypto_amount' => (float) $o->crypto_amount,
+                'fiat_amount' => (float) $o->fiat_amount,
+                'fiat' => $o->ad ? $o->ad->fiat : 'USDT',
+                'created_at' => $o->created_at->toISOString(),
+                'updated_at' => $o->updated_at->toISOString(),
+            ];
+        });
+
+        return response()->json([
+            'orders' => $formattedOrders,
+            'latest_message' => $latestMessage,
+        ]);
     }
 }

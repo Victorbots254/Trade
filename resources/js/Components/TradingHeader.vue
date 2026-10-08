@@ -1,6 +1,7 @@
 <template>
   <header class="bg-slate-900 border-b border-slate-800 text-xs select-none shadow-md z-40 relative transition-colors duration-200">
     <ToastNotification ref="toastRef" />
+    <P2PNotificationBanner v-if="user" :user-id="user?.id" />
 
     <div class="max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 h-14 flex items-center justify-between">
       <!-- Left Brand Logo & Primary Navigation Links -->
@@ -327,6 +328,7 @@ import { ref, computed, onMounted } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import axios from "axios";
 import ToastNotification from "@/Components/ToastNotification.vue";
+import P2PNotificationBanner from "@/Components/P2PNotificationBanner.vue";
 
 const props = defineProps({
   user: Object,

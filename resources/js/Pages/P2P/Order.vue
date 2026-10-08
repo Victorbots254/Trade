@@ -384,7 +384,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -516,6 +516,41 @@ function scrollToBottom() {
     }
   });
 }
+
+function playChime() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, now);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.35);
+  } catch (e) {}
+}
+
+watch(() => props.order?.messages?.length, (newLen, oldLen) => {
+  if (oldLen !== undefined && newLen > oldLen) {
+    const lastMsg = props.order.messages[props.order.messages.length - 1];
+    if (lastMsg && lastMsg.user_id !== props.currentUser?.id) {
+      playChime();
+    }
+    scrollToBottom();
+  }
+});
+
+watch(() => props.order?.status, (newStatus, oldStatus) => {
+  if (oldStatus && newStatus !== oldStatus) {
+    playChime();
+  }
+});
 
 onMounted(() => {
   initCountdown();

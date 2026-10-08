@@ -1,5 +1,8 @@
 <template>
   <div class="min-h-screen bg-[#0b0e11] text-[#eaecef] flex flex-col font-sans select-none">
+    <!-- Real-time P2P Live Notification Toasts & Audio Chimes -->
+    <P2PNotificationBanner />
+
     <!-- Header -->
     <header class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-3.5 flex items-center justify-between sticky top-0 z-30">
       <div class="flex items-center space-x-4">
@@ -344,6 +347,7 @@
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
+import P2PNotificationBanner from '@/Components/P2PNotificationBanner.vue';
 
 const props = defineProps({
   isMerchant: { type: Boolean, default: false },

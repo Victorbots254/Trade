@@ -1,5 +1,8 @@
 <template>
   <div class="min-h-screen bg-[#0b0e11] text-[#eaecef] flex flex-col font-sans select-none">
+    <!-- Real-time P2P Live Notification Toasts & Audio Chimes -->
+    <P2PNotificationBanner :user-id="user?.id" />
+
     <!-- Top Navigation Header -->
     <header class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-3 flex items-center justify-between sticky top-0 z-30">
       <div class="flex items-center space-x-6">
@@ -374,6 +377,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { router } from '@inertiajs/vue3';
+import P2PNotificationBanner from '@/Components/P2PNotificationBanner.vue';
 
 const props = defineProps({
   ads: { type: Object, required: true },

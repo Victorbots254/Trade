@@ -270,6 +270,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/p2p/merchant/ads/{ad}/toggle', [P2PMerchantController::class, 'toggleAd'])->name('p2p.merchant.ads.toggle');
     Route::post('/p2p/merchant/ads/{ad}/close', [P2PMerchantController::class, 'closeAd'])->name('p2p.merchant.ads.close');
     Route::get('/api/p2p/market-price', [P2PMarketplaceController::class, 'getMarketPrice'])->name('p2p.market_price');
+    Route::get('/api/p2p/notifications/poll', [P2POrderController::class, 'pollNotifications'])->name('p2p.notifications.poll');
 });
 
 // Unified Admin Routes (P2P Management, Deposits Verification, User Controls)
