@@ -24,6 +24,24 @@
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
       <!-- LEFT COLUMN: ORDER TIMELINE & PAYMENT CREDENTIALS (7 cols) -->
       <div class="lg:col-span-7 space-y-6">
+        <!-- Live Action Error Banner -->
+        <div v-if="actionError || ($page.props.errors && Object.keys($page.props.errors).length > 0)" class="bg-rose-500/10 border border-rose-500/40 text-rose-300 p-4 rounded-2xl text-xs space-y-1 shadow-lg">
+          <div class="font-bold text-rose-400 flex items-center space-x-1.5">
+            <span>⚠️</span>
+            <span>Notice:</span>
+          </div>
+          <p v-if="actionError">{{ actionError }}</p>
+          <div v-for="(err, k) in $page.props.errors" :key="k">
+            {{ err }}
+          </div>
+        </div>
+
+        <!-- Live Success Banner -->
+        <div v-if="$page.props.flash?.message || $page.props.flash?.success" class="bg-emerald-500/10 border border-emerald-500/40 text-emerald-300 p-4 rounded-2xl text-xs font-bold flex items-center space-x-2 shadow-lg">
+          <span>✓</span>
+          <span>{{ $page.props.flash?.message || $page.props.flash?.success }}</span>
+        </div>
+
         <!-- Progress Stepper Card -->
         <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl p-5 space-y-4 shadow-xl">
           <div class="grid grid-cols-3 gap-2 text-center text-xs">
@@ -185,7 +203,7 @@
             </div>
 
             <!-- SELLER ACTIONS -->
-            <div v-if="isSeller && (order.status === 'paid' || order.status === 'disputed')" class="space-y-2">
+            <div v-if="(isSeller || isAdminOrMod) && order.status !== 'completed' && order.status !== 'cancelled'" class="space-y-2">
               <button
                 @click="showReleaseModal = true"
                 type="button"
@@ -193,7 +211,7 @@
                 <span>✓ Payment Received & Release Crypto</span>
               </button>
               <p class="text-[10px] text-center text-[#848e9c]">
-                Please verify that you have logged into your bank/M-Pesa app and the funds are cleared before releasing.
+                {{ order.status === 'pending_payment' ? 'Buyer has not marked paid yet, but you can release immediately if you have confirmed receipt of funds.' : 'Please verify that you have logged into your bank/M-Pesa app and the funds are cleared before releasing.' }}
               </p>
             </div>
 
@@ -328,11 +346,12 @@
         </div>
 
         <div class="flex items-center space-x-3 pt-2">
-          <button @click="showReleaseModal = false" type="button" class="flex-1 border border-[#2b3139] py-2.5 rounded-xl text-[#848e9c] hover:text-white font-bold">
+          <button @click="showReleaseModal = false" :disabled="releasingCrypto" type="button" class="flex-1 border border-[#2b3139] py-2.5 rounded-xl text-[#848e9c] hover:text-white font-bold disabled:opacity-50">
             Wait / Check Account
           </button>
-          <button @click="confirmReleaseCrypto" type="button" class="flex-1 bg-[#0ecb81] hover:bg-[#0bb371] text-[#1e2329] font-black py-2.5 rounded-xl shadow-lg">
-            Confirm & Release
+          <button @click="confirmReleaseCrypto" :disabled="releasingCrypto" type="button" class="flex-1 bg-[#0ecb81] hover:bg-[#0bb371] disabled:opacity-50 text-[#1e2329] font-black py-2.5 rounded-xl shadow-lg flex items-center justify-center space-x-1.5">
+            <span v-if="releasingCrypto">Releasing Crypto...</span>
+            <span v-else>Confirm & Release</span>
           </button>
         </div>
       </div>
@@ -401,6 +420,8 @@ const showReleaseModal = ref(false);
 const showCancelModal = ref(false);
 const showDisputeModal = ref(false);
 const disputeReason = ref('');
+const releasingCrypto = ref(false);
+const actionError = ref('');
 
 // Chat
 const chatInput = ref('');
@@ -495,8 +516,23 @@ function confirmMarkPaid() {
 }
 
 function confirmReleaseCrypto() {
-  showReleaseModal.value = false;
-  router.post(`/p2p/orders/${props.order.id}/release`);
+  releasingCrypto.value = true;
+  actionError.value = '';
+  router.post(`/p2p/orders/${props.order.id}/release`, {}, {
+    onSuccess: () => {
+      releasingCrypto.value = false;
+      showReleaseModal.value = false;
+    },
+    onError: (errors) => {
+      releasingCrypto.value = false;
+      showReleaseModal.value = false;
+      actionError.value = errors.message || Object.values(errors)[0] || 'Error releasing crypto.';
+      alert('Release Notice: ' + actionError.value);
+    },
+    onFinish: () => {
+      releasingCrypto.value = false;
+    }
+  });
 }
 
 function confirmCancelOrder() {

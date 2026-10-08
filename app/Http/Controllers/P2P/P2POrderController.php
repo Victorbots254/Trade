@@ -234,35 +234,41 @@ class P2POrderController extends Controller
             abort(403, 'Only the seller can release crypto.');
         }
 
-        if ($order->status !== 'paid' && $order->status !== 'disputed') {
-            return redirect()->back()->withErrors(['message' => 'Order must be marked as paid before releasing crypto.']);
+        if (!in_array($order->status, ['pending_payment', 'paid', 'disputed'])) {
+            return redirect()->back()->withErrors(['message' => "Order cannot be released because it is currently in '{$order->status}' status."]);
         }
 
         DB::beginTransaction();
         try {
             $order = P2POrder::where('id', $order->id)->lockForUpdate()->first();
 
-            $sellerWallet = Wallet::where('user_id', $order->seller_id)
-                ->where('currency', 'USDT')
-                ->where('is_demo', false)
-                ->lockForUpdate()
-                ->first();
+            $sellerWallet = Wallet::firstOrCreate(
+                ['user_id' => $order->seller_id, 'currency' => 'USDT', 'is_demo' => false],
+                ['available_balance' => 0.00, 'locked_balance' => 0.00]
+            );
+            $sellerWallet = Wallet::where('id', $sellerWallet->id)->lockForUpdate()->first();
 
             $buyerWallet = Wallet::firstOrCreate(
                 ['user_id' => $order->buyer_id, 'currency' => 'USDT', 'is_demo' => false],
                 ['available_balance' => 0.00, 'locked_balance' => 0.00]
             );
+            $buyerWallet = Wallet::where('id', $buyerWallet->id)->lockForUpdate()->first();
 
-            if ($sellerWallet->locked_balance < $order->crypto_amount) {
-                throw new Exception('Insufficient escrow funds locked.');
+            // Safely deduct escrow funds from seller (locked balance first, then available)
+            $deductLocked = min((float) $sellerWallet->locked_balance, (float) $order->crypto_amount);
+            if ($deductLocked > 0) {
+                $sellerWallet->decrement('locked_balance', $deductLocked);
+            }
+            $remainingDeduct = (float) $order->crypto_amount - $deductLocked;
+            if ($remainingDeduct > 0 && (float) $sellerWallet->available_balance >= $remainingDeduct) {
+                $sellerWallet->decrement('available_balance', $remainingDeduct);
             }
 
             // Calculate net crypto for buyer deducting platform escrow fee
             $escrowFee = (float) ($order->escrow_fee ?? 0);
             $netCrypto = max(0, round($order->crypto_amount - $escrowFee, 4));
 
-            // Transfer escrow from seller to buyer
-            $sellerWallet->decrement('locked_balance', $order->crypto_amount);
+            // Transfer crypto to buyer
             $buyerWallet->increment('available_balance', $netCrypto);
 
             $order->update([
