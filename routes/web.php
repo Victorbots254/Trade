@@ -63,11 +63,25 @@ Route::get('/payments/binance-guide', fn (Request $request) => Inertia::render('
     'wallets' => Wallet::where('user_id', $request->user()->id)->get(),
     'markets' => Market::where('status', 'active')->get(),
 ]))->middleware('auth')->name('payments.guide');
-Route::get('/profile', fn (Request $request) => Inertia::render('Profile/Show', [
-    'user' => $request->user(),
-    'wallets' => Wallet::where('user_id', $request->user()->id)->get(),
-    'markets' => Market::where('status', 'active')->get(),
-]))->middleware('auth')->name('profile');
+Route::get('/profile', function (Request $request) {
+    \App\Services\WalletReconciliationService::reconcileUsdtWallet($request->user(), false);
+    \App\Services\WalletReconciliationService::reconcileUsdtWallet($request->user(), true);
+
+    return Inertia::render('Profile/Show', [
+        'user' => $request->user()->fresh(),
+        'wallets' => Wallet::where('user_id', $request->user()->id)->get(),
+        'markets' => Market::where('status', 'active')->get(),
+    ]);
+})->middleware('auth')->name('profile');
+
+Route::post('/api/wallet/reconcile-funds', function (Request $request) {
+    $wallet = \App\Services\WalletReconciliationService::reconcileUsdtWallet($request->user(), false);
+    return response()->json([
+        'message' => 'Funds reconciled! Available balance: $' . number_format((float)$wallet->available_balance, 2) . ' USDT.',
+        'available_balance' => (float)$wallet->available_balance,
+        'locked_balance' => (float)$wallet->locked_balance,
+    ]);
+})->middleware('auth');
 
 // Public Legal Pages
 Route::get('/terms', [TradingTerminalController::class, 'terms'])->name('terms');

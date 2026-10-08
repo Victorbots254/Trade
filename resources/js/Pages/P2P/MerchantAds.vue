@@ -62,6 +62,23 @@
 
       <!-- SCREEN B: USER IS AN APPROVED MERCHANT -->
       <div v-else class="space-y-6">
+        <!-- Flash Message Banner -->
+        <div v-if="$page.props.flash?.message" class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-xl text-xs font-bold flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span>✓</span>
+            <span>{{ $page.props.flash.message }}</span>
+          </div>
+          <button @click="$page.props.flash.message = null" class="text-emerald-400/70 hover:text-emerald-300">✕</button>
+        </div>
+
+        <!-- Global Error Banner -->
+        <div v-if="$page.props.errors?.message" class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-xl text-xs font-bold flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span>⚠️</span>
+            <span>{{ $page.props.errors.message }}</span>
+          </div>
+        </div>
+
         <!-- Merchant Stats Banner -->
         <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div class="flex items-center space-x-4">
@@ -168,6 +185,17 @@
           <button @click="showCreateModal = false" class="text-[#848e9c] hover:text-white text-base">✕</button>
         </div>
 
+        <!-- Validation Errors Box in Modal -->
+        <div v-if="$page.props.errors && Object.keys($page.props.errors).length > 0" class="bg-rose-500/10 border border-rose-500/40 text-rose-300 p-3.5 rounded-xl text-xs space-y-1.5">
+          <div class="font-bold flex items-center space-x-1.5 text-rose-400">
+            <span>⚠️</span>
+            <span>Unable to publish advertisement:</span>
+          </div>
+          <ul class="list-disc list-inside space-y-0.5 text-[11px] text-rose-300">
+            <li v-for="(err, key) in $page.props.errors" :key="key">{{ err }}</li>
+          </ul>
+        </div>
+
         <form @submit.prevent="submitCreateAd" class="space-y-4">
           <!-- Type: Sell or Buy -->
           <div class="grid grid-cols-2 gap-3">
@@ -207,9 +235,12 @@
           <div>
             <div class="flex justify-between items-center mb-1">
               <label class="block text-[#848e9c] font-semibold">Total USDT to List</label>
-              <span class="text-[10px] text-[#848e9c]">Available: {{ usdtBalance.toFixed(2) }} USDT</span>
+              <span class="text-[10px]" :class="usdtBalance < parseFloat(adForm.total_amount || 0) && adForm.type === 'sell' ? 'text-amber-400 font-bold' : 'text-[#848e9c]'">
+                Available: {{ usdtBalance.toFixed(2) }} USDT
+              </span>
             </div>
-            <input v-model="adForm.total_amount" type="number" step="1" min="5" required placeholder="e.g. 100" class="w-full bg-[#0b0e11] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono" />
+            <input v-model="adForm.total_amount" type="number" step="1" min="5" required placeholder="e.g. 50" class="w-full bg-[#0b0e11] border rounded-xl px-3 py-2 text-white font-mono" :class="$page.props.errors?.total_amount ? 'border-rose-500' : 'border-[#2b3139]'" />
+            <p v-if="$page.props.errors?.total_amount" class="text-rose-400 text-[11px] mt-1 font-semibold">{{ $page.props.errors.total_amount }}</p>
           </div>
 
           <!-- Min / Max Order Limits -->

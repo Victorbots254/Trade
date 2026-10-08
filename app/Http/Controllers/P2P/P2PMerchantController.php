@@ -22,13 +22,11 @@ class P2PMerchantController extends Controller
             ->latest()
             ->get();
 
-        $wallet = Wallet::firstOrCreate(
-            ['user_id' => $user->id, 'currency' => 'USDT', 'is_demo' => false],
-            ['available_balance' => 0.00, 'locked_balance' => 0.00]
-        );
+        // Automatically reconcile user's live USDT wallet to release any stranded locked funds
+        $wallet = \App\Services\WalletReconciliationService::reconcileUsdtWallet($user, false);
 
         return Inertia::render('P2P/MerchantAds', [
-            'isMerchant' => (bool) $user->is_p2p_merchant,
+            'isMerchant' => (bool) ($user->is_p2p_merchant || $user->is_admin || $user->is_moderator),
             'merchantName' => $user->p2p_merchant_name ?: $user->name,
             'completionRate' => (float) $user->p2p_completion_rate,
             'completedTrades' => (int) $user->p2p_completed_trades,
@@ -50,6 +48,9 @@ class P2PMerchantController extends Controller
             ]);
         }
 
+        // Reconcile user's wallet before validation
+        $wallet = \App\Services\WalletReconciliationService::reconcileUsdtWallet($user, false);
+
         $request->validate([
             'type' => 'required|in:sell,buy',
             'asset' => 'required|string|in:USDT',
@@ -66,16 +67,16 @@ class P2PMerchantController extends Controller
             'time_limit_minutes' => 'nullable|integer|min:10|max:60',
         ]);
 
-        // If Merchant is selling USDT, verify they have enough balance
+        // If Merchant is selling USDT, verify balance (admins/moderators automatically provide liquidity if needed)
         if ($request->type === 'sell') {
-            $wallet = Wallet::where('user_id', $user->id)
-                ->where('currency', 'USDT')
-                ->where('is_demo', false)
-                ->first();
+            if (($user->is_admin || $user->is_moderator) && (float)$wallet->available_balance < (float)$request->total_amount) {
+                $wallet->available_balance = max((float)$wallet->available_balance, (float)$request->total_amount);
+                $wallet->save();
+            }
 
-            if (!$wallet || $wallet->available_balance < $request->total_amount) {
+            if ((float)$wallet->available_balance < (float)$request->total_amount) {
                 return redirect()->back()->withErrors([
-                    'total_amount' => 'Insufficient live USDT balance to post this sell ad. You have ' . number_format($wallet->available_balance ?? 0, 2) . ' USDT available.',
+                    'total_amount' => 'Insufficient live USDT balance to post this sell ad. You have $' . number_format((float)$wallet->available_balance, 2) . ' USDT available. Please deposit funds or adjust your ad quantity.',
                 ]);
             }
         }

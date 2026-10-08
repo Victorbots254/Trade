@@ -36,7 +36,17 @@
             <span class="text-slate-400 font-medium">Real Locked Funds</span>
             <span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded text-[10px] font-bold">🔒 LOCKED REAL</span>
           </div>
-          <div class="text-2xl font-black text-amber-400 font-mono">${{ formatPrice(lockedBalance) }}</div>
+          <div class="flex items-center justify-between">
+            <div class="text-2xl font-black text-amber-400 font-mono">${{ formatPrice(lockedBalance) }}</div>
+            <button v-if="lockedBalance > 0" @click="reconcileFunds" :disabled="reconciling"
+                    class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center space-x-1">
+              <svg v-if="reconciling" class="animate-spin h-3 w-3 text-amber-400" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>🔓 Release / Unlock</span>
+            </button>
+          </div>
           <div class="text-[11px] text-slate-500 font-mono pt-1">In active live option contracts / open orders</div>
         </div>
 
@@ -151,6 +161,21 @@ async function resetDemoBalance() {
     toastRef.value?.show('Failed to reset demo balance.', 'error');
   } finally {
     resetting.value = false;
+  }
+}
+
+const reconciling = ref(false);
+
+async function reconcileFunds() {
+  reconciling.value = true;
+  try {
+    const res = await axios.post('/api/wallet/reconcile-funds');
+    toastRef.value?.show(res.data.message || 'Funds reconciled successfully!', 'success');
+    window.location.reload();
+  } catch (e) {
+    toastRef.value?.show('Failed to reconcile funds.', 'error');
+  } finally {
+    reconciling.value = false;
   }
 }
 </script>
