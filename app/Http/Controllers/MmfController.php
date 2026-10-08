@@ -39,7 +39,7 @@ class MmfController extends Controller
 
         $user = $request->user();
         $amount = (float) $request->amount;
-        $apy = 0.15; // 15% Monthly Interest Yield
+        $apy = 0.18; // 18% Monthly Interest Yield
 
         return DB::transaction(function () use ($user, $amount, $request, $apy) {
             $wallet = Wallet::firstOrCreate(

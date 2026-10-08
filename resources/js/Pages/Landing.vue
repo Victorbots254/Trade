@@ -41,12 +41,12 @@
                 <a href="/p2p" class="block px-4 py-2 text-xs hover:text-[#f0b90b] transition">P2P Marketplace</a>
               </div>
             </div>
-            <!-- USDT MMF (15%) -->
+            <!-- USDT MMF (18%) -->
             <a href="/monthly-interests" class="hover:text-[#f0b90b] px-3 py-2 rounded transition flex items-center space-x-1 font-semibold"
                :class="isDark ? 'text-emerald-400' : 'text-emerald-700'">
               <span>USDT MMF</span>
               <span class="text-[10px] font-bold px-1.5 py-0.2 rounded"
-                    :class="isDark ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-800'">(15%)</span>
+                    :class="isDark ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-800'">(18%)</span>
             </a>
             <a href="#security" class="hover:text-[#f0b90b] px-3 py-2 rounded transition">Security</a>
             <a href="#withdrawals" class="hover:text-[#f0b90b] px-3 py-2 rounded transition">Community</a>
@@ -78,7 +78,7 @@
         <a href="/terminal" class="block py-2 text-xs font-semibold" :class="isDark ? 'text-slate-200' : 'text-gray-800'">Spot Trading</a>
         <a href="/trade/options/BTC_USDT" class="block py-2 text-xs font-semibold" :class="isDark ? 'text-slate-200' : 'text-gray-800'">Binary Options</a>
         <a href="/p2p" class="block py-2 text-xs font-semibold text-[#f0b90b]">P2P Trading</a>
-        <a href="/monthly-interests" class="block py-2 text-xs font-bold text-emerald-400">USDT MMF (15% Yield)</a>
+        <a href="/monthly-interests" class="block py-2 text-xs font-bold text-emerald-400">USDT MMF (18% Yield)</a>
         <a href="/deposit" class="block py-2 text-xs font-semibold" :class="isDark ? 'text-slate-200' : 'text-gray-800'">Deposit Funds</a>
         <div v-if="$page.props.auth?.user || user" class="pt-2 border-t" :class="isDark ? 'border-slate-800' : 'border-gray-200'">
           <a href="/terminal" class="block w-full bg-[#f0b90b] text-[#1e2329] text-center font-bold py-2 rounded-lg text-xs">Go to Dashboard →</a>
@@ -120,14 +120,14 @@
             </div>
             <a href="/monthly-interests" class="inline-flex items-center space-x-1.5 border rounded-full px-3.5 py-1.5 text-[11px] font-bold transition hover:scale-105" :class="isDark?'border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20':'border-emerald-600/40 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'">
               <span>💰</span>
-              <span>EARN UP TO 15% MONTHLY (USDT MMF) →</span>
+              <span>EARN UP TO 18% MONTHLY (USDT MMF) →</span>
             </a>
           </div>
           <h1 class="text-4xl sm:text-5xl xl:text-6xl font-extrabold leading-tight" :class="isDark?'text-white':'text-[#1e2329]'">
             Trade Crypto,<br>Gold &amp; Stocks<br><span class="text-[#f0b90b]">With Confidence.</span>
           </h1>
           <p class="text-[15px] leading-relaxed max-w-lg" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">
-            Access 14+ spot markets with real-time pricing, binary options up to 88% ROI, and <strong>earn guaranteed up to 15% monthly interest</strong> with TradeCo USDT Money Market Fund (USDT MMF).
+            Access 14+ spot markets with real-time pricing, binary options up to 88% ROI, and <strong>earn guaranteed up to 18% monthly interest</strong> with TradeCo USDT Money Market Fund (USDT MMF).
           </p>
           <div class="flex flex-col sm:flex-row gap-3 pt-2">
             <template v-if="$page.props.auth?.user || user">
@@ -141,13 +141,13 @@
             </template>
             <a href="/monthly-interests" class="border font-bold px-6 py-3.5 rounded-xl text-sm transition flex items-center justify-center space-x-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 shadow-lg shadow-emerald-500/10">
               <span>💰</span>
-              <span>Earn 15% (USDT MMF)</span>
+              <span>Earn 18% (USDT MMF)</span>
             </a>
             <a href="#markets" class="border font-semibold px-5 py-3.5 rounded-xl text-sm transition flex items-center justify-center" :class="isDark?'border-[#2b3139] text-white hover:border-[#f0b90b]':'border-gray-200 text-[#1e2329] hover:border-[#f0b90b]'">📊 Markets</a>
           </div>
           <div class="flex flex-wrap items-center gap-4 pt-2 text-[11px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">
             <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>No KYC Required</span></div>
-            <div class="flex items-center space-x-1.5 text-emerald-400 font-bold"><span class="text-[#0ecb81]">✔</span><span>Earn 15% Monthly Yield</span></div>
+            <div class="flex items-center space-x-1.5 text-emerald-400 font-bold"><span class="text-[#0ecb81]">✔</span><span>Earn 18% Monthly Yield</span></div>
             <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>USDT BEP20 Deposits</span></div>
             <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>$10,000 Demo Account</span></div>
           </div>
@@ -210,7 +210,7 @@
       </div>
     </div>
 
-    <!-- USDT MONEY MARKET (EARN UP TO 15%) SECTION -->
+    <!-- USDT MONEY MARKET (EARN UP TO 18%) SECTION -->
     <section id="earn" class="py-12 px-4 border-b relative overflow-hidden" :class="isDark?'bg-[#0e1217] border-[#2b3139]':'bg-[#f4fbf7] border-gray-200'">
       <div class="max-w-[1400px] mx-auto space-y-6">
         <!-- Main Highlight Banner -->
@@ -222,20 +222,20 @@
               <span>💰 TradeCo Money Market Fund (USDT MMF)</span>
             </div>
             <h2 class="text-2xl sm:text-3xl font-black text-white leading-tight">
-              Earn Up to <span class="text-emerald-400 underline decoration-emerald-500/50">15% Monthly Yield</span> on Idle USDT
+              Earn Up to <span class="text-emerald-400 underline decoration-emerald-500/50">18% Monthly Yield</span> on Idle USDT
             </h2>
             <p class="text-xs sm:text-sm text-slate-200 leading-relaxed font-normal">
-              Don't leave your capital idle. Lock your USDT for 30 days and earn guaranteed 15% fixed return. Zero market exposure, automated daily accounting, and 100% capital returned to your wallet upon maturity.
+              Don't leave your capital idle. Lock your USDT for 30 days and earn guaranteed 18% fixed return. Zero market exposure, automated daily accounting, and 100% capital returned to your wallet upon maturity.
             </p>
           </div>
 
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 relative z-10 w-full lg:w-auto">
             <div class="bg-black/60 border border-emerald-500/40 rounded-xl px-5 py-3 text-center sm:text-left font-mono shadow-inner">
               <div class="text-[11px] text-slate-300 uppercase font-sans font-semibold">Guaranteed Yield</div>
-              <div class="text-2xl sm:text-3xl font-black text-emerald-400">15.0% <span class="text-xs text-slate-300 font-normal font-sans">/ 30 Days</span></div>
+              <div class="text-2xl sm:text-3xl font-black text-emerald-400">18.0% <span class="text-xs text-slate-300 font-normal font-sans">/ 30 Days</span></div>
             </div>
             <a href="/monthly-interests" class="bg-gradient-to-r from-[#0ecb81] to-emerald-500 hover:from-emerald-400 hover:to-emerald-500 text-[#0b0e11] font-black px-7 py-3.5 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 text-center group">
-              <span>Start Earning 15%</span>
+              <span>Start Earning 18%</span>
               <span class="group-hover:translate-x-1 transition-transform font-bold">→</span>
             </a>
           </div>
@@ -248,16 +248,16 @@
               <span class="text-2xl">📈</span>
               <span class="text-[11px] font-bold px-2 py-0.5 rounded border"
                     :class="isDark ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-emerald-800 bg-emerald-100 border-emerald-300'">
-                15% Profit
+                18% Profit
               </span>
             </div>
             <div class="font-bold text-sm mb-1.5" :class="isDark ? 'text-white' : 'text-[#1e2329]'">Fixed Monthly Profit</div>
             <p class="text-xs leading-relaxed mb-3" :class="isDark ? 'text-[#848e9c]' : 'text-[#474d57]'">
-              Lock $1,000 USDT and receive $1,150 USDT at the end of 30 days. No floating rates or unexpected drawdowns.
+              Lock $1,000 USDT and receive $1,180 USDT at the end of 30 days. No floating rates or unexpected drawdowns.
             </p>
             <div class="text-[11px] font-mono p-2.5 rounded border"
                  :class="isDark ? 'text-emerald-400 bg-emerald-500/5 border-emerald-500/15' : 'text-emerald-800 bg-emerald-50 border-emerald-200 font-semibold'">
-              Example: $1,000 lock → +$150.00 USDT profit
+              Example: $1,000 lock → +$180.00 USDT profit
             </div>
           </div>
 
@@ -275,7 +275,7 @@
             </p>
             <div class="text-[11px] font-mono p-2.5 rounded border"
                  :class="isDark ? 'text-amber-400 bg-amber-500/5 border-amber-500/15' : 'text-amber-900 bg-amber-50 border-amber-200 font-semibold'">
-              Example: $5,000 lock → +$750.00 USDT profit
+              Example: $5,000 lock → +$900.00 USDT profit
             </div>
           </div>
 

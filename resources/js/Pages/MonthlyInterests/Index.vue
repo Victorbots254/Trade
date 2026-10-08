@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-slate-950 text-slate-300 font-sans">
-    <Head title="USDT MMF (15%)" />
+    <Head title="USDT MMF (18%)" />
 
     <!-- Standard Trading Navigation Header -->
     <TradingHeader :user="user" :wallets="wallet ? [wallet] : []" />
@@ -76,7 +76,7 @@
               <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded font-bold">GUARANTEED</span>
             </div>
             <div class="text-2xl lg:text-3xl font-bold text-emerald-400">
-              15.0%
+              18.0%
               <span class="text-xs text-slate-500 font-normal">/ month</span>
             </div>
           </div>
@@ -187,7 +187,7 @@
                   <div class="grid grid-cols-1">
                     <div class="bg-emerald-600/10 border border-emerald-500/40 text-emerald-400 py-2.5 px-3 rounded-lg font-bold text-xs flex justify-between items-center">
                       <span>30 Days (Fixed Term)</span>
-                      <span class="text-xs font-mono font-bold bg-emerald-500/20 px-2 py-0.5 rounded">15.0% APY</span>
+                      <span class="text-xs font-mono font-bold bg-emerald-500/20 px-2 py-0.5 rounded">18.0% APY</span>
                     </div>
                   </div>
                 </div>
@@ -365,7 +365,7 @@
                       <div class="space-y-2">
                         <div class="text-2xl">🌱</div>
                         <div>No active funds locked yet.</div>
-                        <div class="text-xs text-slate-400">Lock USDT to earn 15% guaranteed monthly yield.</div>
+                        <div class="text-xs text-slate-400">Lock USDT to earn 18% guaranteed monthly yield.</div>
                         <div class="pt-2">
                           <button @click="activePanelTab = 'add'" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-bold transition">
                             + Add Funds & Start Earning
@@ -469,12 +469,12 @@ const totalEarned = computed(() => {
 
 const estInterest = computed(() => {
   const amt = parseFloat(form.amount) || 0;
-  return (amt * 0.15).toFixed(2);
+  return (amt * 0.18).toFixed(2);
 });
 
 const estTotal = computed(() => {
   const amt = parseFloat(form.amount) || 0;
-  return (amt + amt * 0.15).toFixed(2);
+  return (amt + amt * 0.18).toFixed(2);
 });
 
 // Form Helpers
