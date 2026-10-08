@@ -131,8 +131,14 @@ const props = defineProps({
 const emit = defineEmits(['order-cancelled']);
 
 const toastRef = ref(null);
-const activeTab = ref('open');
+const activeTab = ref('positions');
 const processingId = ref(null);
+
+watch(() => props.history?.length, (newLen, oldLen) => {
+  if (oldLen !== undefined && newLen > oldLen) {
+    activeTab.value = 'positions';
+  }
+});
 
 const activeAccountMode = computed(() => props.accountMode || localStorage.getItem('trade_account_mode') || 'demo');
 const isDemoMode = computed(() => activeAccountMode.value === 'demo');

@@ -294,7 +294,7 @@ class OrderBookEngine
             $unlockAmount = $order->side === 'buy' ? bcmul((string)$remainingQty, (string)$order->price, 8) : $remainingQty;
             LedgerService::unlockFundsForOrder($wallet, $unlockAmount, $order->id);
             if ($order->is_demo && $walletCurrency === 'USDT') {
-                $order->user->update(['demo_balance' => $wallet->available_balance + $wallet->locked_balance]);
+                $order->user->update(['demo_balance' => (float) $wallet->available_balance]);
             }
         }
 
