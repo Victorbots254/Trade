@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans select-none pb-12">
+  <div class="min-h-screen lg:h-screen flex flex-col bg-slate-950 text-slate-100 overflow-y-auto lg:overflow-hidden font-sans select-none pb-12">
     <!-- Top Bar Navigation Header -->
     <TradingHeader 
       :user="$page.props.auth.user"
@@ -13,9 +13,9 @@
     />
 
     <!-- Main Workspace Area -->
-    <div class="flex-1 grid grid-cols-12 gap-1.5 p-1.5 overflow-hidden transition-all duration-300">
+    <div class="flex-1 grid grid-cols-12 gap-1.5 p-1.5 overflow-y-auto lg:overflow-hidden transition-all duration-300">
       <!-- Column 1: Market Search & Selection (Collapsible / Sunken by Default) -->
-      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-full overflow-hidden transition-all duration-300">
+      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-auto lg:h-full overflow-hidden transition-all duration-300">
         <MarketList 
           :markets="marketsList"
           :currentSymbol="currentMarketState.symbol"
@@ -25,9 +25,9 @@
       </div>
 
       <!-- Column 2: Center Interactive Chart & Bottom Orders -->
-      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-7' : 'col-span-12 lg:col-span-6'" class="flex flex-col space-y-1.5 h-full overflow-hidden transition-all duration-300">
+      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-7' : 'col-span-12 lg:col-span-6'" class="flex flex-col space-y-1.5 h-auto lg:h-full overflow-hidden transition-all duration-300">
         <!-- Candlestick Chart -->
-        <div class="flex-1 min-h-[380px]">
+        <div class="flex-1 min-h-[260px] sm:min-h-[340px]">
           <TradingViewChart 
             :symbol="currentMarketState.symbol"
             :market="currentMarketState"
@@ -37,7 +37,7 @@
         </div>
 
         <!-- Open Orders / Positions / History Tabs -->
-        <div class="h-44">
+        <div class="h-40 sm:h-44">
           <UserOrders 
             :orders="openOrdersList"
             :history="orderHistoryList"
@@ -50,8 +50,8 @@
       </div>
 
       <!-- Column 3: Order Book & Recent Trades (2 Cols) -->
-      <div class="col-span-12 lg:col-span-2 flex flex-col space-y-1.5 h-full overflow-hidden">
-        <div class="flex-1 min-h-[260px]">
+      <div class="col-span-12 lg:col-span-2 flex flex-col space-y-1.5 h-auto lg:h-full overflow-hidden">
+        <div class="flex-1 min-h-[200px] sm:min-h-[260px]">
           <OrderBook 
             :bids="orderBookState.bids"
             :asks="orderBookState.asks"
@@ -59,13 +59,13 @@
             @select-price="onSelectPrice"
           />
         </div>
-        <div class="h-44">
+        <div class="h-36 sm:h-44">
           <RecentTrades :trades="tradesList" />
         </div>
       </div>
 
       <!-- Column 4: Buy / Sell Order Terminal (2 Cols) -->
-      <div class="col-span-12 lg:col-span-2 h-full overflow-hidden">
+      <div class="col-span-12 lg:col-span-2 h-auto lg:h-full overflow-y-auto">
         <OrderTerminal 
           :market="currentMarketState"
           :wallets="walletsList"

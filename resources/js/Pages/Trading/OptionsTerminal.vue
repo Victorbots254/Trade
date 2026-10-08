@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans select-none pb-12">
+  <div class="min-h-screen lg:h-screen flex flex-col bg-slate-950 text-slate-100 overflow-y-auto lg:overflow-hidden font-sans select-none pb-12">
     <ToastNotification ref="toastRef" />
 
     <TradingHeader 
@@ -11,9 +11,9 @@
     />
 
     <!-- Main Options Terminal Grid -->
-    <div class="flex-1 grid grid-cols-12 gap-1.5 p-1.5 overflow-hidden transition-all duration-300">
+    <div class="flex-1 grid grid-cols-12 gap-1.5 p-1.5 overflow-y-auto lg:overflow-hidden transition-all duration-300">
       <!-- Sidebar Markets Selection (Collapsible / Sunken by Default) -->
-      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-full overflow-hidden transition-all duration-300">
+      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-auto lg:h-full overflow-hidden transition-all duration-300">
         <MarketList 
           :markets="marketsList"
           :currentSymbol="currentMarketState.symbol"
@@ -23,9 +23,9 @@
       </div>
 
       <!-- Center Chart & Execution Area -->
-      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-8' : 'col-span-12 lg:col-span-7'" class="flex flex-col space-y-1.5 h-full overflow-hidden transition-all duration-300">
+      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-8' : 'col-span-12 lg:col-span-7'" class="flex flex-col space-y-1.5 h-auto lg:h-full overflow-hidden transition-all duration-300">
         <!-- Interactive Chart View with Visual Price Movement Engine -->
-        <div class="flex-1 min-h-[360px]">
+        <div class="flex-1 min-h-[260px] sm:min-h-[300px]">
           <TradingViewChart 
             :symbol="currentMarketState.symbol"
             :market="displayedMarketState"
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Active Contracts Countdown & History Table -->
-        <div class="h-52 bg-slate-900 border border-slate-800 rounded-lg p-3 flex flex-col overflow-hidden text-xs">
+        <div class="h-40 sm:h-48 bg-slate-900 border border-slate-800 rounded-lg p-2.5 sm:p-3 flex flex-col overflow-hidden text-xs">
           <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-2 font-semibold text-slate-300">
             <span class="flex items-center space-x-2">
               <span>Active Options Positions ({{ activeContractsList.length }})</span>
@@ -87,45 +87,45 @@
       </div>
 
       <!-- Right Execution Control Panel (3 Cols) -->
-      <div class="col-span-12 lg:col-span-3 bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-col justify-between overflow-hidden text-xs space-y-4">
+      <div class="col-span-12 lg:col-span-3 bg-slate-900 border border-slate-800 rounded-lg p-3 lg:p-3.5 flex flex-col justify-between overflow-y-auto max-h-[85vh] lg:max-h-full text-xs space-y-2.5">
         <div>
-          <div class="border-b border-slate-800 pb-2 mb-4 flex justify-between items-center">
-            <h3 class="font-bold text-slate-100 text-sm">Time-Expiry Controls</h3>
-            <span class="text-emerald-400 font-mono font-bold text-xs bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded">+88% Profit</span>
+          <div class="border-b border-slate-800 pb-1.5 mb-2 flex justify-between items-center">
+            <h3 class="font-bold text-slate-100 text-xs sm:text-sm">Time-Expiry Controls</h3>
+            <span class="text-emerald-400 font-mono font-bold text-[11px] bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded">+88% Profit</span>
           </div>
 
           <!-- Time Duration Selection -->
-          <div class="space-y-2 mb-4">
-            <label class="block text-slate-400 font-medium">Select Expiry Time</label>
-            <div class="grid grid-cols-3 gap-1.5 text-center font-mono">
+          <div class="space-y-1 mb-2">
+            <label class="block text-slate-400 text-[11px] font-medium">Select Expiry Time</label>
+            <div class="grid grid-cols-3 gap-1 text-center font-mono">
               <button v-for="t in durations" :key="t.sec"
                       @click="selectedDuration = t.sec"
                       :class="selectedDuration === t.sec ? 'bg-emerald-600 text-white font-bold border-emerald-500' : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'"
-                      class="py-2 border rounded transition text-xs">
+                      class="py-1.5 border rounded transition text-xs">
                 {{ t.label }}
               </button>
             </div>
           </div>
 
           <!-- Investment Amount Input -->
-          <div class="space-y-2 mb-4">
-            <div class="flex justify-between text-slate-400 font-medium">
+          <div class="space-y-1 mb-2">
+            <div class="flex justify-between text-slate-400 font-medium text-[11px]">
               <span>Investment Amount (USDT)</span>
               <span class="text-emerald-400 font-mono font-bold">Avail: ${{ formatPrice(availableTradingBalance) }}</span>
             </div>
             <input v-model="investmentAmount" type="number" step="1" placeholder="e.g. 50.00"
-                   class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-slate-100 font-mono font-bold text-sm focus:outline-none focus:border-emerald-500" />
+                   class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-slate-100 font-mono font-bold text-xs sm:text-sm focus:outline-none focus:border-emerald-500" />
             
-            <div class="grid grid-cols-4 gap-1 pt-1 font-mono text-[11px]">
-              <button @click="addAmount(10)" class="bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 py-1 rounded">+$10</button>
-              <button @click="addAmount(50)" class="bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 py-1 rounded">+$50</button>
-              <button @click="addAmount(100)" class="bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 py-1 rounded">+$100</button>
-              <button @click="setPercentage(100)" class="bg-slate-950 border border-slate-800 hover:bg-slate-800 text-emerald-400 font-bold py-1 rounded">MAX</button>
+            <div class="grid grid-cols-4 gap-1 pt-0.5 font-mono text-[10px]">
+              <button @click="addAmount(10)" class="bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 py-0.5 rounded">+$10</button>
+              <button @click="addAmount(50)" class="bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 py-0.5 rounded">+$50</button>
+              <button @click="addAmount(100)" class="bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 py-0.5 rounded">+$100</button>
+              <button @click="setPercentage(100)" class="bg-slate-950 border border-slate-800 hover:bg-slate-800 text-emerald-400 font-bold py-0.5 rounded">MAX</button>
             </div>
           </div>
 
           <!-- Expected Return Summary -->
-          <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg space-y-1.5 font-mono text-xs mb-4">
+          <div class="bg-slate-950 border border-slate-800 p-2.5 rounded-lg space-y-1 font-mono text-[11px] mb-2">
             <div class="flex justify-between text-slate-400">
               <span>Entry Strike Price:</span>
               <span class="text-slate-100 font-bold">${{ formatPrice(displayedMarketState.last_price) }}</span>
@@ -134,31 +134,31 @@
               <span>Profit Return Rate:</span>
               <span class="text-emerald-400 font-bold">+88%</span>
             </div>
-            <div class="flex justify-between border-t border-slate-800/80 pt-1.5 text-slate-200">
+            <div class="flex justify-between border-t border-slate-800/80 pt-1 text-slate-200">
               <span class="font-bold">Total Payout on Win:</span>
-              <span class="text-emerald-400 font-bold text-sm">${{ formatPrice(expectedPayout) }}</span>
+              <span class="text-emerald-400 font-bold text-xs sm:text-sm">${{ formatPrice(expectedPayout) }}</span>
             </div>
           </div>
         </div>
 
-        <!-- HIGHER / LOWER Action Execution Spinner Buttons -->
-        <div class="space-y-2 pt-2">
+        <!-- HIGHER / LOWER Action Execution Spinner Buttons (Side-by-side 2-col grid for small screens) -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
           <button @click="placeOption('higher')" :disabled="submitting"
-                  class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold py-3 rounded-lg transition uppercase tracking-wider text-xs shadow-lg flex items-center justify-center space-x-2">
-            <svg v-if="submittingDirection === 'higher'" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 disabled:opacity-50 text-white font-bold py-2.5 px-1.5 rounded-lg transition uppercase tracking-wider text-xs shadow-lg flex items-center justify-center space-x-1">
+            <svg v-if="submittingDirection === 'higher'" class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span>HIGHER ⬆ (+88% Return)</span>
+            <span class="truncate">HIGHER ⬆ (+88%)</span>
           </button>
 
           <button @click="placeOption('lower')" :disabled="submitting"
-                  class="w-full bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-bold py-3 rounded-lg transition uppercase tracking-wider text-xs shadow-lg flex items-center justify-center space-x-2">
-            <svg v-if="submittingDirection === 'lower'" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  class="w-full bg-rose-600 hover:bg-rose-500 active:scale-95 disabled:opacity-50 text-white font-bold py-2.5 px-1.5 rounded-lg transition uppercase tracking-wider text-xs shadow-lg flex items-center justify-center space-x-1">
+            <svg v-if="submittingDirection === 'lower'" class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span>LOWER ⬇ (+88% Return)</span>
+            <span class="truncate">LOWER ⬇ (+88%)</span>
           </button>
         </div>
       </div>
