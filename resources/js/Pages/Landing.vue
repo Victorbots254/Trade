@@ -173,10 +173,11 @@
     </div>
 
     <!-- USDT MONEY MARKET (EARN UP TO 15%) SECTION -->
-    <section id="earn" class="py-12 px-4 border-b relative overflow-hidden" :class="isDark?'bg-[#0e1217] border-[#2b3139]':'bg-emerald-50/40 border-gray-200'">
+    <section id="earn" class="py-12 px-4 border-b relative overflow-hidden" :class="isDark?'bg-[#0e1217] border-[#2b3139]':'bg-[#f4fbf7] border-gray-200'">
       <div class="max-w-[1400px] mx-auto space-y-6">
         <!-- Main Highlight Banner -->
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 bg-gradient-to-r from-emerald-500/15 via-[#181a20] to-[#181a20] border border-emerald-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 border rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden"
+             :class="isDark ? 'bg-gradient-to-r from-emerald-950/80 via-[#181a20] to-[#12161c] border-emerald-500/30' : 'bg-gradient-to-r from-[#111928] via-[#1f2a37] to-[#111928] border-emerald-600/40 text-white'">
           <div class="space-y-2.5 max-w-2xl relative z-10">
             <div class="inline-flex items-center space-x-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
@@ -185,15 +186,15 @@
             <h2 class="text-2xl sm:text-3xl font-black text-white leading-tight">
               Earn Up to <span class="text-emerald-400 underline decoration-emerald-500/50">15% Monthly Yield</span> on Idle USDT
             </h2>
-            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p class="text-xs sm:text-sm text-slate-200 leading-relaxed font-normal">
               Don't leave your capital idle. Lock your USDT for 30 days and earn guaranteed 15% fixed return. Zero market exposure, automated daily accounting, and 100% capital returned to your wallet upon maturity.
             </p>
           </div>
 
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 relative z-10 w-full lg:w-auto">
-            <div class="bg-black/50 border border-emerald-500/40 rounded-xl px-5 py-3 text-center sm:text-left font-mono shadow-inner">
-              <div class="text-[11px] text-slate-400 uppercase font-sans font-semibold">Guaranteed Yield</div>
-              <div class="text-2xl sm:text-3xl font-black text-emerald-400">15.0% <span class="text-xs text-slate-400 font-normal font-sans">/ 30 Days</span></div>
+            <div class="bg-black/60 border border-emerald-500/40 rounded-xl px-5 py-3 text-center sm:text-left font-mono shadow-inner">
+              <div class="text-[11px] text-slate-300 uppercase font-sans font-semibold">Guaranteed Yield</div>
+              <div class="text-2xl sm:text-3xl font-black text-emerald-400">15.0% <span class="text-xs text-slate-300 font-normal font-sans">/ 30 Days</span></div>
             </div>
             <a href="/monthly-interests" class="bg-gradient-to-r from-[#0ecb81] to-emerald-500 hover:from-emerald-400 hover:to-emerald-500 text-[#0b0e11] font-black px-7 py-3.5 rounded-xl text-sm transition shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 text-center group">
               <span>Start Earning 15%</span>
@@ -204,44 +205,56 @@
 
         <!-- 3 Feature Highlight Cards with Real Return Examples -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="rounded-xl p-5 border transition" :class="isDark?'bg-[#181a20] border-[#2b3139] hover:border-emerald-500/40':'bg-white border-gray-200 hover:border-emerald-500/40'">
+          <div class="rounded-xl p-5 border transition shadow-sm" :class="isDark?'bg-[#181a20] border-[#2b3139] hover:border-emerald-500/40':'bg-white border-gray-200 hover:border-emerald-500/50 shadow-md'">
             <div class="flex items-center justify-between mb-3">
               <span class="text-2xl">📈</span>
-              <span class="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">15% Profit</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded border"
+                    :class="isDark ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-emerald-800 bg-emerald-100 border-emerald-300'">
+                15% Profit
+              </span>
             </div>
-            <div class="font-bold text-sm text-white mb-1">Fixed Monthly Profit</div>
-            <p class="text-xs text-[#848e9c] leading-relaxed mb-3">
+            <div class="font-bold text-sm mb-1.5" :class="isDark ? 'text-white' : 'text-[#1e2329]'">Fixed Monthly Profit</div>
+            <p class="text-xs leading-relaxed mb-3" :class="isDark ? 'text-[#848e9c]' : 'text-[#474d57]'">
               Lock $1,000 USDT and receive $1,150 USDT at the end of 30 days. No floating rates or unexpected drawdowns.
             </p>
-            <div class="text-[11px] font-mono text-emerald-400 bg-emerald-500/5 p-2 rounded border border-emerald-500/15">
+            <div class="text-[11px] font-mono p-2.5 rounded border"
+                 :class="isDark ? 'text-emerald-400 bg-emerald-500/5 border-emerald-500/15' : 'text-emerald-800 bg-emerald-50 border-emerald-200 font-semibold'">
               Example: $1,000 lock → +$150.00 USDT profit
             </div>
           </div>
 
-          <div class="rounded-xl p-5 border transition" :class="isDark?'bg-[#181a20] border-[#2b3139] hover:border-emerald-500/40':'bg-white border-gray-200 hover:border-emerald-500/40'">
+          <div class="rounded-xl p-5 border transition shadow-sm" :class="isDark?'bg-[#181a20] border-[#2b3139] hover:border-emerald-500/40':'bg-white border-gray-200 hover:border-amber-500/50 shadow-md'">
             <div class="flex items-center justify-between mb-3">
               <span class="text-2xl">🛡️</span>
-              <span class="text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Principal Guard</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded border"
+                    :class="isDark ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-amber-800 bg-amber-100 border-amber-300'">
+                Principal Guard
+              </span>
             </div>
-            <div class="font-bold text-sm text-white mb-1">Principal Guaranteed</div>
-            <p class="text-xs text-[#848e9c] leading-relaxed mb-3">
+            <div class="font-bold text-sm mb-1.5" :class="isDark ? 'text-white' : 'text-[#1e2329]'">Principal Guaranteed</div>
+            <p class="text-xs leading-relaxed mb-3" :class="isDark ? 'text-[#848e9c]' : 'text-[#474d57]'">
               Your initial principal and earned interests are backed by exchange liquidity and cold-storage vaults.
             </p>
-            <div class="text-[11px] font-mono text-amber-400 bg-amber-500/5 p-2 rounded border border-amber-500/15">
+            <div class="text-[11px] font-mono p-2.5 rounded border"
+                 :class="isDark ? 'text-amber-400 bg-amber-500/5 border-amber-500/15' : 'text-amber-900 bg-amber-50 border-amber-200 font-semibold'">
               Example: $5,000 lock → +$750.00 USDT profit
             </div>
           </div>
 
-          <div class="rounded-xl p-5 border transition" :class="isDark?'bg-[#181a20] border-[#2b3139] hover:border-emerald-500/40':'bg-white border-gray-200 hover:border-emerald-500/40'">
+          <div class="rounded-xl p-5 border transition shadow-sm" :class="isDark?'bg-[#181a20] border-[#2b3139] hover:border-emerald-500/40':'bg-white border-gray-200 hover:border-[#f0b90b]/50 shadow-md'">
             <div class="flex items-center justify-between mb-3">
               <span class="text-2xl">⚡</span>
-              <span class="text-[11px] font-bold text-[#f0b90b] bg-[#f0b90b]/10 px-2 py-0.5 rounded border border-[#f0b90b]/20">Start with $10</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded border"
+                    :class="isDark ? 'text-[#f0b90b] bg-[#f0b90b]/10 border-[#f0b90b]/20' : 'text-amber-900 bg-amber-100 border-amber-300'">
+                Start with $10
+              </span>
             </div>
-            <div class="font-bold text-sm text-white mb-1">Low Minimum Entry</div>
-            <p class="text-xs text-[#848e9c] leading-relaxed mb-3">
+            <div class="font-bold text-sm mb-1.5" :class="isDark ? 'text-white' : 'text-[#1e2329]'">Low Minimum Entry</div>
+            <p class="text-xs leading-relaxed mb-3" :class="isDark ? 'text-[#848e9c]' : 'text-[#474d57]'">
               Start earning passive returns from just $10 USDT. Deposit via M-Pesa or BEP20 and lock in one click.
             </p>
-            <div class="text-[11px] font-mono text-[#f0b90b] bg-[#f0b90b]/5 p-2 rounded border border-[#f0b90b]/15">
+            <div class="text-[11px] font-mono p-2.5 rounded border"
+                 :class="isDark ? 'text-[#f0b90b] bg-[#f0b90b]/5 border-[#f0b90b]/15' : 'text-amber-950 bg-amber-50 border-amber-200 font-semibold'">
               Min lock: $10.00 USDT · 30 Days term
             </div>
           </div>
