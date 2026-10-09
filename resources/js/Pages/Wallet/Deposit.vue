@@ -29,7 +29,7 @@
       </div>
 
       <!-- Deposit Method Selector Tabs -->
-      <div class="grid grid-cols-2 gap-3 p-1.5 bg-slate-900 border border-slate-800 rounded-2xl">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-1.5 bg-slate-900 border border-slate-800 rounded-2xl">
         <!-- M-Pesa Tab -->
         <button @click="activeMethod = 'mpesa'"
                 type="button"
@@ -40,20 +40,33 @@
             <div class="font-bold leading-tight">M-Pesa STK Push</div>
             <div class="text-[10px] opacity-80 font-normal hidden sm:block">Instant MegaPay · KES to USDT</div>
           </div>
-          <span v-if="activeMethod === 'mpesa'" class="bg-white/20 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Active</span>
+          <span v-if="activeMethod === 'mpesa'" class="bg-white/20 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ml-auto">Active</span>
         </button>
 
-        <!-- Crypto BEP20 Tab -->
+        <!-- Crypto BEP20 Binance Tab -->
         <button @click="activeMethod = 'crypto'"
                 type="button"
                 :class="activeMethod === 'crypto' ? 'bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-950/50' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
                 class="py-3 px-4 rounded-xl transition flex items-center justify-center space-x-2.5 text-xs sm:text-sm">
           <span class="text-base sm:text-lg">🟡</span>
           <div class="text-left">
-            <div class="font-bold leading-tight">BEP-20 Crypto</div>
-            <div class="text-[10px] opacity-80 font-normal hidden sm:block">BNB Smart Chain (Manual TxHash)</div>
+            <div class="font-bold leading-tight">Binance BEP-20</div>
+            <div class="text-[10px] opacity-80 font-normal hidden sm:block">USDT / BNB Crypto Deposit</div>
           </div>
-          <span v-if="activeMethod === 'crypto'" class="bg-slate-950/20 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Active</span>
+          <span v-if="activeMethod === 'crypto'" class="bg-slate-950/20 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ml-auto">Active</span>
+        </button>
+
+        <!-- P2P Trading Tab -->
+        <button @click="activeMethod = 'p2p'"
+                type="button"
+                :class="activeMethod === 'p2p' ? 'bg-sky-500 text-white font-bold shadow-lg shadow-sky-950/50' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                class="py-3 px-4 rounded-xl transition flex items-center justify-center space-x-2.5 text-xs sm:text-sm">
+          <span class="text-base sm:text-lg">🤝</span>
+          <div class="text-left">
+            <div class="font-bold leading-tight">P2P Trading</div>
+            <div class="text-[10px] opacity-80 font-normal hidden sm:block">M-Pesa & Bank · 0% Escrow Fee</div>
+          </div>
+          <span v-if="activeMethod === 'p2p'" class="bg-white/20 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ml-auto">Active</span>
         </button>
       </div>
 
@@ -287,6 +300,77 @@
               <span v-else>Submit Deposit Proof</span>
             </button>
           </form>
+        </div>
+      </div>
+
+      <!-- METHOD 3: P2P TRADING -->
+      <div v-if="activeMethod === 'p2p'" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800 pb-4 gap-2">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-xl text-sky-400 font-bold">
+              🤝
+            </div>
+            <div>
+              <h2 class="font-bold text-slate-100 text-base flex items-center space-x-2">
+                <span>P2P Express / Peer-to-Peer Trading</span>
+                <span class="bg-sky-500/10 text-sky-400 border border-sky-500/30 text-[10px] px-2 py-0.5 rounded font-mono font-bold">0% ESCROW</span>
+              </h2>
+              <p class="text-xs text-slate-400">Buy USDT directly from trusted merchants with instant release upon payment verification.</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl text-xs font-mono text-slate-300">
+            <span class="text-slate-500">Rate: </span>
+            <span class="text-emerald-400 font-bold">1 USDT ≈ {{ exchangeRate }} KES</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+            <div class="flex items-center space-x-2 text-emerald-400 font-bold text-sm">
+              <span>📱</span>
+              <span>Safaricom M-Pesa Options</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Pay via <strong>Send Money (Phone)</strong>, <strong>Lipa Na M-Pesa Paybill</strong>, or <strong>Buy Goods Till</strong> number with zero platform fees.
+            </p>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+            <div class="flex items-center space-x-2 text-sky-400 font-bold text-sm">
+              <span>🏦</span>
+              <span>Local Bank Transfers</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Direct transfer to major Kenyan banks including <strong>Equity Bank, KCB, NCBA, Co-op</strong>, and more.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 text-xs font-mono">
+          <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
+            <span class="text-slate-400">Escrow Security:</span>
+            <span class="text-emerald-400 font-bold">100% Protected Smart Escrow</span>
+          </div>
+          <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
+            <span class="text-slate-400">Escrow Fee:</span>
+            <span class="text-white font-bold">Free up to $50 (0.5 USDT thereafter)</span>
+          </div>
+          <div class="flex justify-between items-center py-1">
+            <span class="text-slate-400">Average Release Time:</span>
+            <span class="text-amber-400 font-bold">&lt; 3 Minutes</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+          <a href="/p2p"
+             class="w-full sm:w-auto flex-1 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 px-6 rounded-xl transition text-center text-xs sm:text-sm shadow-lg flex items-center justify-center space-x-2">
+            <span>Browse P2P Buy Offers →</span>
+          </a>
+          <a href="/p2p/orders"
+             class="w-full sm:w-auto bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold py-3 px-6 rounded-xl transition text-center text-xs sm:text-sm">
+            <span>My P2P Orders ↗</span>
+          </a>
         </div>
       </div>
 

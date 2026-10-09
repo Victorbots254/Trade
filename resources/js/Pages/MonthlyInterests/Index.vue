@@ -312,11 +312,15 @@
                   <span v-else>Deposit via M-Pesa STK Push →</span>
                 </button>
 
-                <!-- Alternate Option: Crypto Modal -->
-                <div class="pt-2 text-center">
-                  <button type="button" @click="showDepositModal = true" class="text-[11px] text-amber-400 hover:text-amber-300 underline font-medium">
-                    🟡 Or deposit via BEP-20 Crypto Address
+                <!-- Alternate Options: Binance & P2P -->
+                <div class="pt-2 flex flex-wrap items-center justify-center gap-3 text-[11px]">
+                  <button type="button" @click="showDepositModal = true" class="text-amber-400 hover:text-amber-300 underline font-medium">
+                    🟡 Binance (BEP-20)
                   </button>
+                  <span class="text-slate-600">•</span>
+                  <a href="/p2p" class="text-sky-400 hover:text-sky-300 underline font-medium">
+                    🤝 P2P Trading (M-Pesa / Bank)
+                  </a>
                 </div>
               </form>
             </div>

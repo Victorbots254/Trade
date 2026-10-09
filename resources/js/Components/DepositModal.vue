@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl text-xs">
       <!-- Modal Header -->
       <div class="flex justify-between items-center px-5 py-3.5 border-b border-slate-800 bg-slate-950/40">
@@ -10,26 +10,37 @@
         <button @click="$emit('close')" class="text-slate-500 hover:text-slate-300 text-base p-1">✕</button>
       </div>
 
-      <!-- Deposit Method Selector Tabs -->
-      <div class="grid grid-cols-2 gap-2 p-3 bg-slate-950/60 border-b border-slate-800">
+      <!-- Deposit Method Selector Tabs (M-Pesa, Binance, P2P Option) -->
+      <div class="grid grid-cols-3 gap-1.5 p-2 bg-slate-950/60 border-b border-slate-800">
+        <!-- 1. M-Pesa -->
         <button @click="activeTab = 'mpesa'"
                 type="button"
                 :class="activeTab === 'mpesa' ? 'bg-emerald-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
-                class="py-2.5 px-3 rounded-xl transition flex items-center justify-center space-x-2 text-xs">
-          <span>📱</span>
-          <span>M-Pesa STK Push</span>
+                class="py-2.5 px-2 rounded-xl transition flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1.5 text-xs text-center">
+          <span class="text-sm">📱</span>
+          <span>M-Pesa</span>
         </button>
 
+        <!-- 2. Binance -->
         <button @click="activeTab = 'crypto'"
                 type="button"
                 :class="activeTab === 'crypto' ? 'bg-amber-500 text-slate-950 font-bold shadow' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
-                class="py-2.5 px-3 rounded-xl transition flex items-center justify-center space-x-2 text-xs">
-          <span>🟡</span>
-          <span>BEP-20 Crypto</span>
+                class="py-2.5 px-2 rounded-xl transition flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1.5 text-xs text-center">
+          <span class="text-sm">🟡</span>
+          <span>Binance</span>
+        </button>
+
+        <!-- 3. P2P Option -->
+        <button @click="activeTab = 'p2p'"
+                type="button"
+                :class="activeTab === 'p2p' ? 'bg-sky-500 text-white font-bold shadow' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
+                class="py-2.5 px-2 rounded-xl transition flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1.5 text-xs text-center">
+          <span class="text-sm">🤝</span>
+          <span>P2P Option</span>
         </button>
       </div>
 
-      <!-- PENDING / SUCCESS SCREEN -->
+      <!-- PENDING / SUCCESS SCREEN FOR CRYPTO/MPESA -->
       <div v-if="submittedDeposit" class="p-6 text-center space-y-4">
         <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto text-emerald-400 text-xl animate-pulse">
           ✓
@@ -79,7 +90,7 @@
 
         <form v-else @submit.prevent="submitMpesa" class="space-y-4">
           <div class="flex justify-between items-center text-xs">
-            <span class="text-slate-400">Instant Safaricom M-Pesa</span>
+            <span class="text-slate-400 font-medium">Instant Safaricom M-Pesa</span>
             <span class="text-emerald-400 font-mono text-[11px] font-bold">1 USDT = {{ exchangeRate }} KES</span>
           </div>
 
@@ -89,7 +100,7 @@
 
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="block text-slate-400 text-[11px] font-medium">M-Pesa Phone Number</label>
+              <label class="block text-slate-400 text-[11px] font-medium">M-Pesa Mobile Number</label>
               <span v-if="mpesaForm.phone" class="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded">
                 Sending to: {{ formattedModalPhone }}
               </span>
@@ -101,7 +112,7 @@
                      placeholder="e.g. 0798637930 or 254798637930"
                      class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 font-mono text-xs focus:outline-none focus:border-emerald-500" />
             </div>
-            <p class="text-[10px] text-slate-500 mt-1">Accepts any format — sent as pure 254XXXXXXXXX with no plus.</p>
+            <p class="text-[10px] text-slate-500 mt-1">Accepts any format — sent as pure 254XXXXXXXXX automatically.</p>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -140,14 +151,14 @@
         </form>
       </div>
 
-      <!-- TAB 2: CRYPTO BEP-20 MANUAL -->
-      <form v-else @submit.prevent="submitDeposit" class="p-5 space-y-4">
+      <!-- TAB 2: BINANCE (BEP-20 CRYPTO) -->
+      <form v-else-if="activeTab === 'crypto'" @submit.prevent="submitDeposit" class="p-5 space-y-4">
         <!-- Asset Selector -->
         <div>
           <label class="block text-slate-400 text-[11px] mb-1 font-medium">Select Deposit Currency</label>
           <select v-model="form.currency" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 font-mono focus:outline-none focus:border-amber-500 text-xs">
-            <option value="USDT">USDT - BEP20 (BNB Smart Chain)</option>
-            <option value="BNB">BNB - BEP20 (BNB Smart Chain)</option>
+            <option value="USDT">USDT - BEP20 (Binance Smart Chain)</option>
+            <option value="BNB">BNB - BEP20 (Binance Smart Chain)</option>
             <option value="BTC">BTC - BEP20 (Wrapped BTC)</option>
             <option value="ETH">ETH - BEP20 (Wrapped ETH)</option>
           </select>
@@ -156,16 +167,17 @@
         <!-- Custodial Address -->
         <div class="bg-slate-950 border border-slate-800 rounded-lg p-3 space-y-2">
           <div class="flex items-center justify-between text-slate-400 text-[11px]">
-            <span class="font-medium">Custodial Address:</span>
-            <span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded text-[10px] font-bold">BEP-20 ONLY</span>
+            <span class="font-medium">Binance BEP-20 Custodial Address:</span>
+            <span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded text-[10px] font-bold">BINANCE BEP-20</span>
           </div>
 
           <div class="flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded p-2 font-mono">
             <input readonly :value="custodialAddress" class="bg-transparent text-slate-200 w-full focus:outline-none text-[11px] truncate" />
-            <button type="button" @click="copyAddress" class="bg-slate-800 hover:bg-slate-700 text-amber-400 px-2.5 py-1 rounded text-[10px] font-semibold transition">
+            <button type="button" @click="copyAddress" class="bg-slate-800 hover:bg-slate-700 text-amber-400 px-2.5 py-1 rounded text-[10px] font-semibold transition shrink-0">
               {{ copied ? 'Copied!' : 'Copy' }}
             </button>
           </div>
+          <p class="text-[10px] text-slate-500">Send USDT via BNB Smart Chain (BEP20) to this custodial address.</p>
         </div>
 
         <!-- User Input Fields -->
@@ -189,15 +201,84 @@
         <button type="submit" :disabled="loading"
                 class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl font-bold transition shadow-lg text-xs disabled:opacity-50">
           <span v-if="loading">Submitting...</span>
-          <span v-else>Submit BEP-20 Proof</span>
+          <span v-else>Submit Binance Proof →</span>
         </button>
       </form>
+
+      <!-- TAB 3: P2P OPTION (BUY USDT VIA M-PESA / BANK) -->
+      <div v-else-if="activeTab === 'p2p'" class="p-5 space-y-4">
+        <div class="bg-gradient-to-r from-sky-500/10 via-sky-500/5 to-transparent border border-sky-500/30 rounded-xl p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sky-400 font-bold text-xs flex items-center space-x-1.5">
+              <span>🤝</span>
+              <span>P2P Express Trading</span>
+            </span>
+            <span class="bg-sky-500/20 text-sky-400 border border-sky-500/40 px-2 py-0.5 rounded text-[10px] font-bold">
+              0% ESCROW FEE
+            </span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Buy USDT directly from verified Kenyan merchants using local <strong>Safaricom M-Pesa</strong> (Send Money, Paybill, Till) or <strong>Bank Transfer</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5 text-xs">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-1">
+            <div class="text-[#0ecb81] font-bold flex items-center space-x-1">
+              <span>📱</span>
+              <span>Safaricom M-Pesa</span>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-snug">
+              Send Money, Lipa Na M-Pesa Paybill, and Till number options.
+            </p>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-1">
+            <div class="text-[#38bdf8] font-bold flex items-center space-x-1">
+              <span>🏦</span>
+              <span>Local Bank Transfer</span>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-snug">
+              Instant transfer via Equity, KCB, NCBA, Co-op, and more.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2 text-[11px]">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-400">Current Market Rate:</span>
+            <span class="text-emerald-400 font-bold font-mono">1 USDT ≈ {{ exchangeRate }} KES</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-400">Escrow Protection:</span>
+            <span class="text-sky-400 font-bold">TradeCo Smart Escrow</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-400">Escrow Fee:</span>
+            <span class="text-emerald-400 font-bold">Free up to $50 (0.5 USDT thereafter)</span>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <a href="/p2p"
+             class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2.5 px-4 rounded-xl transition shadow-lg text-xs flex items-center justify-center space-x-2">
+            <span>Browse P2P Buy Offers →</span>
+          </a>
+
+          <div class="text-center">
+            <a href="/p2p/orders" class="text-[11px] text-slate-400 hover:text-white underline">
+              View My P2P Orders ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 
 const props = defineProps({
@@ -206,7 +287,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'deposit-submitted', 'deposit-approved']);
 
-const activeTab = ref('mpesa'); // 'mpesa' | 'crypto'
+const activeTab = ref('mpesa'); // 'mpesa' | 'crypto' | 'p2p'
 const exchangeRate = ref(130);
 
 // M-Pesa State
@@ -240,14 +321,11 @@ const loading = ref(false);
 const submittedDeposit = ref(null);
 
 function copyAddress() {
-  navigator.clipboard.writeText(props.custodialAddress);
-  copied.value = true;
-  setTimeout(() => copied.value = false, 2000);
-}
-
-function resetModal() {
-  submittedDeposit.value = null;
-  mpesaActivePrompt.value = null;
+  if (navigator.clipboard && props.custodialAddress) {
+    navigator.clipboard.writeText(props.custodialAddress);
+    copied.value = true;
+    setTimeout(() => { copied.value = false; }, 2000);
+  }
 }
 
 async function submitMpesa() {
@@ -255,17 +333,21 @@ async function submitMpesa() {
   mpesaError.value = '';
 
   try {
-    const res = await axios.post('/api/mpesa/initiate', {
-      phone: mpesaForm.value.phone,
+    const res = await axios.post('/api/deposits', {
+      method: 'mpesa',
+      phone: formattedModalPhone.value,
       amount: mpesaForm.value.amount,
-      amount_type: 'kes',
     });
 
-    mpesaActivePrompt.value = res.data;
+    mpesaActivePrompt.value = {
+      phone: formattedModalPhone.value,
+      kes_amount: mpesaForm.value.amount,
+      deposit_id: res.data.deposit_id,
+    };
+
     pollMpesaStatus(res.data.deposit_id);
-    emit('deposit-submitted');
-  } catch (err) {
-    mpesaError.value = err.response?.data?.message || 'Failed to initiate M-Pesa payment.';
+  } catch (e) {
+    mpesaError.value = e.response?.data?.message || 'Failed to initiate M-Pesa STK Push.';
   } finally {
     mpesaLoading.value = false;
   }
@@ -273,59 +355,67 @@ async function submitMpesa() {
 
 function pollMpesaStatus(depositId) {
   if (mpesaTimer) clearInterval(mpesaTimer);
-  let count = 0;
+
+  let attempts = 0;
   mpesaTimer = setInterval(async () => {
-    count++;
-    if (count > 25) {
+    attempts++;
+    if (attempts > 30) {
       clearInterval(mpesaTimer);
+      mpesaActivePrompt.value = null;
+      mpesaError.value = 'M-Pesa transaction timed out. If you received an SMS receipt, your account will be credited automatically.';
       return;
     }
+
     try {
       const res = await axios.get(`/api/mpesa/status/${depositId}`);
       if (res.data.status === 'approved') {
         clearInterval(mpesaTimer);
-        submittedDeposit.value = res.data.deposit;
         mpesaActivePrompt.value = null;
-        emit('deposit-approved', res.data.deposit);
+        submittedDeposit.value = {
+          amount: res.data.amount,
+          reference: res.data.reference,
+          status: 'approved',
+        };
+        emit('deposit-approved');
       } else if (res.data.status === 'rejected') {
         clearInterval(mpesaTimer);
-        mpesaError.value = res.data.message || 'Payment cancelled by user.';
         mpesaActivePrompt.value = null;
+        mpesaError.value = 'Transaction was cancelled or rejected by user PIN.';
       }
     } catch (e) {}
-  }, 4000);
+  }, 2500);
 }
 
 async function submitDeposit() {
   loading.value = true;
   try {
-    const formData = new FormData();
-    formData.append('currency', form.value.currency);
-    formData.append('amount', form.value.amount);
-    formData.append('tx_hash', form.value.tx_hash);
-    if (form.value.receipt) {
-      formData.append('receipt', form.value.receipt);
-    }
-
-    const res = await axios.post('/api/deposits', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+    const res = await axios.post('/api/deposits', {
+      method: 'crypto',
+      currency: form.value.currency,
+      amount: form.value.amount,
+      tx_hash: form.value.tx_hash,
     });
 
-    submittedDeposit.value = res.data.deposit;
+    submittedDeposit.value = {
+      amount: form.value.amount,
+      tx_hash: form.value.tx_hash,
+      status: 'pending',
+    };
     emit('deposit-submitted');
-  } catch (err) {
-    alert(err.response?.data?.message || 'Error submitting deposit. Ensure TxHash is unique.');
+  } catch (e) {
+    alert(e.response?.data?.message || 'Failed to submit proof.');
   } finally {
     loading.value = false;
   }
 }
 
-onMounted(async () => {
-  try {
-    const res = await axios.get('/api/mpesa/settings');
-    if (res.data?.exchange_rate) {
-      exchangeRate.value = res.data.exchange_rate;
-    }
-  } catch (e) {}
+function resetModal() {
+  submittedDeposit.value = null;
+  form.value.amount = '';
+  form.value.tx_hash = '';
+}
+
+onUnmounted(() => {
+  if (mpesaTimer) clearInterval(mpesaTimer);
 });
 </script>
