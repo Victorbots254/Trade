@@ -24,7 +24,7 @@
         <!-- 2. Binance -->
         <button @click="activeTab = 'crypto'"
                 type="button"
-                :class="activeTab === 'crypto' ? 'bg-amber-500 text-slate-950 font-bold shadow' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
+                :class="activeTab === 'crypto' ? 'bg-[#f0b90b] text-[#1e2329] font-bold shadow' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
                 class="py-2.5 px-2 rounded-xl transition flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1.5 text-xs text-center">
           <span class="text-sm">🟡</span>
           <span>Binance</span>

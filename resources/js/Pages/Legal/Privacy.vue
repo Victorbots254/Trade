@@ -1,11 +1,20 @@
 <template>
   <div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans select-none">
     <!-- Header -->
-    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-      <a href="/" class="flex items-center space-x-2 font-bold text-lg text-emerald-400 tracking-wider">
-        <span>TRADE<span class="text-slate-400 font-normal">CO</span></span>
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30">
+      <a href="/" class="flex items-center space-x-2 shrink-0 group">
+        <div class="w-7 h-7 bg-[#f0b90b] group-hover:bg-[#d4a30b] rounded flex items-center justify-center font-black text-[#1e2329] text-sm shadow transition">
+          T
+        </div>
+        <span class="font-bold text-slate-100 text-sm tracking-wide">
+          TRADE<span class="text-[#f0b90b]">CO</span>
+        </span>
       </a>
-      <a href="/" class="text-xs text-slate-400 hover:text-slate-200 transition">← Back to Home</a>
+      <div class="flex items-center space-x-4 text-xs font-medium">
+        <a href="/terminal" class="text-slate-400 hover:text-white transition">Spot Trade</a>
+        <a href="/p2p" class="text-slate-400 hover:text-white transition">P2P</a>
+        <a href="/" class="text-[#f0b90b] hover:underline font-bold">← Back to Home</a>
+      </div>
     </header>
 
     <!-- Content -->

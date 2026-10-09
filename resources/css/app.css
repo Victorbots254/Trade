@@ -226,6 +226,43 @@ html.light button.bg-\[\#f0b90b\] * {
   color: #1e2329 !important;
 }
 
+/* Maintain dark text on bright emerald action buttons */
+html.light a.bg-\[\#0ecb81\],
+html.light button.bg-\[\#0ecb81\],
+html.light .bg-\[\#0ecb81\] {
+  background-color: #0ecb81 !important;
+  color: #1e2329 !important;
+}
+
+html.light a.bg-\[\#0ecb81\] *,
+html.light button.bg-\[\#0ecb81\] * {
+  color: #1e2329 !important;
+}
+
+/* Maintain white text on red sell buttons */
+html.light a.bg-\[\#f6465d\],
+html.light button.bg-\[\#f6465d\],
+html.light .bg-\[\#f6465d\] {
+  background-color: #f6465d !important;
+  color: #ffffff !important;
+}
+
+html.light a.bg-\[\#f6465d\] *,
+html.light button.bg-\[\#f6465d\] * {
+  color: #ffffff !important;
+}
+
+/* Universal Button Interactivity & Click Polish */
+button:not(:disabled),
+a[role="button"] {
+  cursor: pointer;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.985);
+  transition: transform 0.05s ease;
+}
+
 /* Form Inputs, Selects & Tables */
 html.light input,
 html.light select,

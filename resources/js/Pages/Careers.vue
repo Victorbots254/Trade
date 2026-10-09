@@ -6,7 +6,7 @@
         <span class="font-bold text-lg" :class="isDark?'text-[#f0b90b]':'text-[#1e2329]'">TRADE<span class="text-[#f0b90b]">CO</span></span>
       </a>
       <div class="flex items-center space-x-4 text-[13px]">
-        <button @click="isDark=!isDark" class="p-2 rounded-lg" :class="isDark?'text-[#b7bdc6]':'text-[#474d57]'"><span v-if="isDark">☀️</span><span v-else>🌙</span></button>
+        <button @click="toggleTheme" class="p-2 rounded-lg" :class="isDark?'text-[#b7bdc6]':'text-[#474d57]'"><span v-if="isDark">☀️</span><span v-else>🌙</span></button>
         <a href="/" class="hover:text-[#f0b90b] transition" :class="isDark?'text-[#b7bdc6]':'text-[#474d57]'">← Back to Home</a>
       </div>
     </header>
@@ -57,7 +57,19 @@
 </template>
 <script setup>
 import { ref } from 'vue';
-const isDark = ref(true);
+const isDark = ref(localStorage.getItem('trade_theme') !== 'light');
+function toggleTheme() {
+  isDark.value = !isDark.value;
+  const theme = isDark.value ? 'dark' : 'light';
+  localStorage.setItem('trade_theme', theme);
+  if (theme === 'light') {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  } else {
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
+  }
+}
 const perks = [
   { icon:'🌍', title:'Remote First', desc:'Work from anywhere in the world.' },
   { icon:'💰', title:'Competitive Pay', desc:'Top-of-market salaries + crypto bonuses.' },

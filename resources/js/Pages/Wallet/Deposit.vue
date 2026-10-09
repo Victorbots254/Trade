@@ -1,12 +1,10 @@
 <template>
   <div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans select-none pb-12">
-    <!-- Top Header -->
-    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-      <a href="/" class="flex items-center space-x-2 font-bold text-lg text-emerald-400 tracking-wider">
-        <span>TRADE<span class="text-slate-400 font-normal">CO</span></span>
-      </a>
-      <a href="/terminal" class="text-xs text-slate-400 hover:text-slate-200 transition">← Back to Trading Terminal</a>
-    </header>
+    <!-- Standard Top Navigation Header -->
+    <TradingHeader 
+      :user="$page.props.auth?.user"
+      :wallets="wallets.length ? wallets : ($page.props.auth?.wallets || [])"
+    />
 
     <!-- Main Deposit Container -->
     <div class="flex-1 max-w-4xl w-full mx-auto p-4 md:p-8 space-y-6">
@@ -46,7 +44,7 @@
         <!-- Crypto BEP20 Binance Tab -->
         <button @click="activeMethod = 'crypto'"
                 type="button"
-                :class="activeMethod === 'crypto' ? 'bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-950/50' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
+                :class="activeMethod === 'crypto' ? 'bg-[#f0b90b] text-[#1e2329] font-bold shadow-lg shadow-amber-950/50' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'"
                 class="py-3 px-4 rounded-xl transition flex items-center justify-center space-x-2.5 text-xs sm:text-sm">
           <span class="text-base sm:text-lg">🟡</span>
           <div class="text-left">
@@ -452,8 +450,10 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import QrcodeVue from 'qrcode.vue';
 import axios from 'axios';
+import TradingHeader from '@/Components/TradingHeader.vue';
 
 const props = defineProps({
   custodialAddress: {

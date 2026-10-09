@@ -1,26 +1,33 @@
 <template>
-  <div class="min-h-screen bg-[#0b0e11] text-[#eaecef] flex flex-col font-sans select-none">
-    <!-- Header -->
-    <header class="bg-[#181a20] border-b border-[#2b3139] px-6 py-4 flex items-center justify-between sticky top-0 z-30">
-      <div class="flex items-center space-x-3">
-        <a href="/admin/users" class="text-xs text-[#848e9c] hover:text-white transition">← Admin Console</a>
-        <span class="text-[#2b3139]">|</span>
-        <h1 class="text-base font-bold text-white flex items-center space-x-2">
-          <span>🛡️ P2P Administration & Dispute Center</span>
-          <span class="bg-[#f0b90b]/10 text-[#f0b90b] border border-[#f0b90b]/30 text-[10px] px-2 py-0.5 rounded font-mono uppercase font-bold">
-            Admin Console
-          </span>
-        </h1>
-      </div>
-
-      <div class="flex items-center space-x-3 text-xs">
-        <a href="/p2p" target="_blank" class="text-[#848e9c] hover:text-white bg-[#2b3139]/40 hover:bg-[#2b3139] px-3 py-1.5 rounded-lg border border-[#2b3139]">
-          View Live P2P Market ↗
-        </a>
-      </div>
-    </header>
+  <div class="min-h-screen bg-[#0b0e11] text-[#eaecef] flex flex-col font-sans select-none pb-12">
+    <!-- Top Navigation Header -->
+    <TradingHeader 
+      :user="currentUser || $page.props.auth?.user"
+    />
 
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+      <!-- Admin Sub-Navigation -->
+      <div class="flex flex-col md:flex-row justify-between md:items-center border-b border-[#2b3139] pb-4 gap-3">
+        <div>
+          <h1 class="text-xl font-bold text-white flex items-center space-x-2">
+            <span class="text-[#f0b90b]">🛡️</span>
+            <span>P2P Administration & Dispute Center</span>
+          </h1>
+          <p class="text-xs text-[#848e9c] mt-1">Manage verified merchants, active P2P ads, and arbitrate trade escrow disputes.</p>
+        </div>
+
+        <div class="flex items-center space-x-2 text-xs">
+          <a href="/admin/users" class="bg-[#181a20] text-[#848e9c] hover:text-white px-3.5 py-2 rounded-lg border border-[#2b3139] transition">
+            👥 Trader Controls
+          </a>
+          <a href="/admin/deposits" class="bg-[#181a20] text-[#848e9c] hover:text-white px-3.5 py-2 rounded-lg border border-[#2b3139] transition">
+            💰 Deposit Approvals
+          </a>
+          <a href="/admin/p2p" class="bg-[#f0b90b] text-[#1e2329] px-3.5 py-2 rounded-lg border border-[#f0b90b]/40 font-bold shadow">
+            🛡️ P2P Center & Disputes
+          </a>
+        </div>
+      </div>
       <!-- Flash Alert -->
       <div v-if="$page.props.flash?.message" class="bg-[#0ecb81]/10 border border-[#0ecb81]/30 text-[#0ecb81] p-3 rounded-xl text-xs font-semibold flex items-center space-x-2">
         <span>✓</span>
@@ -329,6 +336,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { router } from '@inertiajs/vue3';
+import TradingHeader from '@/Components/TradingHeader.vue';
 
 const props = defineProps({
   users: { type: Array, required: true },

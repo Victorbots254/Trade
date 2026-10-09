@@ -1,11 +1,16 @@
 <template>
-  <div class="min-h-screen bg-slate-950 text-slate-100 font-sans p-6">
-    <!-- Admin Header -->
-    <div class="max-w-7xl mx-auto space-y-6">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+  <div class="min-h-screen bg-slate-950 text-slate-100 font-sans select-none flex flex-col pb-12">
+    <!-- Top Navigation Header -->
+    <TradingHeader 
+      :user="$page.props.auth?.user"
+    />
+
+    <!-- Admin Content Container -->
+    <div class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+      <div class="flex flex-col md:flex-row justify-between md:items-center border-b border-slate-800 pb-4 gap-3">
         <div>
           <h1 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
-            <span class="text-amber-400">🛡️</span>
+            <span class="text-[#f0b90b]">🛡️</span>
             <span>BEP-20 Manual Deposit Approval Dashboard</span>
           </h1>
           <p class="text-slate-400 text-xs mt-1">
@@ -14,14 +19,14 @@
         </div>
 
         <div class="flex items-center space-x-2 text-xs">
-          <a href="/admin/users" class="bg-slate-900 text-slate-400 hover:text-slate-200 px-3 py-1.5 rounded border border-slate-800">
-            👥 Trader Roster
+          <a href="/admin/users" class="bg-slate-900 text-slate-400 hover:text-slate-200 px-3.5 py-2 rounded-lg border border-slate-800 transition">
+            👥 Trader Controls
           </a>
-          <a href="/admin/p2p" class="bg-slate-900 text-[#f0b90b] px-3 py-1.5 rounded border border-slate-800 font-bold">
-            🛡️ P2P Center
+          <a href="/admin/deposits" class="bg-slate-800 text-emerald-400 font-bold px-3.5 py-2 rounded-lg border border-slate-700">
+            💰 Deposit Approvals
           </a>
-          <a href="/" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded font-semibold transition">
-            ← Terminal
+          <a href="/admin/p2p" class="bg-slate-900 text-[#f0b90b] hover:bg-slate-800 px-3.5 py-2 rounded-lg border border-slate-800 font-bold transition">
+            🛡️ P2P Center & Disputes
           </a>
         </div>
       </div>
@@ -240,6 +245,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { router } from '@inertiajs/vue3';
+import TradingHeader from '@/Components/TradingHeader.vue';
 
 const props = defineProps({
   deposits: Array,
