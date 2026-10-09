@@ -1,16 +1,17 @@
 <template>
   <div class="min-h-screen bg-[#0b0e11] text-[#eaecef] flex flex-col font-sans select-none">
-    <!-- Real-time P2P Live Notification Toasts & Audio Chimes -->
-    <P2PNotificationBanner />
+    <!-- Main Top Navigation Header -->
+    <TradingHeader :user="$page.props.auth?.user" />
 
-    <!-- Header -->
-    <header class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-3.5 flex items-center justify-between sticky top-0 z-30">
-      <div class="flex items-center space-x-4">
-        <a href="/p2p" class="text-xs text-[#848e9c] hover:text-white transition flex items-center space-x-1">
+    <!-- Sub Header Breadcrumb Bar -->
+    <div class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-2.5 flex items-center justify-between sticky top-0 z-30 text-xs">
+      <div class="flex items-center space-x-3">
+        <Link href="/p2p" class="text-xs text-[#848e9c] hover:text-white transition flex items-center space-x-1 font-semibold">
           <span>← Back to P2P Marketplace</span>
-        </a>
+        </Link>
         <span class="text-[#2b3139]">|</span>
-        <h1 class="text-sm font-bold text-white flex items-center space-x-2">
+        <h1 class="text-xs font-bold text-white flex items-center space-x-2">
+          <span>📢</span>
           <span>Merchant Ads Center</span>
           <span v-if="isMerchant" class="bg-[#0ecb81]/10 text-[#0ecb81] border border-[#0ecb81]/30 text-[10px] px-2 py-0.5 rounded uppercase font-bold">
             Verified Merchant
@@ -24,7 +25,7 @@
           <span class="text-[#0ecb81] font-mono font-bold">{{ usdtBalance.toFixed(2) }} USDT</span>
         </div>
       </div>
-    </header>
+    </div>
 
     <!-- Main Content -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
@@ -477,8 +478,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, Link } from '@inertiajs/vue3';
 import axios from 'axios';
+import TradingHeader from '@/Components/TradingHeader.vue';
 import P2PNotificationBanner from '@/Components/P2PNotificationBanner.vue';
 
 const props = defineProps({

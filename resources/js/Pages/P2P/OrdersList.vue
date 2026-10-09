@@ -1,16 +1,25 @@
 <template>
   <div class="min-h-screen bg-[#0b0e11] text-[#eaecef] flex flex-col font-sans select-none">
-    <!-- Header -->
-    <header class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-3.5 flex items-center justify-between sticky top-0 z-30">
-      <div class="flex items-center space-x-4">
-        <a href="/p2p" class="text-xs text-[#848e9c] hover:text-white transition flex items-center space-x-1">
+    <!-- Top Navigation Header -->
+    <TradingHeader :user="user || $page.props.auth?.user" />
+
+    <!-- Sub Header Breadcrumb Bar -->
+    <div class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-2.5 flex items-center justify-between sticky top-0 z-30 text-xs">
+      <div class="flex items-center space-x-3">
+        <Link href="/p2p" class="text-xs text-[#848e9c] hover:text-white transition flex items-center space-x-1 font-semibold">
           <span>← Back to P2P Marketplace</span>
-        </a>
+        </Link>
         <span class="text-[#2b3139]">|</span>
-        <h1 class="text-sm font-bold text-white">My P2P Orders History</h1>
+        <h1 class="text-xs font-bold text-white flex items-center space-x-1.5">
+          <span>📋</span>
+          <span>My P2P Orders</span>
+        </h1>
       </div>
-      <a href="/p2p/merchant/ads" class="text-xs text-[#f0b90b] hover:underline">Merchant Ads →</a>
-    </header>
+      <Link href="/p2p/merchant/ads" class="inline-flex items-center space-x-1 text-xs text-[#f0b90b] hover:text-yellow-400 font-bold transition">
+        <span>Merchant Ads</span>
+        <span>→</span>
+      </Link>
+    </div>
 
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
       <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl overflow-hidden shadow-xl text-xs">
@@ -90,6 +99,9 @@
 </template>
 
 <script setup>
+import { Link } from '@inertiajs/vue3';
+import TradingHeader from '@/Components/TradingHeader.vue';
+
 defineProps({
   orders: { type: Object, required: true },
   user: { type: Object, required: true },

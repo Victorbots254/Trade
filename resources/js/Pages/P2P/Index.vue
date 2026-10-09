@@ -1,40 +1,33 @@
 <template>
   <div class="min-h-screen bg-[#0b0e11] text-[#eaecef] flex flex-col font-sans select-none">
-    <!-- Real-time P2P Live Notification Toasts & Audio Chimes -->
-    <P2PNotificationBanner :user-id="user?.id" />
+    <!-- Main Top Navigation Header -->
+    <TradingHeader :user="user || $page.props.auth?.user" />
 
-    <!-- Top Navigation Header -->
-    <header class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-3 flex items-center justify-between sticky top-0 z-30">
-      <div class="flex items-center space-x-6">
-        <a href="/" class="flex items-center space-x-2 font-black text-lg text-[#f0b90b] tracking-wider">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#f0b90b] to-[#d4a30b] text-[#1e2329] flex items-center justify-center text-sm font-black shadow-md">T</div>
-          <span class="text-white">TRADE<span class="text-[#f0b90b]">CO</span> <span class="text-xs bg-[#f0b90b]/10 text-[#f0b90b] px-2 py-0.5 rounded ml-1 border border-[#f0b90b]/20 font-bold uppercase">P2P</span></span>
-        </a>
-
-        <nav class="hidden md:flex items-center space-x-4 text-xs font-semibold">
-          <a href="/terminal" class="text-[#848e9c] hover:text-[#f0b90b] transition">Spot Terminal</a>
-          <a href="/options" class="text-[#848e9c] hover:text-[#f0b90b] transition">Options</a>
-          <a href="/p2p" class="text-[#f0b90b] border-b-2 border-[#f0b90b] pb-1 font-bold">P2P Trading</a>
-          <a href="/deposit" class="text-[#848e9c] hover:text-[#f0b90b] transition">Deposit</a>
-          <a href="/monthly-interests" class="text-[#848e9c] hover:text-[#f0b90b] transition">USDT MMF (18%)</a>
-        </nav>
+    <!-- P2P Sub Navigation Bar -->
+    <div class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-2.5 flex items-center justify-between sticky top-0 z-30 text-xs">
+      <div class="flex items-center space-x-3">
+        <span class="font-bold text-white flex items-center space-x-1.5">
+          <span>🤝</span>
+          <span>P2P Express Marketplace</span>
+        </span>
+        <span class="bg-[#0ecb81]/10 text-[#0ecb81] border border-[#0ecb81]/30 text-[10px] px-2 py-0.5 rounded font-bold uppercase">0% Escrow</span>
       </div>
 
-      <div class="flex items-center space-x-3 text-xs">
-        <a href="/p2p/orders" class="hidden sm:inline-flex items-center space-x-1.5 text-[#848e9c] hover:text-white bg-[#2b3139]/40 hover:bg-[#2b3139] px-3 py-1.5 rounded-lg border border-[#2b3139] transition">
+      <div class="flex items-center space-x-2.5">
+        <Link href="/p2p/orders" class="inline-flex items-center space-x-1.5 text-[#848e9c] hover:text-white bg-[#2b3139]/40 hover:bg-[#2b3139] px-3 py-1.5 rounded-lg border border-[#2b3139] transition">
           <span>📋</span>
-          <span>My P2P Orders</span>
-        </a>
-        <a href="/p2p/merchant/ads" class="inline-flex items-center space-x-1.5 bg-[#f0b90b]/10 text-[#f0b90b] hover:bg-[#f0b90b]/20 border border-[#f0b90b]/30 px-3 py-1.5 rounded-lg font-bold transition">
+          <span>My Orders</span>
+        </Link>
+        <Link href="/p2p/merchant/ads" class="inline-flex items-center space-x-1.5 bg-[#f0b90b]/10 text-[#f0b90b] hover:bg-[#f0b90b]/20 border border-[#f0b90b]/30 px-3 py-1.5 rounded-lg font-bold transition">
           <span>📢</span>
           <span>Merchant Ads</span>
-        </a>
-        <div v-if="user" class="text-xs text-[#848e9c] bg-[#1e2329] px-3 py-1.5 rounded-lg border border-[#2b3139]">
-          <span class="text-[#848e9c]">Balance: </span>
+        </Link>
+        <div v-if="user" class="hidden sm:flex text-xs text-[#848e9c] bg-[#1e2329] px-3 py-1.5 rounded-lg border border-[#2b3139] items-center space-x-1">
+          <span class="text-[#848e9c]">Balance:</span>
           <span class="text-[#0ecb81] font-mono font-bold">{{ usdtBalance.toFixed(2) }} USDT</span>
         </div>
       </div>
-    </header>
+    </div>
 
     <!-- Main Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
@@ -376,7 +369,8 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, Link } from '@inertiajs/vue3';
+import TradingHeader from '@/Components/TradingHeader.vue';
 import P2PNotificationBanner from '@/Components/P2PNotificationBanner.vue';
 
 const props = defineProps({

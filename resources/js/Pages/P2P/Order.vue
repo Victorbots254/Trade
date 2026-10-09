@@ -1,13 +1,16 @@
 <template>
   <div class="min-h-screen bg-[#0b0e11] text-[#eaecef] flex flex-col font-sans select-none">
-    <!-- Header -->
-    <header class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-3.5 flex items-center justify-between sticky top-0 z-30">
+    <!-- Main Top Navigation Header -->
+    <TradingHeader :user="currentUser || $page.props.auth?.user" />
+
+    <!-- Sub Header Breadcrumb Bar -->
+    <div class="bg-[#181a20] border-b border-[#2b3139] px-4 md:px-8 py-2.5 flex items-center justify-between sticky top-0 z-30 text-xs">
       <div class="flex items-center space-x-3">
-        <a href="/p2p" class="text-xs text-[#848e9c] hover:text-white transition flex items-center space-x-1">
+        <Link href="/p2p" class="text-xs text-[#848e9c] hover:text-white transition flex items-center space-x-1 font-semibold">
           <span>← Back to P2P</span>
-        </a>
+        </Link>
         <span class="text-[#2b3139]">|</span>
-        <h1 class="text-sm font-bold text-white flex items-center space-x-2">
+        <h1 class="text-xs font-bold text-white flex items-center space-x-2">
           <span>Order #{{ order.order_number }}</span>
           <span :class="statusBadgeClass" class="text-[10px] uppercase font-mono px-2 py-0.5 rounded font-bold">
             {{ formatStatus(order.status) }}
@@ -16,9 +19,9 @@
       </div>
 
       <div class="flex items-center space-x-3 text-xs">
-        <a href="/p2p/orders" class="text-[#848e9c] hover:text-white">All Orders</a>
+        <Link href="/p2p/orders" class="text-xs text-[#848e9c] hover:text-white transition">All Orders</Link>
       </div>
-    </header>
+    </div>
 
     <!-- Main Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -523,7 +526,8 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, Link } from '@inertiajs/vue3';
+import TradingHeader from '@/Components/TradingHeader.vue';
 
 const props = defineProps({
   order: { type: Object, required: true },

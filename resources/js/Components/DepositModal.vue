@@ -10,13 +10,13 @@
         <button @click="$emit('close')" class="text-slate-500 hover:text-slate-300 text-base p-1">✕</button>
       </div>
 
-      <!-- Deposit Method Selector Tabs (M-Pesa, Binance, P2P Option) -->
-      <div class="grid grid-cols-3 gap-1.5 p-2 bg-slate-950/60 border-b border-slate-800">
+      <!-- Deposit Method Selector Tabs (M-Pesa + Binance) -->
+      <div class="grid grid-cols-2 gap-1.5 p-2 bg-slate-950/60 border-b border-slate-800">
         <!-- 1. M-Pesa -->
         <button @click="activeTab = 'mpesa'"
                 type="button"
                 :class="activeTab === 'mpesa' ? 'bg-emerald-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
-                class="py-2.5 px-2 rounded-xl transition flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1.5 text-xs text-center">
+                class="py-2.5 px-2 rounded-xl transition flex items-center justify-center space-x-1.5 text-xs">
           <span class="text-sm">📱</span>
           <span>M-Pesa</span>
         </button>
@@ -25,20 +25,27 @@
         <button @click="activeTab = 'crypto'"
                 type="button"
                 :class="activeTab === 'crypto' ? 'bg-[#f0b90b] text-[#1e2329] font-bold shadow' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
-                class="py-2.5 px-2 rounded-xl transition flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1.5 text-xs text-center">
+                class="py-2.5 px-2 rounded-xl transition flex items-center justify-center space-x-1.5 text-xs">
           <span class="text-sm">🟡</span>
           <span>Binance</span>
         </button>
-
-        <!-- 3. P2P Option -->
-        <button @click="activeTab = 'p2p'"
-                type="button"
-                :class="activeTab === 'p2p' ? 'bg-sky-500 text-white font-bold shadow' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
-                class="py-2.5 px-2 rounded-xl transition flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1.5 text-xs text-center">
-          <span class="text-sm">🤝</span>
-          <span>P2P Option</span>
-        </button>
       </div>
+
+      <!-- P2P CTA Row -->
+      <div class="flex items-center justify-between gap-3 px-4 py-2.5 bg-[#0ecb81]/5 border-b border-[#0ecb81]/15">
+        <div class="flex items-center space-x-2 min-w-0">
+          <span class="text-sm shrink-0">🤝</span>
+          <div class="min-w-0">
+            <div class="font-bold text-slate-100 text-[11px] leading-tight">P2P Trading</div>
+            <div class="text-[10px] text-slate-400 truncate">Buy USDT via M-Pesa &amp; Bank · 0% escrow fee</div>
+          </div>
+        </div>
+        <a href="/p2p"
+           class="shrink-0 bg-[#f0b90b] hover:bg-yellow-400 text-[#1e2329] font-bold text-[10px] px-3 py-1.5 rounded-lg transition whitespace-nowrap">
+          Go to P2P →
+        </a>
+      </div>
+
 
       <!-- PENDING / SUCCESS SCREEN FOR CRYPTO/MPESA -->
       <div v-if="submittedDeposit" class="p-6 text-center space-y-4">
@@ -205,77 +212,11 @@
         </button>
       </form>
 
-      <!-- TAB 3: P2P OPTION (BUY USDT VIA M-PESA / BANK) -->
-      <div v-else-if="activeTab === 'p2p'" class="p-5 space-y-4">
-        <div class="bg-gradient-to-r from-sky-500/10 via-sky-500/5 to-transparent border border-sky-500/30 rounded-xl p-4 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-sky-400 font-bold text-xs flex items-center space-x-1.5">
-              <span>🤝</span>
-              <span>P2P Express Trading</span>
-            </span>
-            <span class="bg-sky-500/20 text-sky-400 border border-sky-500/40 px-2 py-0.5 rounded text-[10px] font-bold">
-              0% ESCROW FEE
-            </span>
-          </div>
-          <p class="text-xs text-slate-300 leading-relaxed">
-            Buy USDT directly from verified Kenyan merchants using local <strong>Safaricom M-Pesa</strong> (Send Money, Paybill, Till) or <strong>Bank Transfer</strong>.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2.5 text-xs">
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-1">
-            <div class="text-[#0ecb81] font-bold flex items-center space-x-1">
-              <span>📱</span>
-              <span>Safaricom M-Pesa</span>
-            </div>
-            <p class="text-[11px] text-slate-400 leading-snug">
-              Send Money, Lipa Na M-Pesa Paybill, and Till number options.
-            </p>
-          </div>
-
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-1">
-            <div class="text-[#38bdf8] font-bold flex items-center space-x-1">
-              <span>🏦</span>
-              <span>Local Bank Transfer</span>
-            </div>
-            <p class="text-[11px] text-slate-400 leading-snug">
-              Instant transfer via Equity, KCB, NCBA, Co-op, and more.
-            </p>
-          </div>
-        </div>
-
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2 text-[11px]">
-          <div class="flex justify-between items-center">
-            <span class="text-slate-400">Current Market Rate:</span>
-            <span class="text-emerald-400 font-bold font-mono">1 USDT ≈ {{ exchangeRate }} KES</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-slate-400">Escrow Protection:</span>
-            <span class="text-sky-400 font-bold">TradeCo Smart Escrow</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-slate-400">Escrow Fee:</span>
-            <span class="text-emerald-400 font-bold">Free up to $50 (0.5 USDT thereafter)</span>
-          </div>
-        </div>
-
-        <div class="space-y-2 pt-1">
-          <a href="/p2p"
-             class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2.5 px-4 rounded-xl transition shadow-lg text-xs flex items-center justify-center space-x-2">
-            <span>Browse P2P Buy Offers →</span>
-          </a>
-
-          <div class="text-center">
-            <a href="/p2p/orders" class="text-[11px] text-slate-400 hover:text-white underline">
-              View My P2P Orders ↗
-            </a>
-          </div>
-        </div>
-      </div>
 
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
