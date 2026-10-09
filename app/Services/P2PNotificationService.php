@@ -225,11 +225,20 @@ class P2PNotificationService
                     <!-- Header -->
                     <tr>
                         <td style='padding: 24px 28px; background-color: #14161a; border-bottom: 1px solid #2b3139;'>
-                            <table width='100%'>
+                            <table width='100%' cellspacing='0' cellpadding='0'>
                                 <tr>
                                     <td>
-                                        <span style='font-size: 20px; font-weight: 900; color: #f0b90b; letter-spacing: 0.5px;'>Trade<span style='color: #ffffff;'>Co</span></span>
-                                        <span style='margin-left: 8px; font-size: 11px; background-color: rgba(240,185,11,0.15); color: #f0b90b; border: 1px solid rgba(240,185,11,0.3); padding: 2px 8px; border-radius: 999px; font-weight: bold;'>P2P Escrow</span>
+                                        <table cellspacing='0' cellpadding='0'>
+                                            <tr>
+                                                <td style='width: 32px; height: 32px; background-color: #f0b90b; border-radius: 8px; text-align: center; vertical-align: middle; font-weight: 900; color: #1e2329; font-size: 16px; line-height: 32px;'>
+                                                    T
+                                                </td>
+                                                <td style='padding-left: 10px;'>
+                                                    <span style='font-size: 18px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px;'>TRADE<span style='color: #f0b90b;'>CO</span></span>
+                                                    <span style='display: block; font-size: 10px; color: #848e9c; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;'>P2P Escrow</span>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                     <td align='right'>
                                         <span style='background-color: {$badgeColor}22; color: {$badgeColor}; border: 1px solid {$badgeColor}55; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; text-transform: uppercase;'>{$badge}</span>

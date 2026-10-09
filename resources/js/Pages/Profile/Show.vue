@@ -290,7 +290,13 @@
                 <span class="text-[#848e9c] block text-[11px]">Primary Email Address</span>
                 <span class="font-mono text-white text-xs">{{ user?.email }}</span>
               </div>
-              <span class="text-[10px] text-[#0ecb81] bg-[#0ecb81]/10 px-2 py-0.5 rounded font-bold">Verified ✓</span>
+              <span v-if="user?.email_verified_at" class="text-[10px] text-[#0ecb81] bg-[#0ecb81]/10 px-2 py-0.5 rounded font-bold">
+                Verified ✓
+              </span>
+              <button v-else @click="resendVerification" :disabled="sendingVerify"
+                      class="text-[10px] text-[#f0b90b] hover:text-white bg-[#f0b90b]/10 hover:bg-[#f0b90b]/20 px-2 py-0.5 rounded font-bold transition">
+                {{ sendingVerify ? 'Sending...' : 'Verify Email ✉️' }}
+              </button>
             </div>
 
             <!-- Account UID Row -->
@@ -666,6 +672,20 @@ async function resetDemoBalance() {
 function handleModalDepositSubmitted() {
   toastRef.value?.show('Deposit request submitted successfully!', 'success');
   showDepositModal.value = false;
+}
+
+// Resend Email Verification
+const sendingVerify = ref(false);
+async function resendVerification() {
+  sendingVerify.value = true;
+  try {
+    const res = await axios.post('/api/email/verify/resend');
+    toastRef.value?.show(res.data.message || 'Verification link sent to your email!', 'success');
+  } catch (e) {
+    toastRef.value?.show(e.response?.data?.message || 'Failed to send verification email.', 'error');
+  } finally {
+    sendingVerify.value = false;
+  }
 }
 
 // BEP-20 Wallet Address Modal & Update

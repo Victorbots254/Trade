@@ -270,6 +270,21 @@ class MegaPayService
 
             Log::info("MegaPay deposit #{$lockedDeposit->id} approved and credited: {$lockedDeposit->amount} USDT (Receipt: {$receipt})");
 
+            // Dispatch Clean Trading Deposit Approved Email
+            try {
+                if ($lockedDeposit->user) {
+                    \App\Services\TradingEmailService::sendDepositApprovedEmail(
+                        $lockedDeposit->user,
+                        (float) $lockedDeposit->amount,
+                        'USDT',
+                        $receipt,
+                        'Safaricom M-Pesa STK Push'
+                    );
+                }
+            } catch (\Throwable $e) {
+                Log::warning('M-Pesa deposit approved email dispatch error: ' . $e->getMessage());
+            }
+
             return $lockedDeposit;
         });
     }

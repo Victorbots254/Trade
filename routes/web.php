@@ -178,8 +178,44 @@ Route::post('/api/register', function (Request $request) {
 
     Auth::login($user);
 
-    return response()->json(['user' => $user, 'message' => 'Registration successful']);
+    // Send Clean Trading-Style Welcome Email
+    try {
+        $verifyUrl = \Illuminate\Support\Facades\URL::signedRoute('verification.verify', [
+            'id' => $user->id,
+            'hash' => sha1($user->getEmailForVerification()),
+        ]);
+        \App\Services\TradingEmailService::sendWelcomeEmail($user, $verifyUrl);
+    } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::warning('Welcome email dispatch error: ' . $e->getMessage());
+    }
+
+    return response()->json(['user' => $user, 'message' => 'Registration successful! Welcome email sent.']);
 });
+
+// Email Verification Routes
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    $user = User::findOrFail($id);
+    if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        abort(403, 'Invalid or expired verification link.');
+    }
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+    }
+    return redirect()->route('profile')->with('success', 'Your email address has been verified successfully!');
+})->name('verification.verify');
+
+Route::post('/api/email/verify/resend', function (Request $request) {
+    $user = $request->user();
+    if ($user->hasVerifiedEmail()) {
+        return response()->json(['message' => 'Your email is already verified.']);
+    }
+    $verifyUrl = \Illuminate\Support\Facades\URL::signedRoute('verification.verify', [
+        'id' => $user->id,
+        'hash' => sha1($user->getEmailForVerification()),
+    ]);
+    \App\Services\TradingEmailService::sendVerificationEmail($user, $verifyUrl);
+    return response()->json(['message' => 'Verification email sent. Please check your inbox.']);
+})->middleware('auth');
 
 Route::post('/api/login', function (Request $request) {
     $request->validate([

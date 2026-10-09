@@ -48,13 +48,26 @@ class WithdrawalController extends Controller
             $wallet->available_balance = (float) bcsub((string)$wallet->available_balance, (string)$amount, 8);
             $wallet->save();
 
-            Withdrawal::create([
+            $withdrawal = Withdrawal::create([
                 "user_id" => $user->id,
                 "currency" => "USDT",
                 "amount" => $amount,
                 "bep20_address" => $user->bep20_address,
                 "status" => "pending",
             ]);
+
+            // Dispatch Clean Trading Withdrawal Email
+            try {
+                \App\Services\TradingEmailService::sendWithdrawalNotification(
+                    $user,
+                    $amount,
+                    'USDT',
+                    $user->bep20_address,
+                    'Pending Blockchain Processing'
+                );
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Withdrawal email dispatch error: ' . $e->getMessage());
+            }
 
             return back()->with("message", "Withdrawal request for $" . number_format($amount, 2) . " submitted successfully.");
         });

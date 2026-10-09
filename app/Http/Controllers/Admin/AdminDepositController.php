@@ -99,6 +99,21 @@ class AdminDepositController extends Controller
             broadcast(new DepositApprovedEvent($deposit, $wallet));
         });
 
+        // Send Clean Trading Deposit Approved Email
+        try {
+            if ($deposit->user) {
+                \App\Services\TradingEmailService::sendDepositApprovedEmail(
+                    $deposit->user,
+                    (float) $deposit->amount,
+                    $deposit->currency,
+                    $deposit->tx_hash ?? $deposit->reference ?? "#{$deposit->id}",
+                    $deposit->payment_method ?? 'crypto'
+                );
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Deposit approved email dispatch error: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', "Deposit #{$deposit->id} approved and credited successfully.");
     }
 
