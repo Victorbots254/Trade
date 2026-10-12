@@ -118,16 +118,12 @@
               <span class="w-2 h-2 bg-[#f0b90b] rounded-full animate-pulse"></span>
               <span>LIVE MARKETS · INSTITUTIONAL EXCHANGE</span>
             </div>
-            <a href="/monthly-interests" class="inline-flex items-center space-x-1.5 border rounded-full px-3.5 py-1.5 text-[11px] font-bold transition hover:scale-105" :class="isDark?'border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20':'border-emerald-600/40 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'">
-              <span>💰</span>
-              <span>EARN UP TO 18% MONTHLY (USDT MMF) →</span>
-            </a>
           </div>
           <h1 class="text-4xl sm:text-5xl xl:text-6xl font-extrabold leading-tight" :class="isDark?'text-white':'text-[#1e2329]'">
             Trade Crypto,<br>Gold &amp; Stocks<br><span class="text-[#f0b90b]">With Confidence.</span>
           </h1>
           <p class="text-[15px] leading-relaxed max-w-lg" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">
-            Access 14+ spot markets with real-time pricing, binary options up to 88% ROI, and <strong>earn guaranteed up to 18% monthly interest</strong> with TradeCo USDT Money Market Fund (USDT MMF).
+            Access 14+ spot markets with real-time pricing, binary options up to 88% ROI, and secure institutional liquidity with TradeCo.
           </p>
           <div class="flex flex-col sm:flex-row gap-3 pt-2">
             <template v-if="$page.props.auth?.user || user">
@@ -139,15 +135,10 @@
             <template v-else>
               <a href="/register" class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-bold px-7 py-3.5 rounded-xl text-sm transition shadow-xl flex items-center justify-center">Get Started — Free</a>
             </template>
-            <a href="/monthly-interests" class="border font-bold px-6 py-3.5 rounded-xl text-sm transition flex items-center justify-center space-x-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 shadow-lg shadow-emerald-500/10">
-              <span>💰</span>
-              <span>Earn 18% (USDT MMF)</span>
-            </a>
             <a href="#markets" class="border font-semibold px-5 py-3.5 rounded-xl text-sm transition flex items-center justify-center" :class="isDark?'border-[#2b3139] text-white hover:border-[#f0b90b]':'border-gray-200 text-[#1e2329] hover:border-[#f0b90b]'">📊 Markets</a>
           </div>
           <div class="flex flex-wrap items-center gap-4 pt-2 text-[11px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">
             <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>No KYC Required</span></div>
-            <div class="flex items-center space-x-1.5 text-emerald-400 font-bold"><span class="text-[#0ecb81]">✔</span><span>Earn 18% Monthly Yield</span></div>
             <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>USDT BEP20 Deposits</span></div>
             <div class="flex items-center space-x-1.5"><span class="text-[#0ecb81]">✔</span><span>$10,000 Demo Account</span></div>
           </div>
