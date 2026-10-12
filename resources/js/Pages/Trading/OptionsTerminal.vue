@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen lg:h-screen flex flex-col bg-slate-950 text-slate-100 overflow-y-auto lg:overflow-hidden font-sans select-none pb-12">
+  <div class="min-h-screen lg:h-screen flex flex-col bg-slate-950 text-slate-100 overflow-y-auto lg:overflow-hidden font-sans select-none pb-28 sm:pb-24 lg:pb-12">
     <ToastNotification ref="toastRef" />
 
     <TradingHeader 
@@ -12,8 +12,8 @@
 
     <!-- Main Options Terminal Grid -->
     <div class="flex-1 grid grid-cols-12 gap-1.5 p-1.5 overflow-y-auto lg:overflow-hidden transition-all duration-300">
-      <!-- Sidebar Markets Selection (Collapsible / Sunken by Default) -->
-      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-auto lg:h-full overflow-hidden transition-all duration-300">
+      <!-- Sidebar Markets Selection (Collapsible / Hidden by Default on Mobile) -->
+      <div :class="isMarketCollapsed ? 'hidden lg:block lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-auto lg:h-full overflow-hidden transition-all duration-300">
         <MarketList 
           :markets="marketsList"
           :currentSymbol="currentMarketState.symbol"
@@ -22,10 +22,27 @@
         />
       </div>
 
-      <!-- Center Chart & Execution Area -->
+      <!-- Center Chart Area -->
       <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-8' : 'col-span-12 lg:col-span-7'" class="flex flex-col space-y-1.5 h-auto lg:h-full overflow-hidden transition-all duration-300">
+        <!-- Mobile Pair Quick Switcher Bar (Mobile Only) -->
+        <div class="lg:hidden flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs">
+          <div class="flex items-center space-x-2">
+            <button @click="isMarketCollapsed = !isMarketCollapsed" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500 text-slate-200 px-2.5 py-1 rounded font-bold flex items-center space-x-1.5 transition">
+              <span class="text-emerald-400 font-mono">{{ currentMarketState.symbol }}</span>
+              <span class="text-slate-500 text-[10px]">▼</span>
+            </button>
+            <span class="font-mono text-emerald-400 font-bold">${{ formatPrice(displayedMarketState.last_price) }}</span>
+            <span :class="displayedMarketState.change_24h >= 0 ? 'text-emerald-400' : 'text-rose-400'" class="font-mono text-[11px]">
+              {{ displayedMarketState.change_24h >= 0 ? '+' : '' }}{{ displayedMarketState.change_24h }}%
+            </span>
+          </div>
+          <button @click="isMarketCollapsed = !isMarketCollapsed" class="text-slate-400 hover:text-emerald-400 text-xs font-semibold">
+            {{ isMarketCollapsed ? 'All Pairs ↗' : 'Close ✕' }}
+          </button>
+        </div>
+
         <!-- Interactive Chart View with Visual Price Movement Engine -->
-        <div class="flex-1 min-h-[260px] sm:min-h-[300px]">
+        <div class="flex-1 min-h-[280px] sm:min-h-[340px]">
           <TradingViewChart 
             :symbol="currentMarketState.symbol"
             :market="displayedMarketState"
@@ -34,8 +51,8 @@
           />
         </div>
 
-        <!-- Active Contracts Countdown & History Table -->
-        <div class="h-40 sm:h-48 bg-slate-900 border border-slate-800 rounded-lg p-2.5 sm:p-3 flex flex-col overflow-hidden text-xs">
+        <!-- Active Contracts Countdown & History Table (Desktop View) -->
+        <div class="hidden lg:flex h-40 sm:h-48 bg-slate-900 border border-slate-800 rounded-lg p-2.5 sm:p-3 flex-col overflow-hidden text-xs">
           <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-2 font-semibold text-slate-300">
             <span class="flex items-center space-x-2">
               <span>Active Options Positions ({{ activeContractsList.length }})</span>
@@ -66,7 +83,6 @@
                     </span>
                   </td>
                   <td class="py-1.5 text-slate-300">${{ formatPrice(c.entry_price) }}</td>
-                  <!-- Fixed Multi-Pair Current Price View -->
                   <td class="py-1.5 font-bold text-slate-100">${{ formatPrice(getContractCurrentPrice(c)) }}</td>
                   <td class="py-1.5 text-emerald-400 font-bold">${{ formatPrice(c.investment_amount) }}</td>
                   <td class="py-1.5 text-amber-400 font-bold font-mono">
@@ -86,11 +102,14 @@
         </div>
       </div>
 
-      <!-- Right Execution Control Panel (3 Cols) -->
-      <div class="col-span-12 lg:col-span-3 bg-slate-900 border border-slate-800 rounded-lg p-3 lg:p-3.5 flex flex-col justify-between overflow-y-auto max-h-[85vh] lg:max-h-full text-xs space-y-2.5">
+      <!-- Execution Control Panel (Placed directly under chart on mobile, right column on desktop) -->
+      <div class="col-span-12 lg:col-span-3 bg-slate-900 border border-slate-800 rounded-lg p-3 lg:p-3.5 flex flex-col justify-between overflow-visible lg:overflow-y-auto lg:max-h-full text-xs space-y-2.5 shadow-xl">
         <div>
           <div class="border-b border-slate-800 pb-1.5 mb-2 flex justify-between items-center">
-            <h3 class="font-bold text-slate-100 text-xs sm:text-sm">Time-Expiry Controls</h3>
+            <h3 class="font-bold text-slate-100 text-xs sm:text-sm flex items-center space-x-1.5">
+              <span>⚡</span>
+              <span>Time-Expiry Controls</span>
+            </h3>
             <span class="text-emerald-400 font-mono font-bold text-[11px] bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded">+88% Profit</span>
           </div>
 
@@ -141,11 +160,11 @@
           </div>
         </div>
 
-        <!-- HIGHER / LOWER Action Execution Spinner Buttons (Side-by-side 2-col grid for small screens) -->
-        <div class="grid grid-cols-2 gap-2 pt-1">
+        <!-- HIGHER / LOWER Action Execution Spinner Buttons (Prominent & Clear) -->
+        <div class="grid grid-cols-2 gap-2 pt-1 pb-1">
           <button @click="placeOption('higher')" :disabled="submitting"
-                  class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 disabled:opacity-50 text-white font-bold py-2.5 px-1.5 rounded-lg transition uppercase tracking-wider text-xs shadow-lg flex items-center justify-center space-x-1">
-            <svg v-if="submittingDirection === 'higher'" class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+                  class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 disabled:opacity-50 text-white font-bold py-3 px-2 rounded-xl transition uppercase tracking-wider text-xs sm:text-sm shadow-lg flex items-center justify-center space-x-1.5 cursor-pointer">
+            <svg v-if="submittingDirection === 'higher'" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -153,13 +172,63 @@
           </button>
 
           <button @click="placeOption('lower')" :disabled="submitting"
-                  class="w-full bg-rose-600 hover:bg-rose-500 active:scale-95 disabled:opacity-50 text-white font-bold py-2.5 px-1.5 rounded-lg transition uppercase tracking-wider text-xs shadow-lg flex items-center justify-center space-x-1">
-            <svg v-if="submittingDirection === 'lower'" class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+                  class="w-full bg-rose-600 hover:bg-rose-500 active:scale-95 disabled:opacity-50 text-white font-bold py-3 px-2 rounded-xl transition uppercase tracking-wider text-xs sm:text-sm shadow-lg flex items-center justify-center space-x-1.5 cursor-pointer">
+            <svg v-if="submittingDirection === 'lower'" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             <span class="truncate">LOWER ⬇ (+88%)</span>
           </button>
+        </div>
+      </div>
+
+      <!-- Active Contracts Countdown & History Table (Mobile View: placed after execution controls) -->
+      <div class="lg:hidden col-span-12 bg-slate-900 border border-slate-800 rounded-lg p-2.5 sm:p-3 flex flex-col overflow-hidden text-xs shadow-xl">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-2 font-semibold text-slate-300">
+          <span class="flex items-center space-x-2">
+            <span>Active Options Positions ({{ activeContractsList.length }})</span>
+            <span class="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded">AUTO-SETTLING</span>
+          </span>
+          <span class="text-slate-500 font-mono text-[11px]">Payout: +88% Profit</span>
+        </div>
+
+        <div class="overflow-x-auto font-mono">
+          <table class="w-full text-left text-[11px]">
+            <thead>
+              <tr class="text-slate-500 border-b border-slate-800/60 pb-1">
+                <th>Pair</th>
+                <th>Direction</th>
+                <th>Entry Price</th>
+                <th>Current Price</th>
+                <th>Investment</th>
+                <th>Timer</th>
+                <th class="text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/40">
+              <tr v-for="c in activeContractsList" :key="c.id" class="hover:bg-slate-800/40 transition items-center">
+                <td class="py-1.5 font-bold text-slate-200">{{ c.market?.symbol || currentMarketState.symbol }}</td>
+                <td class="py-1.5">
+                  <span :class="c.direction === 'higher' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-rose-400 bg-rose-500/10 border-rose-500/30'" class="px-1.5 py-0.5 rounded border uppercase text-[10px] font-bold">
+                    {{ c.direction === 'higher' ? 'HIGHER ⬆' : 'LOWER ⬇' }}
+                  </span>
+                </td>
+                <td class="py-1.5 text-slate-300">${{ formatPrice(c.entry_price) }}</td>
+                <td class="py-1.5 font-bold text-slate-100">${{ formatPrice(getContractCurrentPrice(c)) }}</td>
+                <td class="py-1.5 text-emerald-400 font-bold">${{ formatPrice(c.investment_amount) }}</td>
+                <td class="py-1.5 text-amber-400 font-bold font-mono">
+                  {{ formatCountdown(c.remaining_seconds) }}
+                </td>
+                <td class="py-1.5 text-right font-bold">
+                  <span v-if="isContractWinning(c)" class="text-emerald-400">WINNING (+${{ formatPrice(c.payout_amount - c.investment_amount) }})</span>
+                  <span v-else class="text-rose-400">OUT OF MONEY</span>
+                </td>
+              </tr>
+              <tr v-if="activeContractsList.length === 0">
+                <td colspan="7" class="py-6 text-center text-slate-500">No active option contracts. Select time & investment to enter a trade.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

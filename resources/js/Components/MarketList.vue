@@ -1,7 +1,7 @@
 <template>
-  <!-- SUNKEN / COLLAPSED STATE BY DEFAULT -->
+  <!-- SUNKEN / COLLAPSED STATE BY DEFAULT (Desktop Only) -->
   <div v-if="isCollapsed" 
-       class="bg-slate-900 border border-slate-800 rounded-lg flex flex-col items-center py-3 h-full overflow-hidden text-xs select-none space-y-4">
+       class="hidden lg:flex bg-slate-900 border border-slate-800 rounded-lg flex-col items-center py-3 h-full overflow-hidden text-xs select-none space-y-4">
     <!-- Expand Toggle Button -->
     <button @click="toggleCollapse" 
             title="Expand Market Pairs List"

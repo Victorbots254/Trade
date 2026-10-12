@@ -94,17 +94,17 @@
 
       <!-- Right User Controls, Balances, & CTAs -->
       <div class="flex items-center space-x-2 sm:space-x-3">
-        <!-- DEMO vs LIVE MODE SWITCHER -->
-        <div class="hidden lg:flex items-center p-0.5 bg-slate-950/80 rounded-lg border border-slate-800 text-[11px] font-semibold">
+        <!-- DEMO vs LIVE MODE SWITCHER (Visible on all devices: Mobile, Tablet & Desktop) -->
+        <div class="flex items-center p-0.5 bg-slate-950/90 rounded-lg border border-slate-800 text-[10px] sm:text-[11px] font-semibold shrink-0 shadow-inner">
           <button @click="switchAccountMode('demo')" 
-                  :class="accountMode === 'demo' ? 'bg-[#f0b90b]/20 text-[#f0b90b] border border-[#f0b90b]/30 shadow-sm' : 'text-slate-400 hover:text-slate-200 border border-transparent'"
-                  class="px-2.5 py-1 rounded-md transition flex items-center space-x-1">
+                  :class="accountMode === 'demo' ? 'bg-[#f0b90b]/20 text-[#f0b90b] border border-[#f0b90b]/40 shadow-sm font-bold' : 'text-slate-400 hover:text-slate-200 border border-transparent'"
+                  class="px-2 py-1 sm:px-2.5 rounded-md transition flex items-center space-x-1">
             <span>Demo</span>
           </button>
           <button @click="switchAccountMode('live')" 
-                  :class="accountMode === 'live' ? 'bg-[#f0b90b] text-[#1e2329] font-bold shadow-sm' : 'text-slate-400 hover:text-slate-200 border border-transparent'"
-                  class="px-2.5 py-1 rounded-md transition flex items-center space-x-1">
-            <span v-if="accountMode === 'live'" class="w-1.5 h-1.5 rounded-full bg-[#1e2329] animate-pulse"></span>
+                  :class="accountMode === 'live' ? 'bg-emerald-600 text-white font-bold shadow-sm' : 'text-slate-400 hover:text-slate-200 border border-transparent'"
+                  class="px-2 py-1 sm:px-2.5 rounded-md transition flex items-center space-x-1">
+            <span v-if="accountMode === 'live'" class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
             <span>Live</span>
           </button>
         </div>
@@ -112,26 +112,26 @@
         <!-- AUTHENTICATED USER SECTION -->
         <template v-if="user">
           <!-- DEMO BALANCE DISPLAY -->
-          <div v-if="accountMode === 'demo'" class="hidden sm:flex items-center space-x-1.5 bg-[#f0b90b]/10 border border-[#f0b90b]/25 px-2.5 py-1.5 rounded-lg font-mono text-xs">
-            <span class="text-[#f0b90b] font-semibold text-[11px]">Demo:</span>
+          <div v-if="accountMode === 'demo'" class="flex items-center space-x-1 sm:space-x-1.5 bg-[#f0b90b]/10 border border-[#f0b90b]/25 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg font-mono text-[11px] sm:text-xs shrink-0">
+            <span class="text-[#f0b90b] font-semibold text-[10px] sm:text-[11px] hidden xs:inline">Demo:</span>
             <span class="text-amber-300 font-bold">${{ formatBalance(demoBalance) }}</span>
             <button @click="resetDemoBalance" :disabled="resetting"
                     title="Reset Demo Account to $10,000.00"
-                    class="ml-1 text-[10px] text-[#f0b90b] hover:text-white bg-[#f0b90b]/20 hover:bg-[#f0b90b]/40 border border-[#f0b90b]/30 px-1.5 py-0.5 rounded transition flex items-center space-x-0.5">
+                    class="ml-0.5 sm:ml-1 text-[10px] text-[#f0b90b] hover:text-white bg-[#f0b90b]/20 hover:bg-[#f0b90b]/40 border border-[#f0b90b]/30 px-1 py-0.5 rounded transition flex items-center space-x-0.5">
               <svg v-if="resetting" class="animate-spin h-2.5 w-2.5" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
               <span v-else>↻</span>
-              <span>Reset</span>
+              <span class="hidden sm:inline">Reset</span>
             </button>
           </div>
 
           <!-- LIVE BALANCE DISPLAY -->
-          <div v-else class="hidden sm:flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-1.5 rounded-lg font-mono text-xs">
-            <span class="text-emerald-400 font-semibold text-[11px]">Live:</span>
+          <div v-else class="flex items-center space-x-1 sm:space-x-1.5 bg-emerald-500/10 border border-emerald-500/25 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg font-mono text-[11px] sm:text-xs shrink-0">
+            <span class="text-emerald-400 font-semibold text-[10px] sm:text-[11px] hidden xs:inline">Live:</span>
             <span class="text-emerald-300 font-bold">${{ formatBalance(liveBalance) }}</span>
-            <span class="text-[10px] text-emerald-500/70 font-normal">USDT</span>
+            <span class="text-[9px] sm:text-[10px] text-emerald-500/70 font-normal">USDT</span>
           </div>
 
           <!-- DEPOSIT & WITHDRAW CTAS -->

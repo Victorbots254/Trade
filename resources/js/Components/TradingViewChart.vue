@@ -12,18 +12,28 @@
         <span class="hidden md:inline text-slate-500">Low: <span class="text-slate-300 font-mono">${{ formatPrice(market?.low_24h) }}</span></span>
       </div>
 
-      <div class="flex items-center space-x-2">
-        <div class="flex items-center space-x-1 bg-slate-950 p-0.5 rounded border border-slate-800 text-[11px]">
-          <button @click="activeTab = 'tv_widget'" :class="activeTab === 'tv_widget' ? 'bg-slate-800 text-emerald-400 font-semibold shadow' : 'text-slate-400 hover:text-slate-200'" class="px-2.5 py-0.5 rounded transition">TradingView Technical Chart</button>
-          <button @click="activeTab = 'candles'" :class="activeTab === 'candles' ? 'bg-slate-800 text-emerald-400 font-semibold shadow' : 'text-slate-400 hover:text-slate-200'" class="px-2.5 py-0.5 rounded transition">Engine Feed</button>
-          <button @click="activeTab = 'depth'" :class="activeTab === 'depth' ? 'bg-slate-800 text-emerald-400 font-semibold shadow' : 'text-slate-400 hover:text-slate-200'" class="px-2.5 py-0.5 rounded transition">Depth Chart</button>
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <div class="flex items-center space-x-0.5 sm:space-x-1 bg-slate-950 p-0.5 rounded border border-slate-800 text-[10px] sm:text-[11px]">
+          <button @click="activeTab = 'tv_widget'" :class="activeTab === 'tv_widget' ? 'bg-slate-800 text-emerald-400 font-semibold shadow' : 'text-slate-400 hover:text-slate-200'" class="px-1.5 sm:px-2.5 py-0.5 rounded transition">
+            <span class="hidden sm:inline">TradingView Technical Chart</span>
+            <span class="sm:hidden">TV Chart</span>
+          </button>
+          <button @click="activeTab = 'candles'" :class="activeTab === 'candles' ? 'bg-slate-800 text-emerald-400 font-semibold shadow' : 'text-slate-400 hover:text-slate-200'" class="px-1.5 sm:px-2.5 py-0.5 rounded transition">
+            <span class="hidden sm:inline">Engine Feed</span>
+            <span class="sm:hidden">Engine</span>
+          </button>
+          <button @click="activeTab = 'depth'" :class="activeTab === 'depth' ? 'bg-slate-800 text-emerald-400 font-semibold shadow' : 'text-slate-400 hover:text-slate-200'" class="px-1.5 sm:px-2.5 py-0.5 rounded transition">
+            <span class="hidden sm:inline">Depth Chart</span>
+            <span class="sm:hidden">Depth</span>
+          </button>
         </div>
 
         <!-- 1-Click Expand / Fullscreen Chart Button -->
         <button @click="toggleFullscreen" 
                 title="Expand TradingView Chart to Fullscreen"
-                class="bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-emerald-400 border border-slate-800 px-2 py-1 rounded text-xs font-bold transition flex items-center space-x-1">
-          <span>⛶ Expand</span>
+                class="bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-emerald-400 border border-slate-800 px-2 py-1 rounded text-xs font-bold transition flex items-center space-x-1 shrink-0">
+          <span>⛶</span>
+          <span class="hidden sm:inline">Expand</span>
         </button>
       </div>
     </div>
@@ -175,22 +185,13 @@ function renderTvScriptWidget() {
     theme: "dark",
     style: "1",
     locale: "en",
-    enable_publishing: true,
+    enable_publishing: false,
     allow_symbol_change: true,
     hide_side_toolbar: false,
-    details: true,
-    hotlist: true,
-    calendar: true,
-    watchlist: [
-      "BINANCE:BTCUSDT",
-      "BINANCE:ETHUSDT",
-      "BINANCE:BNBUSDT",
-      "BINANCE:SOLUSDT",
-      "TVC:GOLD",
-      "TVC:USOIL",
-      "FX:EURUSD",
-      "NASDAQ:NVDA"
-    ],
+    hide_top_toolbar: false,
+    details: false,
+    hotlist: false,
+    calendar: false,
     show_popup_button: true,
     popup_width: "1000",
     popup_height: "650",
@@ -217,22 +218,12 @@ function renderFullscreenWidget() {
     theme: "dark",
     style: "1",
     locale: "en",
-    enable_publishing: true,
+    enable_publishing: false,
     allow_symbol_change: true,
     hide_side_toolbar: false,
-    details: true,
-    hotlist: true,
-    calendar: true,
-    watchlist: [
-      "BINANCE:BTCUSDT",
-      "BINANCE:ETHUSDT",
-      "BINANCE:BNBUSDT",
-      "BINANCE:SOLUSDT",
-      "TVC:GOLD",
-      "TVC:USOIL",
-      "FX:EURUSD",
-      "NASDAQ:NVDA"
-    ],
+    details: false,
+    hotlist: false,
+    calendar: false,
     support_host: "https://www.tradingview.com"
   });
 

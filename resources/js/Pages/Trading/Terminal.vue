@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen lg:h-screen flex flex-col bg-slate-950 text-slate-100 overflow-y-auto lg:overflow-hidden font-sans select-none pb-12">
+  <div class="min-h-screen lg:h-screen flex flex-col bg-slate-950 text-slate-100 overflow-y-auto lg:overflow-hidden font-sans select-none pb-28 sm:pb-24 lg:pb-12">
     <!-- Top Bar Navigation Header -->
     <TradingHeader 
       :user="$page.props.auth.user"
@@ -14,8 +14,8 @@
 
     <!-- Main Workspace Area -->
     <div class="flex-1 grid grid-cols-12 gap-1.5 p-1.5 overflow-y-auto lg:overflow-hidden transition-all duration-300">
-      <!-- Column 1: Market Search & Selection (Collapsible / Sunken by Default) -->
-      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-auto lg:h-full overflow-hidden transition-all duration-300">
+      <!-- Column 1: Market Search & Selection (Collapsible / Hidden on Mobile by Default) -->
+      <div :class="isMarketCollapsed ? 'hidden lg:block lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-auto lg:h-full overflow-hidden transition-all duration-300">
         <MarketList 
           :markets="marketsList"
           :currentSymbol="currentMarketState.symbol"
@@ -26,6 +26,23 @@
 
       <!-- Column 2: Center Interactive Chart & Bottom Orders -->
       <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-7' : 'col-span-12 lg:col-span-6'" class="flex flex-col space-y-1.5 h-auto lg:h-full overflow-hidden transition-all duration-300">
+        <!-- Mobile Pair Switcher (Mobile Only) -->
+        <div class="lg:hidden flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs">
+          <div class="flex items-center space-x-2">
+            <button @click="isMarketCollapsed = !isMarketCollapsed" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-[#f0b90b] text-slate-200 px-2.5 py-1 rounded font-bold flex items-center space-x-1.5 transition">
+              <span class="text-[#f0b90b] font-mono">{{ currentMarketState.symbol }}</span>
+              <span class="text-slate-500 text-[10px]">▼</span>
+            </button>
+            <span class="font-mono text-emerald-400 font-bold">${{ formatPrice(currentMarketState.last_price) }}</span>
+            <span :class="currentMarketState.change_24h >= 0 ? 'text-emerald-400' : 'text-rose-400'" class="font-mono text-[11px]">
+              {{ currentMarketState.change_24h >= 0 ? '+' : '' }}{{ currentMarketState.change_24h }}%
+            </span>
+          </div>
+          <button @click="isMarketCollapsed = !isMarketCollapsed" class="text-slate-400 hover:text-[#f0b90b] text-xs font-semibold">
+            {{ isMarketCollapsed ? 'All Pairs ↗' : 'Close ✕' }}
+          </button>
+        </div>
+
         <!-- Candlestick Chart -->
         <div class="flex-1 min-h-[260px] sm:min-h-[340px]">
           <TradingViewChart 
