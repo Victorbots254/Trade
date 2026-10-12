@@ -368,6 +368,7 @@ Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->prefix('admin'
     Route::get('/withdrawals', [AdminWithdrawalController::class, 'index'])->name('admin.withdrawals');
     Route::post('/withdrawals/{withdrawal}/approve', [AdminWithdrawalController::class, 'approve'])->name('admin.withdrawals.approve');
     Route::post('/withdrawals/{withdrawal}/reject', [AdminWithdrawalController::class, 'reject'])->name('admin.withdrawals.reject');
+    Route::post('/withdrawals/{withdrawal}/update-paid-date', [AdminWithdrawalController::class, 'updatePaidDate'])->name('admin.withdrawals.update_paid_date');
 
     // User Roster & Trading Controls
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users');

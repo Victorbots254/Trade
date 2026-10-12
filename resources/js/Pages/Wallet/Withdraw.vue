@@ -69,7 +69,8 @@
                 <th class="pb-2">Amount</th>
                 <th class="pb-2">Address</th>
                 <th class="pb-2">Status</th>
-                <th class="pb-2 text-right">Date Submitted</th>
+                <th class="pb-2">Date Submitted</th>
+                <th class="pb-2 text-right">Date Paid</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-800/60">
@@ -88,10 +89,21 @@
                     PENDING
                   </span>
                 </td>
-                <td class="py-2.5 text-right text-slate-500 text-[11px]">{{ new Date(w.created_at).toLocaleString() }}</td>
+                <td class="py-2.5 text-slate-500 text-[11px]">{{ new Date(w.created_at).toLocaleString() }}</td>
+                <td class="py-2.5 text-right font-mono text-[11px]">
+                  <div v-if="w.paid_at" class="text-emerald-400 font-bold">
+                    {{ new Date(w.paid_at).toLocaleString() }}
+                  </div>
+                  <div v-else-if="w.status === 'approved'" class="text-emerald-400">
+                    {{ w.approved_at ? new Date(w.approved_at).toLocaleString() : 'Completed' }}
+                  </div>
+                  <div v-else class="text-slate-600">
+                    —
+                  </div>
+                </td>
               </tr>
               <tr v-if="withdrawals.length === 0">
-                <td colspan="5" class="py-6 text-center text-slate-500">No withdrawal requests found.</td>
+                <td colspan="6" class="py-6 text-center text-slate-500">No withdrawal requests found.</td>
               </tr>
             </tbody>
           </table>

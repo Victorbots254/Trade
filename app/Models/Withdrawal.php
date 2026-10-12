@@ -15,11 +15,13 @@ class Withdrawal extends Model
         'status',
         'admin_notes',
         'approved_at',
+        'paid_at',
     ];
 
     protected $casts = [
         'amount' => 'float',
         'approved_at' => 'datetime',
+        'paid_at' => 'datetime',
     ];
 
     public function user()

@@ -163,7 +163,8 @@
                 <th class="py-3 px-4">Destination Address</th>
                 <th class="py-3 px-4">Status</th>
                 <th class="py-3 px-4">TxHash / BscScan</th>
-                <th class="py-3 px-4">Date</th>
+                <th class="py-3 px-4">Requested Date</th>
+                <th class="py-3 px-4">Date Paid</th>
                 <th class="py-3 px-4 text-right">Admin Actions</th>
               </tr>
             </thead>
@@ -220,9 +221,37 @@
                   <span v-else class="text-slate-600 text-[11px]">—</span>
                 </td>
 
-                <!-- Date -->
-                <td class="py-3.5 px-4 text-slate-500 text-[11px] whitespace-nowrap">
+                <!-- Requested Date -->
+                <td class="py-3.5 px-4 text-slate-400 text-[11px] whitespace-nowrap">
                   {{ formatDate(w.created_at) }}
+                </td>
+
+                <!-- Date Paid -->
+                <td class="py-3.5 px-4 whitespace-nowrap">
+                  <div v-if="w.paid_at" class="flex items-center space-x-1.5">
+                    <span class="text-emerald-400 font-bold text-[11px] flex items-center space-x-1">
+                      <span>✓</span>
+                      <span>{{ formatDate(w.paid_at) }}</span>
+                    </span>
+                    <button @click="openEditPaidModal(w)" class="text-slate-500 hover:text-cyan-400 p-0.5 text-xs transition" title="Edit Date Paid">
+                      ✏️
+                    </button>
+                  </div>
+                  <div v-else-if="w.status === 'approved'" class="flex items-center space-x-1.5">
+                    <span class="text-slate-500 italic text-[11px]">—</span>
+                    <button @click="openEditPaidModal(w)" class="text-cyan-400 hover:text-cyan-300 font-sans font-bold text-[11px] underline">
+                      + Set Paid Date
+                    </button>
+                  </div>
+                  <div v-else-if="w.status === 'rejected'" class="text-slate-600 italic text-[11px]">
+                    Refunded
+                  </div>
+                  <div v-else class="flex items-center space-x-1 text-slate-500 text-[11px] italic">
+                    <span>Pending</span>
+                    <button @click="openApproveModal(w)" class="text-emerald-400 hover:underline font-sans not-italic text-[10px] ml-1">
+                      (Pay)
+                    </button>
+                  </div>
                 </td>
 
                 <!-- Actions -->
@@ -230,7 +259,7 @@
                   <div v-if="w.status === 'pending'" class="inline-flex items-center space-x-1.5 font-sans font-bold">
                     <button @click="openApproveModal(w)"
                             class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center space-x-1">
-                      <span>✓</span>
+                       <span>✓</span>
                       <span>Allow / Complete</span>
                     </button>
                     <button @click="openRejectModal(w)"
@@ -238,14 +267,17 @@
                       ✕ Reject
                     </button>
                   </div>
-                  <div v-else class="text-slate-500 text-[11px] font-sans">
-                    Processed
+                  <div v-else class="inline-flex items-center space-x-2 text-slate-400 text-[11px] font-sans">
+                    <span>Processed</span>
+                    <button @click="openEditPaidModal(w)" class="text-cyan-400 hover:text-cyan-300 font-bold underline text-[11px]">
+                      Details
+                    </button>
                   </div>
                 </td>
               </tr>
 
               <tr v-if="filteredWithdrawals.length === 0">
-                <td colspan="8" class="py-12 text-center text-slate-500 font-sans">
+                <td colspan="9" class="py-12 text-center text-slate-500 font-sans">
                   No withdrawal requests found matching your current filter.
                 </td>
               </tr>
@@ -282,6 +314,18 @@
         </div>
 
         <div class="space-y-2">
+          <label class="block text-slate-300 font-medium">
+            Date &amp; Time Paid <span class="text-emerald-400">*</span>
+          </label>
+          <input v-model="approvalPaidAt"
+                 type="datetime-local"
+                 class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs" />
+          <p class="text-[11px] text-slate-500">
+            Recorded in the database and shown under the "Date Paid" column. Defaults to current time.
+          </p>
+        </div>
+
+        <div class="space-y-2">
           <label class="block text-slate-300 font-medium">BscScan Transaction Hash (TxID) — Optional</label>
           <input v-model="approvalTxHash"
                  type="text"
@@ -307,6 +351,72 @@
           <button @click="submitApprove" :disabled="submitting" type="button" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl transition shadow disabled:opacity-50">
             <span v-if="submitting">Completing...</span>
             <span v-else>Confirm &amp; Mark Complete →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT / SET DATE PAID MODAL -->
+    <div v-if="editingPaidWithdrawal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl text-xs">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+          <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+            <span class="text-cyan-400">📅</span>
+            <span>Update Payment Details — #{{ editingPaidWithdrawal.id }}</span>
+          </h3>
+          <button @click="editingPaidWithdrawal = null" class="text-slate-500 hover:text-slate-300 text-base">✕</button>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-1.5 font-mono text-[11px]">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Trader:</span>
+            <span class="text-white font-bold">{{ editingPaidWithdrawal.user?.name }} ({{ editingPaidWithdrawal.user?.email }})</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Amount:</span>
+            <span class="text-emerald-400 font-bold">${{ formatPrice(editingPaidWithdrawal.amount) }} USDT</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Status:</span>
+            <span class="uppercase font-bold" :class="editingPaidWithdrawal.status === 'approved' ? 'text-emerald-400' : 'text-amber-400'">
+              {{ editingPaidWithdrawal.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-slate-300 font-medium">Date &amp; Time Paid</label>
+          <input v-model="editPaidAt"
+                 type="datetime-local"
+                 class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 font-mono text-xs" />
+          <p class="text-[11px] text-slate-500">
+            Sets the date and time when payout funds reached the trader.
+          </p>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-slate-300 font-medium">BscScan TxID (Optional)</label>
+          <input v-model="editTxHash"
+                 type="text"
+                 placeholder="0x..."
+                 class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 font-mono text-xs" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-slate-300 font-medium">Admin Notes (Optional)</label>
+          <input v-model="editNotes"
+                 type="text"
+                 placeholder="Payment remarks or reference..."
+                 class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 text-xs" />
+        </div>
+
+        <div class="flex items-center space-x-3 pt-2">
+          <button @click="editingPaidWithdrawal = null" type="button" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl transition">
+            Cancel
+          </button>
+          <button @click="submitUpdatePaidDate" :disabled="submitting" type="button" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl transition shadow disabled:opacity-50">
+            <span v-if="submitting">Saving...</span>
+            <span v-else>Save Payment Details →</span>
           </button>
         </div>
       </div>
@@ -375,6 +485,13 @@ const searchQuery = ref('');
 const approvingWithdrawal = ref(null);
 const approvalTxHash = ref('');
 const approvalNotes = ref('');
+const approvalPaidAt = ref('');
+
+// Edit Paid Date modal
+const editingPaidWithdrawal = ref(null);
+const editPaidAt = ref('');
+const editTxHash = ref('');
+const editNotes = ref('');
 
 const rejectingWithdrawal = ref(null);
 const rejectionReason = ref('');
@@ -410,6 +527,19 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleString();
 }
 
+function getNowLocalIso() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - offset).toISOString().slice(0, 16);
+}
+
+function toLocalIso(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  const offset = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - offset).toISOString().slice(0, 16);
+}
+
 function copyText(str) {
   if (!str) return;
   try {
@@ -422,6 +552,7 @@ function openApproveModal(w) {
   approvingWithdrawal.value = w;
   approvalTxHash.value = '';
   approvalNotes.value = '';
+  approvalPaidAt.value = getNowLocalIso();
 }
 
 function submitApprove() {
@@ -431,6 +562,7 @@ function submitApprove() {
   router.post(`/admin/withdrawals/${approvingWithdrawal.value.id}/approve`, {
     tx_hash: approvalTxHash.value,
     admin_notes: approvalNotes.value,
+    paid_at: approvalPaidAt.value,
   }, {
     preserveScroll: true,
     onSuccess: () => {
@@ -440,6 +572,35 @@ function submitApprove() {
     },
     onError: (err) => {
       toastRef.value?.show(err.message || 'Failed to approve withdrawal', 'error');
+      submitting.value = false;
+    }
+  });
+}
+
+function openEditPaidModal(w) {
+  editingPaidWithdrawal.value = w;
+  editPaidAt.value = w.paid_at ? toLocalIso(w.paid_at) : (w.approved_at ? toLocalIso(w.approved_at) : getNowLocalIso());
+  editTxHash.value = w.tx_hash || '';
+  editNotes.value = w.admin_notes || '';
+}
+
+function submitUpdatePaidDate() {
+  if (!editingPaidWithdrawal.value) return;
+  submitting.value = true;
+
+  router.post(`/admin/withdrawals/${editingPaidWithdrawal.value.id}/update-paid-date`, {
+    paid_at: editPaidAt.value || null,
+    tx_hash: editTxHash.value || null,
+    admin_notes: editNotes.value || null,
+  }, {
+    preserveScroll: true,
+    onSuccess: () => {
+      toastRef.value?.show('Payment date & details updated successfully!', 'success');
+      editingPaidWithdrawal.value = null;
+      submitting.value = false;
+    },
+    onError: (err) => {
+      toastRef.value?.show(err.message || 'Failed to update payment date', 'error');
       submitting.value = false;
     }
   });

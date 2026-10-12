@@ -56,6 +56,7 @@ class AdminWithdrawalController extends Controller
         $request->validate([
             'tx_hash' => ['nullable', 'string'],
             'admin_notes' => ['nullable', 'string', 'max:500'],
+            'paid_at' => ['nullable', 'date'],
         ]);
 
         DB::transaction(function () use ($withdrawal, $request) {
@@ -65,11 +66,14 @@ class AdminWithdrawalController extends Controller
                 throw new Exception('Withdrawal has already been processed.');
             }
 
+            $paidAt = $request->paid_at ? \Carbon\Carbon::parse($request->paid_at) : now();
+
             $withdrawal->update([
                 'status' => 'approved',
                 'tx_hash' => $request->tx_hash ? trim($request->tx_hash) : null,
                 'admin_notes' => $request->admin_notes ? trim($request->admin_notes) : 'Approved and completed by admin',
                 'approved_at' => now(),
+                'paid_at' => $paidAt,
             ]);
 
             // Dispatch notification email to trader
@@ -89,6 +93,33 @@ class AdminWithdrawalController extends Controller
         });
 
         return redirect()->back()->with('success', "Withdrawal #{$withdrawal->id} of \${$withdrawal->amount} USDT approved and marked as complete.");
+    }
+
+    /**
+     * Update payment details (date paid, tx_hash, admin notes) for a withdrawal.
+     */
+    public function updatePaidDate(Request $request, Withdrawal $withdrawal)
+    {
+        $request->validate([
+            'paid_at' => ['nullable', 'date'],
+            'tx_hash' => ['nullable', 'string', 'max:255'],
+            'admin_notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $updates = [];
+        if ($request->has('paid_at')) {
+            $updates['paid_at'] = $request->paid_at ? \Carbon\Carbon::parse($request->paid_at) : null;
+        }
+        if ($request->has('tx_hash')) {
+            $updates['tx_hash'] = $request->tx_hash ? trim($request->tx_hash) : null;
+        }
+        if ($request->has('admin_notes')) {
+            $updates['admin_notes'] = $request->admin_notes ? trim($request->admin_notes) : null;
+        }
+
+        $withdrawal->update($updates);
+
+        return redirect()->back()->with('success', "Withdrawal #{$withdrawal->id} date paid updated successfully.");
     }
 
     /**
