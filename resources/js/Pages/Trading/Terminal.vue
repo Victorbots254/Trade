@@ -202,6 +202,10 @@ function onSelectPrice(price) {
   selectedTerminalPrice.value = price;
 }
 
+function formatPrice(val) {
+  return Number(val || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 async function fetchUserData() {
   if (!page.props.auth.user) return;
   try {
