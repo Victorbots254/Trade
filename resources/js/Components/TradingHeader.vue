@@ -38,7 +38,14 @@
                   class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 font-bold text-xs"
                   :class="$page.url.startsWith('/admin/deposits') ? 'bg-emerald-600 text-white shadow' : 'text-emerald-400 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60'">
               <span>💰</span>
-              <span>Deposit Approvals</span>
+              <span>Deposits</span>
+            </Link>
+
+            <Link href="/admin/withdrawals" 
+                  class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 font-bold text-xs"
+                  :class="$page.url.startsWith('/admin/withdrawals') ? 'bg-cyan-600 text-white shadow' : 'text-cyan-400 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60'">
+              <span>💸</span>
+              <span>Withdrawals</span>
             </Link>
 
             <div class="h-4 w-px bg-slate-700 mx-1"></div>
@@ -185,6 +192,10 @@
                   <span>💰</span>
                   <span>Admin Deposits</span>
                 </Link>
+                <Link href="/admin/withdrawals" class="px-4 py-2 hover:bg-slate-800 text-cyan-400 flex items-center space-x-2 transition font-semibold">
+                  <span>💸</span>
+                  <span>Withdrawal Approvals</span>
+                </Link>
               </div>
 
               <!-- P2P Quick Access -->
@@ -277,6 +288,10 @@
           </Link>
           <Link href="/admin/deposits" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-emerald-400 font-bold flex items-center justify-between">
             <span>💰 Deposit Approvals</span>
+            <span>→</span>
+          </Link>
+          <Link href="/admin/withdrawals" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-cyan-400 font-bold flex items-center justify-between">
+            <span>💸 Withdrawal Approvals</span>
             <span>→</span>
           </Link>
           <Link href="/terminal" @click="mobileMenuOpen = false" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center justify-between">

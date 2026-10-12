@@ -17,15 +17,18 @@
           <p class="text-xs text-slate-400">Manage registered trader balances, outcome controls, and deposit approvals.</p>
         </div>
 
-        <div class="flex items-center space-x-2 text-xs">
-          <a href="/admin/users" class="bg-slate-800 text-slate-100 font-bold px-3.5 py-2 rounded-lg border border-slate-700">
-            👥 Trader Roster & Controls
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <a href="/admin/users" class="bg-slate-800 text-slate-100 font-bold px-3 py-1.5 rounded-lg border border-slate-700">
+            👥 Trader Controls
           </a>
-          <a href="/admin/deposits" class="bg-slate-900 text-slate-400 hover:text-slate-200 px-3.5 py-2 rounded-lg border border-slate-800">
+          <a href="/admin/deposits" class="bg-slate-900 text-slate-400 hover:text-slate-200 px-3 py-1.5 rounded-lg border border-slate-800">
             💰 Deposit Approvals
           </a>
-          <a href="/admin/p2p" class="bg-slate-900 hover:bg-slate-800 text-[#f0b90b] px-3.5 py-2 rounded-lg border border-slate-800 font-bold transition">
-            🛡️ P2P Center & Disputes
+          <a href="/admin/withdrawals" class="bg-slate-900 text-cyan-400 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-800 font-bold transition">
+            💸 Withdrawal Approvals
+          </a>
+          <a href="/admin/p2p" class="bg-slate-900 hover:bg-slate-800 text-[#f0b90b] px-3 py-1.5 rounded-lg border border-slate-800 font-bold transition">
+            🛡️ P2P Center &amp; Disputes
           </a>
         </div>
       </div>
