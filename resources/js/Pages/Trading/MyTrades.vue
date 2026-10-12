@@ -343,6 +343,7 @@ const activeOptionsList = ref((props.activeOptions || []).map(c => {
   const expires = new Date(c.expires_at).getTime();
   const now = Date.now();
   c.remaining_seconds = Math.max(0, Math.floor((expires - now) / 1000));
+  c.current_price = c.current_price !== undefined ? parseFloat(c.current_price) : parseFloat(c.entry_price);
   return c;
 }));
 
@@ -432,52 +433,14 @@ function formatCountdown(sec) {
 }
 
 function getContractCurrentPrice(contract) {
-  const mode = userTradingMode.value;
+  if (contract.current_price !== undefined && contract.current_price !== null && !isNaN(contract.current_price)) {
+    return parseFloat(contract.current_price);
+  }
   const market = (props.markets || []).find(m => m.id === contract.market_id);
-  const realPrice = market ? parseFloat(market.last_price || contract.entry_price) : parseFloat(contract.entry_price);
-
-  if (mode === 'fair_market') {
-    return realPrice;
-  }
-
-  // Inject manipulation only in the last 5 seconds of the trade
-  if (contract.remaining_seconds > 5) {
-    return realPrice;
-  }
-
-  const entry = parseFloat(contract.entry_price);
-  
-  // Maintain within a few cents of the entry price
-  let delta = 0.05;
-  let noise = Math.random() * 0.04;
-  
-  if (entry < 1) {
-    delta = entry * 0.005;
-    noise = delta * Math.random();
-  }
-
-  if (mode === 'force_win') {
-    if (contract.direction === 'higher') {
-      return parseFloat((entry + delta + noise).toFixed(6));
-    } else {
-      return parseFloat((entry - delta - noise).toFixed(6));
-    }
-  } else if (mode === 'force_loss') {
-    if (contract.direction === 'higher') {
-      return parseFloat((entry - delta - noise).toFixed(6));
-    } else {
-      return parseFloat((entry + delta + noise).toFixed(6));
-    }
-  }
-
-  return realPrice;
+  return market ? parseFloat(market.last_price || contract.entry_price) : parseFloat(contract.entry_price);
 }
 
 function isContractWinning(contract) {
-  const mode = userTradingMode.value;
-  if (mode === 'force_win') return true;
-  if (mode === 'force_loss') return false;
-
   const curPrice = getContractCurrentPrice(contract);
   const entry = parseFloat(contract.entry_price);
   if (contract.direction === 'higher') {
@@ -543,6 +506,57 @@ async function checkAndSettleContracts() {
     const c = activeOptionsList.value[i];
     if (c.remaining_seconds > 0) {
       c.remaining_seconds--;
+
+      const entry = parseFloat(c.entry_price);
+      const market = (props.markets || []).find(m => m.id === c.market_id);
+      const precision = market?.price_precision ?? (entry < 1 ? 4 : (entry < 100 ? 3 : 2));
+
+      // Realistic tick delta proportional to entry price (0.08% to 0.20%)
+      const pctStep = 0.0008 + Math.random() * 0.0012;
+      const deltaStep = Math.max(entry * pctStep, 1 / Math.pow(10, precision));
+
+      if (c.remaining_seconds > 4) {
+        // Natural live market price action & fluctuation during active duration
+        const randomDir = Math.random() > 0.48 ? 1 : -1;
+        const jitter = randomDir * (deltaStep * (0.5 + Math.random() * 0.8));
+        let newPrice = (c.current_price || entry) + jitter;
+
+        // Keep realistic envelope around entry (within ±1.8%)
+        const maxDev = entry * 0.018;
+        if (newPrice > entry + maxDev) newPrice = entry + maxDev - Math.abs(jitter);
+        if (newPrice < entry - maxDev) newPrice = entry - maxDev + Math.abs(jitter);
+
+        c.current_price = parseFloat(newPrice.toFixed(precision));
+      } else {
+        // Final seconds outcome convergence
+        const mode = userTradingMode.value;
+        const targetOffset = deltaStep * (1 + (4 - c.remaining_seconds) * 0.35);
+
+        if (mode === 'force_loss') {
+          // Steer to loss side
+          if (c.direction === 'higher') {
+            c.current_price = parseFloat((entry - targetOffset).toFixed(precision));
+          } else {
+            c.current_price = parseFloat((entry + targetOffset).toFixed(precision));
+          }
+        } else if (mode === 'force_win') {
+          // Steer to win side
+          if (c.direction === 'higher') {
+            c.current_price = parseFloat((entry + targetOffset).toFixed(precision));
+          } else {
+            c.current_price = parseFloat((entry - targetOffset).toFixed(precision));
+          }
+        } else {
+          // Fair market: continue natural fluctuation
+          const randomDir = Math.random() > 0.48 ? 1 : -1;
+          const jitter = randomDir * (deltaStep * (0.4 + Math.random() * 0.6));
+          c.current_price = parseFloat(((c.current_price || entry) + jitter).toFixed(precision));
+        }
+      }
+
+      if (market) {
+        market.last_price = c.current_price;
+      }
     } else if (c.status === 'active') {
       c.status = 'settling';
       try {
@@ -566,7 +580,7 @@ async function checkAndSettleContracts() {
 onMounted(() => {
   fetchMyTradesData();
   timerInterval = setInterval(checkAndSettleContracts, 1000);
-  pollInterval = setInterval(fetchMyTradesData, 15000);
+  pollInterval = setInterval(fetchMyTradesData, 4000);
 });
 
 onUnmounted(() => {

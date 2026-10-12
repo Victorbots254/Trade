@@ -202,6 +202,7 @@ const activeContractsList = ref((props.activeContracts || []).map(c => {
   const expires = new Date(c.expires_at).getTime();
   const now = Date.now();
   c.remaining_seconds = Math.max(0, Math.floor((expires - now) / 1000));
+  c.current_price = c.current_price !== undefined ? parseFloat(c.current_price) : parseFloat(c.entry_price);
   return c;
 }));
 const orderBookState = ref({ bids: [], asks: [] });
@@ -239,9 +240,13 @@ const displayedMarketState = computed(() => {
   if (activeContractsList.value.length > 0) {
     const mainContract = activeContractsList.value.find(c => c.market_id === currentMarketState.value.id) || activeContractsList.value[0];
     const effectivePrice = getContractCurrentPrice(mainContract);
+    const currHigh = parseFloat(currentMarketState.value.high_24h || effectivePrice);
+    const currLow = parseFloat(currentMarketState.value.low_24h || effectivePrice);
     return {
       ...currentMarketState.value,
       last_price: effectivePrice,
+      high_24h: Math.max(currHigh, effectivePrice),
+      low_24h: Math.min(currLow, effectivePrice),
     };
   }
   return currentMarketState.value;
@@ -273,54 +278,14 @@ function formatCountdown(sec) {
 }
 
 function getContractCurrentPrice(contract) {
-  const mode = userTradingMode.value;
-  
-  // 1. Get real price for contract's specific market
+  if (contract.current_price !== undefined && contract.current_price !== null && !isNaN(contract.current_price)) {
+    return parseFloat(contract.current_price);
+  }
   const market = marketsList.value.find(m => m.id === contract.market_id);
-  const realPrice = market ? parseFloat(market.last_price || contract.entry_price) : parseFloat(contract.entry_price);
-
-  if (mode === 'fair_market') {
-    return realPrice;
-  }
-
-  // Inject manipulation only in the last 5 seconds of the trade
-  if (contract.remaining_seconds > 5) {
-    return realPrice;
-  }
-
-  const entry = parseFloat(contract.entry_price);
-  
-  // Maintain within a few cents of the entry price
-  let delta = 0.05;
-  let noise = Math.random() * 0.04;
-  
-  if (entry < 1) {
-    delta = entry * 0.005;
-    noise = delta * Math.random();
-  }
-
-  if (mode === 'force_win') {
-    if (contract.direction === 'higher') {
-      return parseFloat((entry + delta + noise).toFixed(6));
-    } else {
-      return parseFloat((entry - delta - noise).toFixed(6));
-    }
-  } else if (mode === 'force_loss') {
-    if (contract.direction === 'higher') {
-      return parseFloat((entry - delta - noise).toFixed(6));
-    } else {
-      return parseFloat((entry + delta + noise).toFixed(6));
-    }
-  }
-
-  return realPrice;
+  return market ? parseFloat(market.last_price || contract.entry_price) : parseFloat(contract.entry_price);
 }
 
 function isContractWinning(contract) {
-  const mode = userTradingMode.value;
-  if (mode === 'force_win') return true;
-  if (mode === 'force_loss') return false;
-
   const curPrice = getContractCurrentPrice(contract);
   const entry = parseFloat(contract.entry_price);
   if (contract.direction === 'higher') {
@@ -373,6 +338,7 @@ async function placeOption(direction) {
 
     const newContract = res.data.contract;
     newContract.remaining_seconds = selectedDuration.value;
+    newContract.current_price = parseFloat(newContract.entry_price);
     activeContractsList.value.unshift(newContract);
     
     if (res.data.user && page.props.auth.user) {
@@ -394,10 +360,68 @@ async function checkAndSettleContracts() {
     const c = activeContractsList.value[i];
     if (c.remaining_seconds > 0) {
       c.remaining_seconds--;
-      // Micro-fluctuate tick
-      const m = (props.markets || []).find(m => m.id === c.market_id);
-      if (m) {
-        m.last_price = getContractCurrentPrice(c);
+
+      const entry = parseFloat(c.entry_price);
+      const market = marketsList.value.find(m => m.id === c.market_id);
+      const precision = market?.price_precision ?? (entry < 1 ? 4 : (entry < 100 ? 3 : 2));
+
+      // Realistic tick delta proportional to entry price (0.08% to 0.20%)
+      const pctStep = 0.0008 + Math.random() * 0.0012;
+      const deltaStep = Math.max(entry * pctStep, 1 / Math.pow(10, precision));
+
+      if (c.remaining_seconds > 4) {
+        // Natural live market price action & fluctuation during active duration
+        const randomDir = Math.random() > 0.48 ? 1 : -1;
+        const jitter = randomDir * (deltaStep * (0.5 + Math.random() * 0.8));
+        let newPrice = (c.current_price || entry) + jitter;
+
+        // Keep realistic envelope around entry (within ±1.8%)
+        const maxDev = entry * 0.018;
+        if (newPrice > entry + maxDev) newPrice = entry + maxDev - Math.abs(jitter);
+        if (newPrice < entry - maxDev) newPrice = entry - maxDev + Math.abs(jitter);
+
+        c.current_price = parseFloat(newPrice.toFixed(precision));
+      } else {
+        // Final seconds outcome convergence
+        const mode = userTradingMode.value;
+        const targetOffset = deltaStep * (1 + (4 - c.remaining_seconds) * 0.35);
+
+        if (mode === 'force_loss') {
+          // Steer to loss side
+          if (c.direction === 'higher') {
+            c.current_price = parseFloat((entry - targetOffset).toFixed(precision));
+          } else {
+            c.current_price = parseFloat((entry + targetOffset).toFixed(precision));
+          }
+        } else if (mode === 'force_win') {
+          // Steer to win side
+          if (c.direction === 'higher') {
+            c.current_price = parseFloat((entry + targetOffset).toFixed(precision));
+          } else {
+            c.current_price = parseFloat((entry - targetOffset).toFixed(precision));
+          }
+        } else {
+          // Fair market: continue natural fluctuation
+          const randomDir = Math.random() > 0.48 ? 1 : -1;
+          const jitter = randomDir * (deltaStep * (0.4 + Math.random() * 0.6));
+          c.current_price = parseFloat(((c.current_price || entry) + jitter).toFixed(precision));
+        }
+      }
+
+      // Keep market and ticker details synchronized (Last price, High, Low)
+      if (market) {
+        market.last_price = c.current_price;
+        if (!market.high_24h || c.current_price > market.high_24h) market.high_24h = c.current_price;
+        if (!market.low_24h || c.current_price < market.low_24h) market.low_24h = c.current_price;
+      }
+      if (currentMarketState.value.id === c.market_id) {
+        currentMarketState.value.last_price = c.current_price;
+        if (!currentMarketState.value.high_24h || c.current_price > currentMarketState.value.high_24h) {
+          currentMarketState.value.high_24h = c.current_price;
+        }
+        if (!currentMarketState.value.low_24h || c.current_price < currentMarketState.value.low_24h) {
+          currentMarketState.value.low_24h = c.current_price;
+        }
       }
     } else if (c.status === 'active') {
       c.status = 'settling';
@@ -430,10 +454,14 @@ function startLiveWs(symbol) {
         if (data.e === 'trade') {
           const realP = parseFloat(data.p);
           currentMarketState.value.last_price = realP;
+          if (!currentMarketState.value.high_24h || realP > currentMarketState.value.high_24h) currentMarketState.value.high_24h = realP;
+          if (!currentMarketState.value.low_24h || realP < currentMarketState.value.low_24h) currentMarketState.value.low_24h = realP;
           
           const idx = marketsList.value.findIndex(m => m.symbol === symbol);
           if (idx !== -1) {
             marketsList.value[idx].last_price = realP;
+            if (!marketsList.value[idx].high_24h || realP > marketsList.value[idx].high_24h) marketsList.value[idx].high_24h = realP;
+            if (!marketsList.value[idx].low_24h || realP < marketsList.value[idx].low_24h) marketsList.value[idx].low_24h = realP;
           }
         }
 
@@ -446,16 +474,25 @@ function startLiveWs(symbol) {
         }
       };
     } catch (e) {}
-  } else {
-    if (simInterval) clearInterval(simInterval);
-    simInterval = setInterval(() => {
-      const p = parseFloat(currentMarketState.value.last_price || 100);
-      const newP = p + (Math.random() - 0.49) * 0.5;
-      currentMarketState.value.last_price = newP;
-      const idx = marketsList.value.findIndex(m => m.symbol === symbol);
-      if (idx !== -1) marketsList.value[idx].last_price = newP;
-    }, 1000);
   }
+
+  // Fallback & ambient price motion generator
+  if (simInterval) clearInterval(simInterval);
+  simInterval = setInterval(() => {
+    if (activeContractsList.value.length === 0) {
+      const p = parseFloat(currentMarketState.value.last_price || 100);
+      const precision = currentMarketState.value.price_precision ?? (p < 1 ? 4 : (p < 100 ? 3 : 2));
+      const step = Math.max(p * 0.0003, 1 / Math.pow(10, precision));
+      const newP = parseFloat((p + (Math.random() - 0.49) * step).toFixed(precision));
+      currentMarketState.value.last_price = newP;
+      if (!currentMarketState.value.high_24h || newP > currentMarketState.value.high_24h) currentMarketState.value.high_24h = newP;
+      if (!currentMarketState.value.low_24h || newP < currentMarketState.value.low_24h) currentMarketState.value.low_24h = newP;
+      const idx = marketsList.value.findIndex(m => m.symbol === currentMarketState.value.symbol);
+      if (idx !== -1) {
+        marketsList.value[idx].last_price = newP;
+      }
+    }
+  }, 1000);
 
   // Global ticker stream for sidebar and background contracts
   try {
@@ -487,7 +524,7 @@ onMounted(() => {
   fetchUserProfile();
   startLiveWs(currentMarketState.value.symbol);
   timerInterval = setInterval(checkAndSettleContracts, 1000);
-  userPollInterval = setInterval(fetchUserProfile, 15000);
+  userPollInterval = setInterval(fetchUserProfile, 4000);
 });
 
 onUnmounted(() => {
