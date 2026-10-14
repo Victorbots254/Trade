@@ -169,63 +169,24 @@
           </div>
 
           <!-- M-PESA PAYOUT DETAILS -->
-          <div v-if="form.payment_method === 'mpesa'" class="p-4 bg-[#0b0e11] border border-[#2b3139] rounded-xl space-y-4">
+          <div v-if="form.payment_method === 'mpesa'" class="p-4 bg-[#0b0e11] border border-[#2b3139] rounded-xl space-y-3.5">
             <div class="flex items-center justify-between border-b border-[#2b3139] pb-2.5">
               <span class="font-bold text-white text-xs flex items-center space-x-2">
                 <span>🟢</span>
-                <span>Safaricom M-Pesa Destination Details</span>
+                <span>Safaricom M-Pesa Payout</span>
               </span>
-              <span class="text-[11px] text-[#848e9c]">Zero withdrawal fees</span>
+              <span class="text-[11px] text-[#0ecb81] font-semibold">Instant Mobile Money</span>
             </div>
 
-            <!-- M-Pesa Type Toggle -->
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <button 
-                type="button"
-                @click="form.mpesa_type = 'phone'"
-                :class="form.mpesa_type === 'phone' ? 'bg-[#0ecb81]/15 border-[#0ecb81] text-[#0ecb81]' : 'bg-[#181a20] border-[#2b3139] text-[#848e9c]'"
-                class="py-2 px-3 rounded-lg border font-bold text-center transition">
-                Send Money (Mobile Phone)
-              </button>
-              <button 
-                type="button"
-                @click="form.mpesa_type = 'paybill'"
-                :class="form.mpesa_type === 'paybill' ? 'bg-[#0ecb81]/15 border-[#0ecb81] text-[#0ecb81]' : 'bg-[#181a20] border-[#2b3139] text-[#848e9c]'"
-                class="py-2 px-3 rounded-lg border font-bold text-center transition">
-                Buy Goods / Paybill
-              </button>
-            </div>
-
-            <div v-if="form.mpesa_type === 'phone'" class="space-y-3">
-              <div>
-                <label class="block text-[#848e9c] text-xs font-semibold mb-1">M-Pesa Phone Number *</label>
-                <input 
-                  v-model="form.mpesa_phone" 
-                  type="text" 
-                  required
-                  placeholder="e.g. 0712345678 or +254712345678"
-                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
-              </div>
-            </div>
-
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[#848e9c] text-xs font-semibold mb-1">Business / Till No. *</label>
-                <input 
-                  v-model="form.mpesa_phone" 
-                  type="text" 
-                  required
-                  placeholder="e.g. 247247 or Till 123456"
-                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-[#848e9c] text-xs font-semibold mb-1">Account Number (Optional for Till)</label>
-                <input 
-                  v-model="form.mpesa_account_number" 
-                  type="text" 
-                  placeholder="e.g. 0712345678"
-                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
-              </div>
+            <div>
+              <label class="block text-[#848e9c] text-xs font-semibold mb-1">M-Pesa Phone Number *</label>
+              <input 
+                v-model="form.mpesa_phone" 
+                type="text" 
+                required
+                placeholder="e.g. 0712345678 or +254712345678"
+                class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+              <span class="text-[10px] text-[#848e9c] mt-0.5 block">Your Safaricom mobile phone number to receive payment in KES.</span>
             </div>
 
             <div>
@@ -417,8 +378,6 @@ const availableBalance = computed(() => {
 const defaultMpesa = props.savedPaymentDetails?.mpesa || {};
 const initialPhone = defaultMpesa.phone || "";
 const initialName = defaultMpesa.account_name || props.user?.name || "";
-const initialType = defaultMpesa.type || "phone";
-const initialAcc = defaultMpesa.account_number || "";
 
 const form = useForm({
   amount: "",
@@ -426,8 +385,6 @@ const form = useForm({
   bep20_address: props.user?.bep20_address || "",
   mpesa_phone: initialPhone,
   mpesa_name: initialName,
-  mpesa_type: initialType,
-  mpesa_account_number: initialAcc,
 });
 
 function setPaymentMethod(method) {

@@ -33,8 +33,6 @@ class WithdrawalController extends Controller
             "bep20_address" => "nullable|string",
             "mpesa_phone" => "nullable|string|max:30",
             "mpesa_name" => "nullable|string|max:150",
-            "mpesa_type" => "nullable|string|in:phone,paybill",
-            "mpesa_account_number" => "nullable|string|max:50",
         ]);
 
         $user = $request->user();
@@ -47,8 +45,6 @@ class WithdrawalController extends Controller
         $bep20Address = null;
         $mpesaPhone = null;
         $mpesaName = null;
-        $mpesaType = null;
-        $mpesaAccountNumber = null;
         $amountKes = null;
 
         if ($paymentMethod === 'bep20') {
@@ -57,15 +53,13 @@ class WithdrawalController extends Controller
                 return back()->withErrors(["bep20_address" => "You must provide or link a Binance BEP-20 wallet address."]);
             }
         } else {
-            // M-Pesa
+            // M-Pesa (Phone Number Payout)
             $savedMpesa = is_array($user->p2p_payment_details) && isset($user->p2p_payment_details['mpesa']) 
                 ? $user->p2p_payment_details['mpesa'] 
                 : [];
 
             $mpesaPhone = $request->mpesa_phone ?: ($savedMpesa['phone'] ?? null);
-            $mpesaType = $request->mpesa_type ?: ($savedMpesa['type'] ?? 'phone');
             $mpesaName = $request->mpesa_name ?: ($savedMpesa['account_name'] ?? $user->name);
-            $mpesaAccountNumber = $request->mpesa_account_number ?: ($savedMpesa['account_number'] ?? null);
 
             if (empty($mpesaPhone)) {
                 return back()->withErrors(["mpesa_phone" => "Please enter your Safaricom M-Pesa phone number."]);
@@ -81,8 +75,6 @@ class WithdrawalController extends Controller
             $bep20Address, 
             $mpesaPhone, 
             $mpesaName, 
-            $mpesaType, 
-            $mpesaAccountNumber, 
             $amountKes
         ) {
             $wallet = Wallet::firstOrCreate(
@@ -108,8 +100,8 @@ class WithdrawalController extends Controller
                 "bep20_address" => $bep20Address,
                 "mpesa_phone" => $mpesaPhone,
                 "mpesa_name" => $mpesaName,
-                "mpesa_type" => $mpesaType,
-                "mpesa_account_number" => $mpesaAccountNumber,
+                "mpesa_type" => 'phone',
+                "mpesa_account_number" => null,
                 "amount_kes" => $amountKes,
                 "status" => "pending",
             ]);

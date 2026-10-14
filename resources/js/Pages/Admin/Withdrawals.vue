@@ -200,7 +200,7 @@
                       </button>
                     </div>
                     <div v-if="w.mpesa_name" class="text-[10px] text-slate-400 font-sans">
-                      {{ w.mpesa_name }} <span v-if="w.mpesa_type === 'paybill'">({{ w.mpesa_account_number }})</span>
+                      {{ w.mpesa_name }}
                     </div>
                   </div>
 
@@ -342,9 +342,6 @@
             <div v-if="approvingWithdrawal.payment_method === 'mpesa'" class="text-right font-sans">
               <span class="text-emerald-400 font-bold font-mono">{{ approvingWithdrawal.mpesa_phone }}</span>
               <span class="text-slate-300 block text-[11px]">{{ approvingWithdrawal.mpesa_name }}</span>
-              <span v-if="approvingWithdrawal.mpesa_type === 'paybill'" class="text-slate-400 block text-[10px] font-mono">
-                Paybill Acc: {{ approvingWithdrawal.mpesa_account_number }}
-              </span>
             </div>
             <span v-else class="text-cyan-400 break-all max-w-[240px] text-right">{{ approvingWithdrawal.bep20_address }}</span>
           </div>

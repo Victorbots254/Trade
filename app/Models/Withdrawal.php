@@ -56,9 +56,7 @@ class Withdrawal extends Model
     public function getDestinationLabelAttribute()
     {
         if ($this->payment_method === 'mpesa') {
-            $type = $this->mpesa_type === 'paybill' ? 'Paybill' : 'Phone';
-            $num = $this->mpesa_type === 'paybill' ? "{$this->mpesa_phone} (Acc: {$this->mpesa_account_number})" : $this->mpesa_phone;
-            return "M-Pesa {$type}: {$num}" . ($this->mpesa_name ? " - {$this->mpesa_name}" : '');
+            return "M-Pesa: {$this->mpesa_phone}" . ($this->mpesa_name ? " ({$this->mpesa_name})" : '');
         }
 
         return $this->bep20_address ?: 'BEP-20';
