@@ -348,6 +348,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/p2p/merchant/ads', [P2PMerchantController::class, 'storeAd'])->name('p2p.merchant.ads.store');
     Route::post('/p2p/merchant/ads/{ad}/toggle', [P2PMerchantController::class, 'toggleAd'])->name('p2p.merchant.ads.toggle');
     Route::post('/p2p/merchant/ads/{ad}/close', [P2PMerchantController::class, 'closeAd'])->name('p2p.merchant.ads.close');
+    Route::post('/p2p/merchant/payment-details', [P2PMerchantController::class, 'updatePaymentDetails'])->name('p2p.payment_details.update');
+    Route::post('/api/p2p/payment-details', [P2PMerchantController::class, 'updatePaymentDetails']);
     Route::get('/api/p2p/market-price', [P2PMarketplaceController::class, 'getMarketPrice'])->name('p2p.market_price');
     Route::get('/api/p2p/notifications/poll', [P2POrderController::class, 'pollNotifications'])->name('p2p.notifications.poll');
 });

@@ -20,10 +20,13 @@ class P2PMarketplaceController extends Controller
         $fiat = $request->query('fiat', 'all'); // 'all', 'USDT', 'USD', 'KES'
         $paymentMethod = $request->query('payment_method', 'all');
 
-        $query = P2PAd::with('user:id,name,username,email,p2p_merchant_name,p2p_completion_rate,p2p_completed_trades,p2p_rating,is_dummy')
+        $query = P2PAd::with('user:id,name,username,email,p2p_merchant_name,p2p_completion_rate,p2p_completed_trades,p2p_rating,is_dummy,is_p2p_merchant')
             ->where('status', 'active')
             ->where('available_amount', '>', 0)
-            ->where('type', $type);
+            ->where('type', $type)
+            ->whereHas('user', function ($q) {
+                $q->where('is_p2p_merchant', true);
+            });
 
         if ($fiat && $fiat !== 'all') {
             if (in_array(strtoupper($fiat), ['USDT', 'USD'])) {

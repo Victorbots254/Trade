@@ -382,8 +382,8 @@
               </div>
             </div>
 
-            <!-- P2P Trading Profile Status -->
-            <div class="p-4 bg-[#0b0e11] border border-[#2b3139] rounded-xl space-y-3">
+            <!-- P2P Trading Profile Status & Payment Methods -->
+            <div class="p-4 bg-[#0b0e11] border border-[#2b3139] rounded-xl space-y-3.5">
               <div class="flex items-center justify-between text-xs">
                 <span class="text-[#848e9c] font-semibold flex items-center space-x-1.5">
                   <span>🤝</span>
@@ -399,8 +399,8 @@
 
               <div class="grid grid-cols-2 gap-3 text-xs">
                 <div class="bg-[#181a20] p-2.5 rounded-lg border border-[#2b3139]">
-                  <span class="text-[#848e9c] text-[10px] block">Merchant Name</span>
-                  <span class="font-bold text-white text-xs">{{ user?.p2p_merchant_name || user?.name }}</span>
+                  <span class="text-[#848e9c] text-[10px] block">Trader Handle</span>
+                  <span class="font-bold text-white text-xs font-mono">@{{ user?.username || user?.p2p_merchant_name || user?.name }}</span>
                 </div>
                 <div class="bg-[#181a20] p-2.5 rounded-lg border border-[#2b3139]">
                   <span class="text-[#848e9c] text-[10px] block">Completed Trades</span>
@@ -408,11 +408,89 @@
                 </div>
               </div>
 
+              <!-- Linked P2P Payment Methods -->
+              <div class="border-t border-[#2b3139] pt-3 space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-white text-xs font-bold flex items-center space-x-1.5">
+                    <span>📱</span>
+                    <span>P2P Payment & Receiving Details</span>
+                  </span>
+                  <button 
+                    @click="openP2PPaymentModal"
+                    class="text-[11px] text-[#f0b90b] hover:underline font-bold transition">
+                    {{ hasP2PPaymentDetails ? 'Edit / Configure' : '+ Add Details' }}
+                  </button>
+                </div>
+
+                <!-- M-Pesa Method Display -->
+                <div class="p-2.5 bg-[#181a20] rounded-lg border border-[#2b3139] flex items-center justify-between">
+                  <div class="space-y-0.5">
+                    <div class="flex items-center space-x-2">
+                      <span class="font-bold text-xs text-white">Safaricom M-Pesa</span>
+                      <span v-if="userP2PDetails?.mpesa" class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.2 rounded font-bold uppercase">Linked</span>
+                      <span v-else class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-bold uppercase">Not Set</span>
+                    </div>
+                    <div v-if="userP2PDetails?.mpesa" class="text-[11px] text-[#848e9c]">
+                      <span v-if="userP2PDetails.mpesa.type === 'phone' || !userP2PDetails.mpesa.type">Phone: <strong class="text-white font-mono">{{ userP2PDetails.mpesa.phone }}</strong> ({{ userP2PDetails.mpesa.account_name || user?.name }})</span>
+                      <span v-else>Paybill: <strong class="text-white font-mono">{{ userP2PDetails.mpesa.paybill_number }}</strong> · Acc: <strong class="text-white font-mono">{{ userP2PDetails.mpesa.account_number }}</strong></span>
+                    </div>
+                    <div v-else class="text-[11px] text-[#848e9c]">
+                      Link your phone number or paybill to receive funds directly from P2P buyers.
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <button 
+                      v-if="userP2PDetails?.mpesa" 
+                      @click="deleteMpesaDetails" 
+                      :disabled="deletingPayment"
+                      class="text-[10px] text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-2 py-1 rounded border border-rose-500/30 font-bold transition">
+                      Delete M-Pesa
+                    </button>
+                    <button 
+                      @click="openP2PPaymentModal"
+                      class="text-[10px] text-slate-300 hover:text-white bg-[#2b3139] px-2 py-1 rounded font-bold transition">
+                      {{ userP2PDetails?.mpesa ? 'Edit' : 'Configure' }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Bank Method Display -->
+                <div class="p-2.5 bg-[#181a20] rounded-lg border border-[#2b3139] flex items-center justify-between">
+                  <div class="space-y-0.5">
+                    <div class="flex items-center space-x-2">
+                      <span class="font-bold text-xs text-white">Bank Account</span>
+                      <span v-if="userP2PDetails?.bank" class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.2 rounded font-bold uppercase">Linked</span>
+                      <span v-else class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-bold uppercase">Not Set</span>
+                    </div>
+                    <div v-if="userP2PDetails?.bank" class="text-[11px] text-[#848e9c]">
+                      <span>{{ userP2PDetails.bank.bank_name }}: <strong class="text-white font-mono">{{ userP2PDetails.bank.account_number }}</strong> ({{ userP2PDetails.bank.account_name || user?.name }})</span>
+                    </div>
+                    <div v-else class="text-[11px] text-[#848e9c]">
+                      Optional bank transfer account for larger order settlements.
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <button 
+                      v-if="userP2PDetails?.bank" 
+                      @click="deleteBankDetails" 
+                      :disabled="deletingPayment"
+                      class="text-[10px] text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-2 py-1 rounded border border-rose-500/30 font-bold transition">
+                      Delete Bank
+                    </button>
+                    <button 
+                      @click="openP2PPaymentModal"
+                      class="text-[10px] text-slate-300 hover:text-white bg-[#2b3139] px-2 py-1 rounded font-bold transition">
+                      {{ userP2PDetails?.bank ? 'Edit' : 'Configure' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div class="flex items-center justify-between pt-1 text-xs">
                 <Link href="/p2p" class="text-[#f0b90b] hover:underline font-bold">
                   Go to P2P Marketplace →
                 </Link>
-                <Link v-if="user?.is_p2p_merchant || user?.is_admin" href="/p2p/ads" class="text-slate-400 hover:text-white font-bold">
+                <Link v-if="user?.is_p2p_merchant || user?.is_admin" href="/p2p/merchant/ads" class="text-slate-400 hover:text-white font-bold">
                   My P2P Ads ↗
                 </Link>
               </div>
@@ -567,6 +645,190 @@
               class="bg-[#0ecb81] hover:bg-[#0bb573] text-[#1e2329] font-black px-4 py-2 rounded-xl transition flex items-center space-x-1.5">
               <span v-if="savingProfile">Saving...</span>
               <span v-else>Save Changes</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 4: MANAGE P2P PAYMENT DETAILS (M-PESA & BANK)                       -->
+    <!-- ========================================================================= -->
+    <div v-if="showP2PModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl text-xs space-y-4 p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b border-[#2b3139] pb-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-lg">📱</span>
+            <h3 class="font-bold text-white text-sm">P2P Payment & Receiving Details</h3>
+          </div>
+          <button @click="showP2PModal = false" class="text-[#848e9c] hover:text-white text-base">✕</button>
+        </div>
+
+        <p class="text-xs text-[#848e9c] leading-relaxed">
+          Configure your receiving accounts for P2P trading. When other traders purchase USDT from you or send local payments, they will transfer funds directly to these verified accounts.
+        </p>
+
+        <form @submit.prevent="submitP2PDetails" class="space-y-4">
+          <!-- Trader Username / Handle -->
+          <div>
+            <label class="block text-[#848e9c] font-semibold text-xs mb-1">Trader Username / Handle</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-[#848e9c] font-bold">@</span>
+              <input 
+                v-model="p2pForm.username" 
+                type="text" 
+                placeholder="e.g. Victor_Ke"
+                class="w-full bg-[#0b0e11] border border-[#2b3139] rounded-xl pl-8 pr-3 py-2 text-white font-mono text-xs focus:border-[#f0b90b] focus:outline-none" />
+            </div>
+            <span class="text-[10px] text-[#848e9c] mt-0.5 block">Your public nickname displayed to other traders on P2P orders and listings.</span>
+          </div>
+
+          <!-- SECTION 1: SAFARICOM M-PESA -->
+          <div class="p-3.5 bg-[#0b0e11] border border-[#2b3139] rounded-xl space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="text-sm">🟢</span>
+                <span class="font-bold text-white text-xs">Safaricom M-Pesa</span>
+              </div>
+              <button 
+                v-if="userP2PDetails?.mpesa" 
+                type="button" 
+                @click="deleteMpesaDetails" 
+                :disabled="deletingPayment"
+                class="text-[10px] text-rose-400 hover:text-rose-300 font-bold hover:underline">
+                🗑 Delete M-Pesa
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <button 
+                type="button"
+                @click="p2pForm.mpesa.type = 'phone'"
+                :class="p2pForm.mpesa.type === 'phone' ? 'bg-[#0ecb81]/15 border-[#0ecb81] text-[#0ecb81]' : 'bg-[#181a20] border-[#2b3139] text-[#848e9c]'"
+                class="py-1.5 px-3 rounded-lg border font-bold text-center transition">
+                Send Money (Phone)
+              </button>
+              <button 
+                type="button"
+                @click="p2pForm.mpesa.type = 'paybill'"
+                :class="p2pForm.mpesa.type === 'paybill' ? 'bg-[#0ecb81]/15 border-[#0ecb81] text-[#0ecb81]' : 'bg-[#181a20] border-[#2b3139] text-[#848e9c]'"
+                class="py-1.5 px-3 rounded-lg border font-bold text-center transition">
+                Paybill / Till
+              </button>
+            </div>
+
+            <div v-if="p2pForm.mpesa.type === 'phone'" class="space-y-2">
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">M-Pesa Phone Number *</label>
+                <input 
+                  v-model="p2pForm.mpesa.phone" 
+                  type="text" 
+                  placeholder="0712345678 or +254712345678"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+              </div>
+            </div>
+
+            <div v-else class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Business / Paybill No. *</label>
+                <input 
+                  v-model="p2pForm.mpesa.paybill_number" 
+                  type="text" 
+                  placeholder="e.g. 247247"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+              </div>
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Account Number *</label>
+                <input 
+                  v-model="p2pForm.mpesa.account_number" 
+                  type="text" 
+                  placeholder="e.g. 0712345678"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Account / Registered Name *</label>
+              <input 
+                v-model="p2pForm.mpesa.account_name" 
+                type="text" 
+                placeholder="Name as registered on M-Pesa"
+                class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white text-xs focus:border-[#0ecb81] focus:outline-none" />
+            </div>
+          </div>
+
+          <!-- SECTION 2: BANK TRANSFER (OPTIONAL) -->
+          <div class="p-3.5 bg-[#0b0e11] border border-[#2b3139] rounded-xl space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="text-sm">🏦</span>
+                <span class="font-bold text-white text-xs">Bank Transfer (Optional)</span>
+              </div>
+              <button 
+                v-if="userP2PDetails?.bank" 
+                type="button" 
+                @click="deleteBankDetails" 
+                :disabled="deletingPayment"
+                class="text-[10px] text-rose-400 hover:text-rose-300 font-bold hover:underline">
+                🗑 Delete Bank
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Bank Name</label>
+                <select 
+                  v-model="p2pForm.bank.bank_name"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white text-xs focus:border-[#f0b90b] focus:outline-none">
+                  <option value="Equity Bank">Equity Bank</option>
+                  <option value="KCB Bank">KCB Bank</option>
+                  <option value="Co-operative Bank">Co-operative Bank</option>
+                  <option value="NCBA Bank">NCBA Bank</option>
+                  <option value="Absa Bank Kenya">Absa Bank Kenya</option>
+                  <option value="Stanbic Bank">Stanbic Bank</option>
+                  <option value="Standard Chartered">Standard Chartered</option>
+                  <option value="I&M Bank">I&M Bank</option>
+                  <option value="Family Bank">Family Bank</option>
+                  <option value="DTB Bank">Diamond Trust Bank (DTB)</option>
+                  <option value="Other Bank">Other Bank</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Account Number</label>
+                <input 
+                  v-model="p2pForm.bank.account_number" 
+                  type="text" 
+                  placeholder="e.g. 0123456789"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#f0b90b] focus:outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Bank Account Holder Name</label>
+              <input 
+                v-model="p2pForm.bank.account_name" 
+                type="text" 
+                placeholder="Full official bank account name"
+                class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white text-xs focus:border-[#f0b90b] focus:outline-none" />
+            </div>
+          </div>
+
+          <span v-if="p2pError" class="text-rose-400 text-[11px] block">{{ p2pError }}</span>
+
+          <div class="flex items-center justify-end space-x-2.5 pt-2 border-t border-[#2b3139]">
+            <button 
+              type="button" 
+              @click="showP2PModal = false" 
+              class="px-4 py-2 rounded-xl text-[#848e9c] hover:text-white hover:bg-[#2b3139] font-bold transition">
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              :disabled="savingP2P"
+              class="bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-black px-5 py-2 rounded-xl transition flex items-center space-x-1.5 shadow">
+              <span v-if="savingP2P">Saving...</span>
+              <span v-else>Save Payment Details</span>
             </button>
           </div>
         </form>
@@ -772,6 +1034,116 @@ async function submitProfileUpdate() {
     profileError.value = e.response?.data?.message || 'Failed to update profile. Please verify your information.';
   } finally {
     savingProfile.value = false;
+  }
+}
+
+// P2P Payment Details Modal & Management
+const showP2PModal = ref(false);
+const userP2PDetails = ref(props.user?.p2p_payment_details || {});
+const p2pForm = ref({
+  username: props.user?.username || '',
+  mpesa: {
+    type: 'phone',
+    phone: '',
+    account_name: props.user?.name || '',
+    paybill_number: '',
+    account_number: '',
+  },
+  bank: {
+    bank_name: 'Equity Bank',
+    account_number: '',
+    account_name: props.user?.name || '',
+  },
+});
+const savingP2P = ref(false);
+const deletingPayment = ref(false);
+const p2pError = ref('');
+
+const hasP2PPaymentDetails = computed(() => {
+  return !!(userP2PDetails.value?.mpesa?.phone || userP2PDetails.value?.mpesa?.paybill_number || userP2PDetails.value?.bank?.account_number);
+});
+
+function openP2PPaymentModal() {
+  const existing = userP2PDetails.value || {};
+  p2pForm.value = {
+    username: props.user?.username || '',
+    mpesa: {
+      type: existing.mpesa?.type || 'phone',
+      phone: existing.mpesa?.phone || '',
+      account_name: existing.mpesa?.account_name || props.user?.name || '',
+      paybill_number: existing.mpesa?.paybill_number || '',
+      account_number: existing.mpesa?.account_number || '',
+    },
+    bank: {
+      bank_name: existing.bank?.bank_name || 'Equity Bank',
+      account_number: existing.bank?.account_number || '',
+      account_name: existing.bank?.account_name || props.user?.name || '',
+    },
+  };
+  p2pError.value = '';
+  showP2PModal.value = true;
+}
+
+async function submitP2PDetails() {
+  p2pError.value = '';
+  savingP2P.value = true;
+  try {
+    const res = await axios.post('/api/p2p/payment-details', {
+      action: 'save',
+      username: p2pForm.value.username,
+      mpesa: p2pForm.value.mpesa,
+      bank: p2pForm.value.bank,
+    });
+    toastRef.value?.show(res.data.message || 'P2P payment details saved successfully!', 'success');
+    userP2PDetails.value = res.data.p2p_payment_details || res.data.user?.p2p_payment_details || {};
+    if (res.data.user?.username && props.user) {
+      props.user.username = res.data.user.username;
+    }
+    showP2PModal.value = false;
+  } catch (e) {
+    p2pError.value = e.response?.data?.message || 'Failed to save payment details.';
+  } finally {
+    savingP2P.value = false;
+  }
+}
+
+async function deleteMpesaDetails() {
+  if (!confirm('Are you sure you want to remove your M-Pesa payment method?')) return;
+  deletingPayment.value = true;
+  try {
+    const res = await axios.post('/api/p2p/payment-details', { action: 'delete_mpesa' });
+    toastRef.value?.show(res.data.message || 'M-Pesa payment method removed.', 'success');
+    if (res.data.p2p_payment_details !== undefined) {
+      userP2PDetails.value = res.data.p2p_payment_details;
+    } else {
+      const updated = { ...userP2PDetails.value };
+      delete updated.mpesa;
+      userP2PDetails.value = updated;
+    }
+  } catch (e) {
+    toastRef.value?.show(e.response?.data?.message || 'Failed to remove M-Pesa method.', 'error');
+  } finally {
+    deletingPayment.value = false;
+  }
+}
+
+async function deleteBankDetails() {
+  if (!confirm('Are you sure you want to remove your Bank payment method?')) return;
+  deletingPayment.value = true;
+  try {
+    const res = await axios.post('/api/p2p/payment-details', { action: 'delete_bank' });
+    toastRef.value?.show(res.data.message || 'Bank payment method removed.', 'success');
+    if (res.data.p2p_payment_details !== undefined) {
+      userP2PDetails.value = res.data.p2p_payment_details;
+    } else {
+      const updated = { ...userP2PDetails.value };
+      delete updated.bank;
+      userP2PDetails.value = updated;
+    }
+  } catch (e) {
+    toastRef.value?.show(e.response?.data?.message || 'Failed to remove Bank method.', 'error');
+  } finally {
+    deletingPayment.value = false;
   }
 }
 </script>

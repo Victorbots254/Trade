@@ -46,6 +46,7 @@ class User extends Authenticatable
             'is_moderator' => 'boolean',
             'is_p2p_merchant' => 'boolean',
             'is_dummy' => 'boolean',
+            'p2p_payment_details' => 'array',
             'p2p_completion_rate' => 'float',
             'p2p_completed_trades' => 'integer',
             'p2p_rating' => 'float',

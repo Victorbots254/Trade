@@ -30,12 +30,15 @@ class P2PMerchantController extends Controller
 
         return Inertia::render('P2P/MerchantAds', [
             'isMerchant' => (bool) ($user->is_p2p_merchant || $user->is_admin),
-            'merchantName' => $user->p2p_merchant_name ?: $user->name,
+            'merchantName' => $user->p2p_merchant_name ?: ($user->username ?: $user->name),
+            'username' => $user->username ?: $user->name,
+            'paymentDetails' => is_array($user->p2p_payment_details) ? $user->p2p_payment_details : [],
             'completionRate' => (float) $user->p2p_completion_rate,
             'completedTrades' => (int) $user->p2p_completed_trades,
             'usdtBalance' => (float) $wallet->available_balance,
             'marketRateKes' => $marketRateKes,
             'ads' => $ads,
+            'user' => $user,
         ]);
     }
 
@@ -140,5 +143,104 @@ class P2PMerchantController extends Controller
         $ad->update(['status' => 'closed', 'available_amount' => 0]);
 
         return redirect()->back()->with('message', 'Ad closed successfully.');
+    }
+
+    /**
+     * Update or delete P2P payment methods (M-Pesa, Bank Transfer) and trading handle.
+     */
+    public function updatePaymentDetails(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'username' => 'nullable|string|max:50',
+            'p2p_merchant_name' => 'nullable|string|max:100',
+            'action' => 'nullable|string|in:save,delete_mpesa,delete_bank',
+            'mpesa' => 'nullable|array',
+            'bank' => 'nullable|array',
+        ]);
+
+        if ($request->filled('username')) {
+            $cleanUsername = preg_replace('/[^a-zA-Z0-9_]/', '', $request->username);
+            if ($cleanUsername !== $user->username) {
+                if (\App\Models\User::where('username', $cleanUsername)->where('id', '!=', $user->id)->exists()) {
+                    return redirect()->back()->withErrors(['username' => 'This username is already taken.']);
+                }
+                $user->username = $cleanUsername;
+            }
+        }
+
+        if ($request->filled('p2p_merchant_name')) {
+            $user->p2p_merchant_name = $request->p2p_merchant_name;
+        }
+
+        $existingDetails = is_array($user->p2p_payment_details) ? $user->p2p_payment_details : [];
+
+        if ($request->action === 'delete_mpesa') {
+            unset($existingDetails['mpesa']);
+            $user->p2p_payment_details = $existingDetails;
+            $user->save();
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'M-Pesa payment method removed successfully.',
+                    'user' => $user->fresh(),
+                    'p2p_payment_details' => $existingDetails,
+                ]);
+            }
+            return redirect()->back()->with('message', 'M-Pesa payment method removed successfully.');
+        }
+
+        if ($request->action === 'delete_bank') {
+            unset($existingDetails['bank']);
+            $user->p2p_payment_details = $existingDetails;
+            $user->save();
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Bank payment method removed successfully.',
+                    'user' => $user->fresh(),
+                    'p2p_payment_details' => $existingDetails,
+                ]);
+            }
+            return redirect()->back()->with('message', 'Bank payment method removed successfully.');
+        }
+
+        // Saving / Updating payment details
+        if ($request->has('mpesa')) {
+            if (empty($request->mpesa['phone']) && empty($request->mpesa['paybill_number'])) {
+                unset($existingDetails['mpesa']);
+            } else {
+                $existingDetails['mpesa'] = [
+                    'type' => $request->mpesa['type'] ?? 'phone',
+                    'phone' => $request->mpesa['phone'] ?? null,
+                    'account_name' => $request->mpesa['account_name'] ?? $user->name,
+                    'paybill_number' => $request->mpesa['paybill_number'] ?? null,
+                    'account_number' => $request->mpesa['account_number'] ?? null,
+                ];
+            }
+        }
+
+        if ($request->has('bank')) {
+            if (empty($request->bank['account_number'])) {
+                unset($existingDetails['bank']);
+            } else {
+                $existingDetails['bank'] = [
+                    'bank_name' => $request->bank['bank_name'] ?? 'Equity Bank',
+                    'account_number' => $request->bank['account_number'] ?? null,
+                    'account_name' => $request->bank['account_name'] ?? $user->name,
+                ];
+            }
+        }
+
+        $user->p2p_payment_details = $existingDetails;
+        $user->save();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'P2P payment details updated successfully!',
+                'user' => $user->fresh(),
+            ]);
+        }
+
+        return redirect()->back()->with('message', 'P2P payment details updated successfully!');
     }
 }

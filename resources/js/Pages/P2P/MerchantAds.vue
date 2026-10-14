@@ -110,6 +110,124 @@
           </button>
         </div>
 
+        <!-- Merchant Receiving Accounts (M-Pesa & Bank) -->
+        <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2b3139] pb-3">
+            <div>
+              <h3 class="font-bold text-white text-sm flex items-center space-x-2">
+                <span>📱</span>
+                <span>Receiving & Settlement Accounts</span>
+              </h3>
+              <p class="text-[11px] text-[#848e9c] mt-0.5">
+                These payment details are automatically presented to P2P buyers who trade with your desk.
+              </p>
+            </div>
+            <button
+              @click="openEditPaymentModal"
+              type="button"
+              class="bg-[#2b3139] hover:bg-[#323942] text-white font-bold px-3 py-1.5 rounded-lg text-xs transition self-start sm:self-auto flex items-center space-x-1 border border-[#3b414a]">
+              <span>⚙️</span>
+              <span>Edit Receiving Accounts</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <!-- M-Pesa Card -->
+            <div class="bg-[#0b0e11] border border-[#2b3139] rounded-xl p-4 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">🟢</span>
+                  <span class="font-bold text-white">Safaricom M-Pesa</span>
+                  <span v-if="currentPaymentDetails?.mpesa" class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-bold uppercase">Active</span>
+                  <span v-else class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-bold uppercase">Not Set</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <button
+                    v-if="currentPaymentDetails?.mpesa"
+                    @click="deletePaymentMethod('delete_mpesa')"
+                    :disabled="deletingPayment"
+                    type="button"
+                    class="text-[10px] text-rose-400 hover:text-rose-300 font-bold bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30">
+                    Delete M-Pesa
+                  </button>
+                  <button
+                    @click="openEditPaymentModal"
+                    type="button"
+                    class="text-[10px] text-slate-300 hover:text-white bg-[#2b3139] px-2 py-0.5 rounded">
+                    {{ currentPaymentDetails?.mpesa ? 'Edit' : 'Add' }}
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="currentPaymentDetails?.mpesa" class="font-mono text-xs text-slate-300 space-y-1 bg-[#181a20] p-2.5 rounded-lg border border-[#2b3139]/50">
+                <div v-if="currentPaymentDetails.mpesa.type === 'phone' || !currentPaymentDetails.mpesa.type">
+                  <span class="text-[#848e9c]">Mobile: </span>
+                  <strong class="text-white">{{ currentPaymentDetails.mpesa.phone }}</strong>
+                </div>
+                <div v-else>
+                  <span class="text-[#848e9c]">Paybill: </span>
+                  <strong class="text-white">{{ currentPaymentDetails.mpesa.paybill_number || currentPaymentDetails.mpesa.business_number }}</strong>
+                  <span class="text-[#848e9c] ml-2">Account: </span>
+                  <strong class="text-white">{{ currentPaymentDetails.mpesa.account_number }}</strong>
+                </div>
+                <div>
+                  <span class="text-[#848e9c]">Account Name: </span>
+                  <strong class="text-white font-sans">{{ currentPaymentDetails.mpesa.account_name }}</strong>
+                </div>
+              </div>
+              <div v-else class="text-[11px] text-[#848e9c]">
+                No M-Pesa payout details configured. Add your mobile number or paybill.
+              </div>
+            </div>
+
+            <!-- Bank Transfer Card -->
+            <div class="bg-[#0b0e11] border border-[#2b3139] rounded-xl p-4 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">🏦</span>
+                  <span class="font-bold text-white">Bank Account Transfer</span>
+                  <span v-if="currentPaymentDetails?.bank" class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-bold uppercase">Active</span>
+                  <span v-else class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-bold uppercase">Not Set</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <button
+                    v-if="currentPaymentDetails?.bank"
+                    @click="deletePaymentMethod('delete_bank')"
+                    :disabled="deletingPayment"
+                    type="button"
+                    class="text-[10px] text-rose-400 hover:text-rose-300 font-bold bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30">
+                    Delete Bank
+                  </button>
+                  <button
+                    @click="openEditPaymentModal"
+                    type="button"
+                    class="text-[10px] text-slate-300 hover:text-white bg-[#2b3139] px-2 py-0.5 rounded">
+                    {{ currentPaymentDetails?.bank ? 'Edit' : 'Add' }}
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="currentPaymentDetails?.bank" class="font-mono text-xs text-slate-300 space-y-1 bg-[#181a20] p-2.5 rounded-lg border border-[#2b3139]/50">
+                <div>
+                  <span class="text-[#848e9c]">Bank: </span>
+                  <strong class="text-white">{{ currentPaymentDetails.bank.bank_name }}</strong>
+                </div>
+                <div>
+                  <span class="text-[#848e9c]">Account No: </span>
+                  <strong class="text-white">{{ currentPaymentDetails.bank.account_number }}</strong>
+                </div>
+                <div>
+                  <span class="text-[#848e9c]">Account Name: </span>
+                  <strong class="text-white font-sans">{{ currentPaymentDetails.bank.account_name }}</strong>
+                </div>
+              </div>
+              <div v-else class="text-[11px] text-[#848e9c]">
+                No Bank account details configured. Add your bank details for wire transfers.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- My Ads Table -->
         <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl overflow-hidden shadow-xl text-xs">
           <div class="p-4 border-b border-[#2b3139] flex justify-between items-center">
@@ -473,6 +591,170 @@
         </form>
       </div>
     </div>
+
+    <!-- MODAL: EDIT MERCHANT PAYMENT DETAILS -->
+    <div v-if="showPaymentModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl text-xs space-y-4 p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b border-[#2b3139] pb-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-lg">⚙️</span>
+            <h3 class="font-bold text-white text-sm">Update Receiving & Payout Accounts</h3>
+          </div>
+          <button @click="showPaymentModal = false" class="text-[#848e9c] hover:text-white text-base">✕</button>
+        </div>
+
+        <form @submit.prevent="savePaymentSettings" class="space-y-4">
+          <!-- Merchant Display Name / Handle -->
+          <div>
+            <label class="block text-[#848e9c] font-semibold text-xs mb-1">Merchant Display Name / Handle</label>
+            <input 
+              v-model="paymentForm.p2p_merchant_name" 
+              type="text" 
+              class="w-full bg-[#0b0e11] border border-[#2b3139] rounded-xl px-3 py-2 text-white text-xs focus:border-[#0ecb81] focus:outline-none" />
+          </div>
+
+          <!-- M-Pesa Settings -->
+          <div class="p-3.5 bg-[#0b0e11] border border-[#2b3139] rounded-xl space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white text-xs flex items-center space-x-1.5">
+                <span>🟢</span>
+                <span>Safaricom M-Pesa Receiving Account</span>
+              </span>
+              <button 
+                v-if="currentPaymentDetails?.mpesa" 
+                type="button" 
+                @click="deletePaymentMethod('delete_mpesa')" 
+                class="text-[10px] text-rose-400 hover:text-rose-300 font-bold hover:underline">
+                🗑 Delete M-Pesa
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <button 
+                type="button"
+                @click="paymentForm.mpesa.type = 'phone'"
+                :class="paymentForm.mpesa.type === 'phone' ? 'bg-[#0ecb81]/15 border-[#0ecb81] text-[#0ecb81]' : 'bg-[#181a20] border-[#2b3139] text-[#848e9c]'"
+                class="py-1.5 px-3 rounded-lg border font-bold text-center transition">
+                Send Money (Phone)
+              </button>
+              <button 
+                type="button"
+                @click="paymentForm.mpesa.type = 'paybill'"
+                :class="paymentForm.mpesa.type === 'paybill' ? 'bg-[#0ecb81]/15 border-[#0ecb81] text-[#0ecb81]' : 'bg-[#181a20] border-[#2b3139] text-[#848e9c]'"
+                class="py-1.5 px-3 rounded-lg border font-bold text-center transition">
+                Paybill / Till
+              </button>
+            </div>
+
+            <div v-if="paymentForm.mpesa.type === 'phone'" class="space-y-2">
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">M-Pesa Phone Number</label>
+                <input 
+                  v-model="paymentForm.mpesa.phone" 
+                  type="text" 
+                  placeholder="0712345678 or +254712345678"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+              </div>
+            </div>
+
+            <div v-else class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Business / Paybill No.</label>
+                <input 
+                  v-model="paymentForm.mpesa.paybill_number" 
+                  type="text" 
+                  placeholder="e.g. 247247"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+              </div>
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Account Number</label>
+                <input 
+                  v-model="paymentForm.mpesa.account_number" 
+                  type="text" 
+                  placeholder="e.g. 0712345678"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Registered M-Pesa Name</label>
+              <input 
+                v-model="paymentForm.mpesa.account_name" 
+                type="text" 
+                class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white text-xs focus:border-[#0ecb81] focus:outline-none" />
+            </div>
+          </div>
+
+          <!-- Bank Settings -->
+          <div class="p-3.5 bg-[#0b0e11] border border-[#2b3139] rounded-xl space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white text-xs flex items-center space-x-1.5">
+                <span>🏦</span>
+                <span>Bank Transfer Account (Optional)</span>
+              </span>
+              <button 
+                v-if="currentPaymentDetails?.bank" 
+                type="button" 
+                @click="deletePaymentMethod('delete_bank')" 
+                class="text-[10px] text-rose-400 hover:text-rose-300 font-bold hover:underline">
+                🗑 Delete Bank
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Bank Name</label>
+                <select 
+                  v-model="paymentForm.bank.bank_name"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white text-xs focus:border-[#0ecb81] focus:outline-none">
+                  <option value="Equity Bank">Equity Bank</option>
+                  <option value="KCB Bank">KCB Bank</option>
+                  <option value="Co-operative Bank">Co-operative Bank</option>
+                  <option value="NCBA Bank">NCBA Bank</option>
+                  <option value="Absa Bank Kenya">Absa Bank Kenya</option>
+                  <option value="Stanbic Bank">Stanbic Bank</option>
+                  <option value="Standard Chartered">Standard Chartered</option>
+                  <option value="Other Bank">Other Bank</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Account Number</label>
+                <input 
+                  v-model="paymentForm.bank.account_number" 
+                  type="text" 
+                  placeholder="e.g. 0123456789"
+                  class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white font-mono text-xs focus:border-[#0ecb81] focus:outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[#848e9c] font-semibold text-[11px] mb-1">Account Holder Name</label>
+              <input 
+                v-model="paymentForm.bank.account_name" 
+                type="text" 
+                class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3 py-2 text-white text-xs focus:border-[#0ecb81] focus:outline-none" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end space-x-2.5 pt-2 border-t border-[#2b3139]">
+            <button 
+              type="button" 
+              @click="showPaymentModal = false" 
+              class="px-4 py-2 rounded-xl text-[#848e9c] hover:text-white hover:bg-[#2b3139] font-bold transition">
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              :disabled="savingPayment"
+              class="bg-[#0ecb81] hover:bg-[#0bb371] text-[#1e2329] font-black px-5 py-2 rounded-xl transition flex items-center space-x-1.5 shadow">
+              <span v-if="savingPayment">Saving...</span>
+              <span v-else>Save Settings</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -491,11 +773,100 @@ const props = defineProps({
   usdtBalance: { type: Number, default: 0.00 },
   marketRateKes: { type: Number, default: 129.50 },
   ads: { type: Array, default: () => [] },
+  paymentDetails: { type: Object, default: () => ({}) },
+  username: { type: String, default: '' },
+  user: { type: Object, default: () => ({}) },
 });
 
 const showCreateModal = ref(false);
 const creatingAd = ref(false);
 const currentMarketRate = ref(props.marketRateKes || 129.50);
+
+// Merchant Payment Settings Management
+const showPaymentModal = ref(false);
+const savingPayment = ref(false);
+const deletingPayment = ref(false);
+const currentPaymentDetails = ref(props.paymentDetails || {});
+
+const paymentForm = ref({
+  p2p_merchant_name: props.merchantName || '',
+  mpesa: {
+    type: currentPaymentDetails.value?.mpesa?.type || 'phone',
+    phone: currentPaymentDetails.value?.mpesa?.phone || '',
+    account_name: currentPaymentDetails.value?.mpesa?.account_name || props.merchantName || '',
+    paybill_number: currentPaymentDetails.value?.mpesa?.paybill_number || currentPaymentDetails.value?.mpesa?.business_number || '',
+    account_number: currentPaymentDetails.value?.mpesa?.account_number || '',
+  },
+  bank: {
+    bank_name: currentPaymentDetails.value?.bank?.bank_name || 'Equity Bank',
+    account_number: currentPaymentDetails.value?.bank?.account_number || '',
+    account_name: currentPaymentDetails.value?.bank?.account_name || props.merchantName || '',
+  },
+});
+
+function openEditPaymentModal() {
+  const d = currentPaymentDetails.value || {};
+  paymentForm.value = {
+    p2p_merchant_name: props.merchantName || '',
+    mpesa: {
+      type: d.mpesa?.type || 'phone',
+      phone: d.mpesa?.phone || '',
+      account_name: d.mpesa?.account_name || props.merchantName || '',
+      paybill_number: d.mpesa?.paybill_number || d.mpesa?.business_number || '',
+      account_number: d.mpesa?.account_number || '',
+    },
+    bank: {
+      bank_name: d.bank?.bank_name || 'Equity Bank',
+      account_number: d.bank?.account_number || '',
+      account_name: d.bank?.account_name || props.merchantName || '',
+    },
+  };
+  showPaymentModal.value = true;
+}
+
+function savePaymentSettings() {
+  savingPayment.value = true;
+  router.post('/p2p/merchant/payment-details', {
+    action: 'save',
+    p2p_merchant_name: paymentForm.value.p2p_merchant_name,
+    mpesa: paymentForm.value.mpesa,
+    bank: paymentForm.value.bank,
+  }, {
+    onSuccess: () => {
+      showPaymentModal.value = false;
+      currentPaymentDetails.value = {
+        mpesa: paymentForm.value.mpesa.phone || paymentForm.value.mpesa.paybill_number ? { ...paymentForm.value.mpesa } : null,
+        bank: paymentForm.value.bank.account_number ? { ...paymentForm.value.bank } : null,
+      };
+    },
+    onFinish: () => {
+      savingPayment.value = false;
+    },
+  });
+}
+
+function deletePaymentMethod(action) {
+  const methodLabel = action === 'delete_mpesa' ? 'M-Pesa' : 'Bank';
+  if (!confirm(`Are you sure you want to remove your ${methodLabel} payment details?`)) return;
+  deletingPayment.value = true;
+  router.post('/p2p/merchant/payment-details', { action }, {
+    onSuccess: () => {
+      if (action === 'delete_mpesa') {
+        const updated = { ...currentPaymentDetails.value };
+        delete updated.mpesa;
+        currentPaymentDetails.value = updated;
+      } else {
+        const updated = { ...currentPaymentDetails.value };
+        delete updated.bank;
+        currentPaymentDetails.value = updated;
+      }
+      showPaymentModal.value = false;
+    },
+    onFinish: () => {
+      deletingPayment.value = false;
+    },
+  });
+}
 
 const adForm = ref({
   type: 'sell',
@@ -508,16 +879,16 @@ const adForm = ref({
   payment_methods: ['mpesa'],
   payment_details: {
     mpesa: {
-      type: 'phone',
-      phone: '',
-      business_number: '',
-      account_number: '',
-      account_name: props.merchantName || '',
+      type: currentPaymentDetails.value?.mpesa?.type || 'phone',
+      phone: currentPaymentDetails.value?.mpesa?.phone || '',
+      business_number: currentPaymentDetails.value?.mpesa?.paybill_number || currentPaymentDetails.value?.mpesa?.business_number || '',
+      account_number: currentPaymentDetails.value?.mpesa?.account_number || '',
+      account_name: currentPaymentDetails.value?.mpesa?.account_name || props.merchantName || '',
     },
     bank: {
-      bank_name: '',
-      account_number: '',
-      account_name: props.merchantName || '',
+      bank_name: currentPaymentDetails.value?.bank?.bank_name || 'Equity Bank',
+      account_number: currentPaymentDetails.value?.bank?.account_number || '',
+      account_name: currentPaymentDetails.value?.bank?.account_name || props.merchantName || '',
       branch: '',
     },
   },
