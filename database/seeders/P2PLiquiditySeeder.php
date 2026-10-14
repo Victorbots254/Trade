@@ -193,7 +193,7 @@ class P2PLiquiditySeeder extends Seeder
         $merchants = [
             'NairobiEscrow', 'SwiftCryptoKE', 'SimbaExpress', 'KenyattaTraders',
             'KilimaniExchange', 'PataCrypto254', 'MombasaOTC', 'FastPay254', 'BlueStarTrading',
-            'CryptoKingKe', 'SafariEscrow', 'BomaCapital', 'MaraOTC', 'ZamaniPay',
+            'CryptoKingKe', 'SavannahEscrow', 'BomaCapital', 'MaraOTC', 'ZamaniPay',
             'HabariCrypto', 'EldoretEx', 'NakuruP2P', 'RiftValEx', 'CoastLiquidity',
             'NyaliTraders', 'WestlandsOTC', 'KarenP2P', 'MuthaigaFX', 'KilifiTraders',
             'ThikaExpress', 'MachakosPay', 'KisumuOTC', 'DianiCrypto', 'VictoriaEscrow',
@@ -244,11 +244,16 @@ class P2PLiquiditySeeder extends Seeder
             $completionRate = round(96.5 + (rand(0, 33) / 10), 1);
             $rating = round(4.80 + (rand(0, 18) / 100), 2);
 
+            $targetUsername = $name;
+            if (User::where('username', $targetUsername)->where('email', '!=', $email)->exists()) {
+                $targetUsername = $name . ($index + 1);
+            }
+
             $user = User::updateOrCreate(
                 ['email' => $email],
                 [
                     'name' => $name,
-                    'username' => $name,
+                    'username' => $targetUsername,
                     'password' => Hash::make(Str::random(16)),
                     'is_admin' => false,
                     'is_moderator' => false,
