@@ -385,11 +385,13 @@ class UserActivitySeeder extends Seeder
                     'available_amount' => 4650.00,
                     'min_limit' => 1000.00,
                     'max_limit' => 300000.00,
-                    'payment_methods' => ['M-Pesa', 'Bank Transfer'],
+                    'payment_methods' => ['mpesa', 'bank_transfer'],
                     'payment_details' => ['phone' => '+254700000000', 'name' => 'Verified Liquidity Partner'],
                     'terms' => 'Instant release within 5 mins.',
                     'time_limit_minutes' => 15,
                     'status' => 'active',
+                    'is_dummy' => false,
+                    'is_limited' => false,
                 ]);
 
                 // Completed P2P Buy Order

@@ -151,5 +151,6 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(UserActivitySeeder::class);
+        $this->call(P2PLiquiditySeeder::class);
     }
 }

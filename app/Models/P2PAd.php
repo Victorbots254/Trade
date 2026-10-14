@@ -29,6 +29,9 @@ class P2PAd extends Model
         'auto_reply',
         'time_limit_minutes',
         'status', // 'active', 'paused', 'closed'
+        'is_dummy',
+        'is_limited',
+        'requirement_text',
     ];
 
     protected function casts(): array
@@ -42,6 +45,8 @@ class P2PAd extends Model
             'payment_methods' => 'array',
             'payment_details' => 'array',
             'time_limit_minutes' => 'integer',
+            'is_dummy' => 'boolean',
+            'is_limited' => 'boolean',
         ];
     }
 

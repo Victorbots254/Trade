@@ -155,17 +155,24 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-[#2b3139]/60">
-              <tr v-for="ad in ads.data" :key="ad.id" class="hover:bg-[#1e2329]/50 transition">
+              <tr
+                v-for="ad in ads.data"
+                :key="ad.id"
+                :class="[!ad.is_dummy ? 'bg-gradient-to-r from-[#f0b90b]/5 via-[#181a20] to-[#181a20] border-l-2 border-l-[#f0b90b]' : 'hover:bg-[#1e2329]/50']"
+                class="transition">
                 <!-- Merchant info -->
                 <td class="py-4 px-4 md:px-6">
                   <div class="flex items-center space-x-3">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#f0b90b]/20 to-[#0ecb81]/20 border border-[#f0b90b]/30 flex items-center justify-center font-bold text-white text-sm">
+                    <div
+                      :class="[!ad.is_dummy ? 'from-[#f0b90b]/30 to-[#f0b90b]/10 border-[#f0b90b]/60 text-[#f0b90b]' : 'from-[#f0b90b]/20 to-[#0ecb81]/20 border-[#f0b90b]/30 text-white']"
+                      class="w-9 h-9 rounded-xl bg-gradient-to-tr border flex items-center justify-center font-bold text-sm">
                       {{ (ad.user?.p2p_merchant_name || ad.user?.name || 'M')[0].toUpperCase() }}
                     </div>
                     <div>
-                      <div class="flex items-center space-x-1.5">
+                      <div class="flex items-center space-x-1.5 flex-wrap gap-1">
                         <span class="font-bold text-white text-sm">{{ ad.user?.p2p_merchant_name || ad.user?.name }}</span>
-                        <span class="text-[#0ecb81] text-xs" title="Verified Merchant">✓</span>
+                        <span v-if="!ad.is_dummy" class="bg-[#f0b90b]/15 text-[#f0b90b] border border-[#f0b90b]/30 text-[9px] px-1.5 py-0.2 rounded font-black tracking-wide uppercase">⭐ TOP TRADER</span>
+                        <span v-else class="text-[#0ecb81] text-xs" title="Verified Merchant">✓</span>
                       </div>
                       <div class="text-[11px] text-[#848e9c] flex items-center space-x-2 mt-0.5">
                         <span>{{ ad.user?.p2p_completed_trades || 0 }} orders</span>
@@ -216,12 +223,27 @@
 
                 <!-- Action Button -->
                 <td class="py-4 px-4 md:px-6 text-right">
+                  <!-- Dummy / Limited ad: Limited state with qualification requirement popup -->
+                  <div v-if="ad.is_dummy || ad.is_limited" class="inline-flex flex-col items-end space-y-1">
+                    <button
+                      @click="openLimitedNotice(ad)"
+                      type="button"
+                      class="bg-[#2b3139]/80 hover:bg-[#323842] text-[#848e9c] hover:text-[#eaecef] border border-[#3b414d] font-bold px-4 py-2 rounded-xl transition text-xs flex items-center space-x-1.5 font-sans shadow"
+                      title="Trading Limited: Merchant requirements not met">
+                      <span>🔒</span>
+                      <span>Limited</span>
+                    </button>
+                    <span class="text-[10px] text-[#848e9c]">Req: 30+ Trades</span>
+                  </div>
+
+                  <!-- Real User / Active ad: Clickable Buy/Sell button -->
                   <button
+                    v-else
                     @click="openTradeModal(ad)"
                     type="button"
                     :class="activeType === 'sell' ? 'bg-[#0ecb81] hover:bg-[#0bb371] text-[#1e2329]' : 'bg-[#f6465d] hover:bg-[#e03a51] text-white'"
-                    class="font-black px-5 py-2.5 rounded-xl transition text-xs shadow-lg font-sans">
-                    {{ activeType === 'sell' ? 'Buy USDT' : 'Sell USDT' }}
+                    class="font-black px-5 py-2.5 rounded-xl transition text-xs shadow-lg font-sans flex items-center space-x-1 ml-auto">
+                    <span>{{ activeType === 'sell' ? 'Buy USDT' : 'Sell USDT' }}</span>
                   </button>
                 </td>
               </tr>
@@ -249,6 +271,27 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Table Pagination Bar -->
+        <div v-if="ads.total > (ads.per_page || 25)" class="border-t border-[#2b3139] px-4 md:px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#14161a] text-xs">
+          <div class="text-[#848e9c]">
+            Showing <span class="text-white font-bold font-mono">{{ ads.from || 1 }}</span> to <span class="text-white font-bold font-mono">{{ ads.to || ads.data.length }}</span> of <span class="text-white font-bold font-mono">{{ ads.total }}</span> P2P advertisers
+          </div>
+          <div class="flex items-center space-x-1 flex-wrap gap-1">
+            <button
+              v-for="(link, i) in ads.links"
+              :key="i"
+              :disabled="!link.url || link.active"
+              @click="link.url && router.visit(link.url, { preserveState: true })"
+              v-html="link.label"
+              :class="[
+                link.active ? 'bg-[#f0b90b] text-[#1e2329] font-black shadow' : 'bg-[#0b0e11] text-[#848e9c] hover:text-white border border-[#2b3139]',
+                !link.url ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer hover:border-[#f0b90b]'
+              ]"
+              class="px-3 py-1.5 rounded-lg text-xs transition">
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -364,6 +407,58 @@
         </div>
       </div>
     </div>
+
+    <!-- ADVERTISER TRADING REQUIREMENT / LIMITED NOTICE MODAL -->
+    <div v-if="limitedNoticeAd" class="fixed inset-0 z-50 bg-[#0b0e11]/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-[#181a20] border border-[#2b3139] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl p-6 space-y-4 text-xs">
+        <div class="flex justify-between items-start">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-xl">
+              🔒
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-base">Trading Limited</h3>
+              <p class="text-xs text-[#848e9c]">Merchant: {{ limitedNoticeAd.user?.p2p_merchant_name || limitedNoticeAd.user?.name }}</p>
+            </div>
+          </div>
+          <button @click="limitedNoticeAd = null" class="text-[#848e9c] hover:text-white text-base">✕</button>
+        </div>
+
+        <p class="text-slate-300 leading-relaxed text-xs">
+          This merchant desk has restricted trading to experienced accounts with high trading histories. New or unverified accounts cannot place orders directly with this advertiser.
+        </p>
+
+        <div class="bg-[#0b0e11] border border-[#2b3139] rounded-xl p-3.5 space-y-2 text-xs">
+          <div class="text-[#848e9c] font-semibold text-[11px] uppercase tracking-wider">Advertiser Qualifications:</div>
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-300">Min. Completed P2P Orders:</span>
+            <span class="text-rose-400 font-bold font-mono">30 Trades Required</span>
+          </div>
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-300">Account Registration Age:</span>
+            <span class="text-rose-400 font-bold font-mono">> 30 Days Required</span>
+          </div>
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-300">30-Day Completion Rate:</span>
+            <span class="text-rose-400 font-bold font-mono">≥ 95.0% Required</span>
+          </div>
+        </div>
+
+        <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-xs text-amber-300 flex items-start space-x-2">
+          <span>💡</span>
+          <span class="leading-relaxed">
+            You can trade freely with our <strong>Top Verified Traders</strong> shown at the top of the list!
+          </span>
+        </div>
+
+        <button
+          @click="limitedNoticeAd = null"
+          type="button"
+          class="w-full bg-[#f0b90b] hover:bg-[#d4a30b] text-[#1e2329] font-black py-2.5 rounded-xl transition text-xs shadow-lg">
+          Trade with Top Traders
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -377,6 +472,7 @@ const props = defineProps({
   ads: { type: Object, required: true },
   filters: { type: Object, default: () => ({ type: 'sell', fiat: 'all', payment_method: 'all' }) },
   user: { type: Object, default: null },
+  isNewUser: { type: Boolean, default: false },
   usdtBalance: { type: Number, default: 0.00 },
   myActiveOrders: { type: Array, default: () => [] },
   stats: { type: Object, default: () => ({}) },
@@ -387,11 +483,16 @@ const selectedFiat = ref(props.filters.fiat || 'all');
 const selectedPayment = ref(props.filters.payment_method || 'all');
 
 const selectedAd = ref(null);
+const limitedNoticeAd = ref(null);
 const tradeFiatInput = ref('');
 const tradeGrossCrypto = ref(0);
 const selectedOrderPaymentMethod = ref('mpesa');
 const orderLoading = ref(false);
 const orderError = ref('');
+
+function openLimitedNotice(ad) {
+  limitedNoticeAd.value = ad;
+}
 
 function getEffectivePrice(ad) {
   if (!ad) return 1.0;

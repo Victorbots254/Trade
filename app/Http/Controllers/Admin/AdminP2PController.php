@@ -21,10 +21,12 @@ class AdminP2PController extends Controller
     public function index(Request $request)
     {
         $users = User::select('id', 'name', 'email', 'is_admin', 'is_p2p_merchant', 'p2p_merchant_name', 'p2p_completion_rate', 'p2p_completed_trades', 'created_at')
+            ->where('is_dummy', false)
             ->latest()
             ->get();
 
         $ads = P2PAd::with('user:id,name,email,p2p_merchant_name')
+            ->where('is_dummy', false)
             ->latest()
             ->get();
 

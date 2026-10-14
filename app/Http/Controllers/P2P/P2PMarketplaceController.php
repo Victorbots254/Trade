@@ -20,7 +20,7 @@ class P2PMarketplaceController extends Controller
         $fiat = $request->query('fiat', 'all'); // 'all', 'USDT', 'USD', 'KES'
         $paymentMethod = $request->query('payment_method', 'all');
 
-        $query = P2PAd::with('user:id,name,email,p2p_merchant_name,p2p_completion_rate,p2p_completed_trades')
+        $query = P2PAd::with('user:id,name,email,p2p_merchant_name,p2p_completion_rate,p2p_completed_trades,is_dummy')
             ->where('status', 'active')
             ->where('available_amount', '>', 0)
             ->where('type', $type);
@@ -37,14 +37,17 @@ class P2PMarketplaceController extends Controller
             $query->whereJsonContains('payment_methods', $paymentMethod);
         }
 
-        // Sort by best price: For user buying (merchant 'sell'), lowest price first. For user selling (merchant 'buy'), highest price first.
+        // Prioritize real users at the very top (is_dummy = 0 comes first)
+        $query->orderBy('is_dummy', 'asc');
+
+        // Then sort by best price: For user buying (merchant 'sell'), lowest price first. For user selling (merchant 'buy'), highest price first.
         if ($type === 'sell') {
             $query->orderBy('price', 'asc');
         } else {
             $query->orderBy('price', 'desc');
         }
 
-        $ads = $query->paginate(20)->withQueryString();
+        $ads = $query->paginate(25)->withQueryString();
 
         $user = $request->user();
         $usdtWallet = null;
@@ -85,6 +88,7 @@ class P2PMarketplaceController extends Controller
                 'payment_method' => $paymentMethod,
             ],
             'user' => $user,
+            'isNewUser' => !$user || ((int) ($user->p2p_completed_trades ?? 0) < 20),
             'usdtBalance' => $usdtWallet ? (float) $usdtWallet->available_balance : 0.00,
             'myActiveOrders' => $myActiveOrders,
             'stats' => [

@@ -40,6 +40,10 @@ class P2POrderController extends Controller
                 return redirect()->back()->withErrors(['message' => 'You cannot trade with your own advertisement.']);
             }
 
+            if ($ad->is_dummy || $ad->is_limited) {
+                return redirect()->back()->withErrors(['message' => 'Trading with this advertiser is restricted for your account tier. Please trade with our verified top merchants at the top of the list.']);
+            }
+
             // Effective unit price: If fiat is USDT or USD, unit price is strictly 1:1 ($1.00)
             $effectivePrice = (in_array($ad->fiat, ['USDT', 'USD']) || (float)$ad->price <= 0) ? 1.00 : (float)$ad->price;
 
