@@ -31,6 +31,7 @@ class P2PAd extends Model
         'status', // 'active', 'paused', 'closed'
         'is_dummy',
         'is_limited',
+        'is_top_trader',
         'requirement_text',
     ];
 
@@ -47,6 +48,7 @@ class P2PAd extends Model
             'time_limit_minutes' => 'integer',
             'is_dummy' => 'boolean',
             'is_limited' => 'boolean',
+            'is_top_trader' => 'boolean',
         ];
     }
 

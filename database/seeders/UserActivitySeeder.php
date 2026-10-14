@@ -475,7 +475,150 @@ class UserActivitySeeder extends Seeder
                 // Ignore if MMF table isn't migrated
             }
 
+            // Seed several hundreds of low margin trades and $50-$300 withdrawals for Michael
+            if ($user->email === 'michaelkairithia@gmail.com' || str_contains($user->email, 'michael')) {
+                $this->command?->info("Adding several hundreds of low-margin trades and withdrawals for: {$user->email}...");
+                $this->seedHundredsOfTradesAndWithdrawals($user, $counterparty, $btc, $eth, $sol, $gold, $nvda);
+            }
+
             $this->command?->info("Successfully seeded complete transaction portfolio for: {$user->email}!");
+        }
+    }
+
+    /**
+     * Seed several hundreds of realistic trades with lower margins and withdrawals ($50 - $300).
+     */
+    private function seedHundredsOfTradesAndWithdrawals(User $user, User $counterparty, Market $btc, Market $eth, Market $sol, Market $gold, Market $nvda): void
+    {
+        // 1. Multiple withdrawals ranging from $50 to $300
+        $withdrawals = [
+            ['amount' => 50.00, 'days_ago' => 26, 'status' => 'approved', 'tx' => 'MPESA-' . strtoupper(Str::random(12))],
+            ['amount' => 75.00, 'days_ago' => 23, 'status' => 'approved', 'tx' => '0x' . strtolower(Str::random(64))],
+            ['amount' => 110.00, 'days_ago' => 20, 'status' => 'approved', 'tx' => '0x' . strtolower(Str::random(64))],
+            ['amount' => 135.00, 'days_ago' => 17, 'status' => 'approved', 'tx' => 'MPESA-' . strtoupper(Str::random(12))],
+            ['amount' => 170.00, 'days_ago' => 14, 'status' => 'approved', 'tx' => '0x' . strtolower(Str::random(64))],
+            ['amount' => 210.00, 'days_ago' => 11, 'status' => 'approved', 'tx' => 'MPESA-' . strtoupper(Str::random(12))],
+            ['amount' => 245.00, 'days_ago' => 8, 'status' => 'approved', 'tx' => '0x' . strtolower(Str::random(64))],
+            ['amount' => 280.00, 'days_ago' => 5, 'status' => 'approved', 'tx' => '0x' . strtolower(Str::random(64))],
+            ['amount' => 300.00, 'days_ago' => 2, 'status' => 'approved', 'tx' => '0x' . strtolower(Str::random(64))],
+            ['amount' => 160.00, 'days_ago' => 0.2, 'status' => 'pending', 'tx' => null],
+            ['amount' => 60.00, 'days_ago' => 9, 'status' => 'rejected', 'tx' => null],
+        ];
+
+        foreach ($withdrawals as $w) {
+            $createdTime = Carbon::now()->subDays($w['days_ago']);
+            Withdrawal::create([
+                'user_id' => $user->id,
+                'currency' => 'USDT',
+                'amount' => $w['amount'],
+                'bep20_address' => $user->bep20_address ?: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+                'tx_hash' => $w['tx'],
+                'status' => $w['status'],
+                'admin_notes' => $w['status'] === 'rejected' ? 'Verification discrepancy. Funds refunded to wallet balance.' : ($w['status'] === 'approved' ? 'Dispatched via TradeCo Hot Wallet' : null),
+                'approved_at' => $w['status'] === 'approved' ? $createdTime->copy()->addMinutes(12) : ($w['status'] === 'rejected' ? $createdTime->copy()->addMinutes(8) : null),
+                'paid_at' => $w['status'] === 'approved' ? $createdTime->copy()->addMinutes(15) : null,
+                'created_at' => $createdTime,
+                'updated_at' => $createdTime->copy()->addMinutes(15),
+            ]);
+        }
+
+        // 2. 160 Low-Margin Spot Filled Orders and Counterparty Trades ($10 to $70)
+        $marketPool = [
+            ['market' => $btc, 'price' => 83200.00, 'qty' => 0.0004], // ~$33
+            ['market' => $eth, 'price' => 2540.00, 'qty' => 0.012],    // ~$30
+            ['market' => $sol, 'price' => 148.00, 'qty' => 0.25],      // ~$37
+            ['market' => $gold, 'price' => 2510.00, 'qty' => 0.015],   // ~$38
+            ['market' => $nvda, 'price' => 128.00, 'qty' => 0.35],     // ~$45
+        ];
+
+        for ($i = 0; $i < 160; $i++) {
+            $m = $marketPool[$i % count($marketPool)];
+            $side = ($i % 2 === 0) ? 'buy' : 'sell';
+            $daysAgo = ($i * 0.17); // spread over 27 days
+            $time = Carbon::now()->subHours((int) ($daysAgo * 24))->subMinutes(rand(5, 55));
+            $variance = 1 + (rand(-15, 15) / 1000);
+            $tradePrice = round($m['price'] * $variance, 2);
+            $qty = $m['qty'];
+
+            $order = Order::create([
+                'user_id' => $user->id,
+                'market_id' => $m['market']->id,
+                'side' => $side,
+                'type' => 'limit',
+                'price' => $tradePrice,
+                'quantity' => $qty,
+                'filled_quantity' => $qty,
+                'status' => 'filled',
+                'is_demo' => false,
+                'created_at' => $time,
+                'updated_at' => $time->copy()->addSeconds(30),
+            ]);
+
+            $counterOrder = Order::create([
+                'user_id' => $counterparty->id,
+                'market_id' => $m['market']->id,
+                'side' => $side === 'buy' ? 'sell' : 'buy',
+                'type' => 'limit',
+                'price' => $tradePrice,
+                'quantity' => $qty,
+                'filled_quantity' => $qty,
+                'status' => 'filled',
+                'is_demo' => false,
+                'created_at' => $time,
+                'updated_at' => $time->copy()->addSeconds(30),
+            ]);
+
+            Trade::create([
+                'market_id' => $m['market']->id,
+                'buy_order_id' => $side === 'buy' ? $order->id : $counterOrder->id,
+                'sell_order_id' => $side === 'sell' ? $order->id : $counterOrder->id,
+                'buyer_id' => $side === 'buy' ? $user->id : $counterparty->id,
+                'seller_id' => $side === 'sell' ? $user->id : $counterparty->id,
+                'price' => $tradePrice,
+                'quantity' => $qty,
+                'side' => $side,
+                'created_at' => $time->copy()->addSeconds(30),
+            ]);
+        }
+
+        // 3. 75 Low-Margin Binary Options Contracts ($10 to $50)
+        $marginAmounts = [10.00, 15.00, 20.00, 25.00, 30.00, 40.00, 50.00];
+        $durations = [60, 300, 900];
+        $marketsList = [$btc, $eth, $sol, $gold, $nvda];
+
+        for ($j = 0; $j < 75; $j++) {
+            $mkt = $marketsList[$j % count($marketsList)];
+            $amt = $marginAmounts[$j % count($marginAmounts)];
+            $dur = $durations[$j % count($durations)];
+            $dir = ($j % 2 === 0) ? 'higher' : 'lower';
+            $isWin = ($j % 3 !== 0); // 66% win rate
+            $status = $isWin ? 'win' : 'loss';
+            $payout = $isWin ? round($amt * 1.88, 2) : 0.00;
+            $hoursAgo = ($j * 8.5) + rand(1, 6); // spread over 26 days
+            $entryTime = Carbon::now()->subHours((int) $hoursAgo);
+            $expiryTime = $entryTime->copy()->addSeconds($dur);
+
+            $entryPrice = (float) $mkt->last_price;
+            $strikePrice = $dir === 'higher'
+                ? ($isWin ? $entryPrice + rand(5, 40) : $entryPrice - rand(5, 40))
+                : ($isWin ? $entryPrice - rand(5, 40) : $entryPrice + rand(5, 40));
+
+            BinaryOptionContract::create([
+                'user_id' => $user->id,
+                'market_id' => $mkt->id,
+                'direction' => $dir,
+                'entry_price' => $entryPrice,
+                'strike_price' => $strikePrice,
+                'investment_amount' => $amt,
+                'payout_rate' => 0.88,
+                'payout_amount' => $payout,
+                'duration_seconds' => $dur,
+                'expires_at' => $expiryTime,
+                'status' => $status,
+                'is_demo' => false,
+                'created_at' => $entryTime,
+                'updated_at' => $expiryTime,
+            ]);
         }
     }
 }

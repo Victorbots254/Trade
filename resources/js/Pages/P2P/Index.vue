@@ -158,26 +158,35 @@
               <tr
                 v-for="ad in ads.data"
                 :key="ad.id"
-                :class="[!ad.is_dummy ? 'bg-gradient-to-r from-[#f0b90b]/5 via-[#181a20] to-[#181a20] border-l-2 border-l-[#f0b90b]' : 'hover:bg-[#1e2329]/50']"
+                :class="[ad.is_top_trader ? 'bg-gradient-to-r from-[#f0b90b]/10 via-[#181a20] to-[#181a20] border-l-2 border-l-[#f0b90b]' : 'hover:bg-[#1e2329]/50']"
                 class="transition">
                 <!-- Merchant info -->
                 <td class="py-4 px-4 md:px-6">
                   <div class="flex items-center space-x-3">
                     <div
-                      :class="[!ad.is_dummy ? 'from-[#f0b90b]/30 to-[#f0b90b]/10 border-[#f0b90b]/60 text-[#f0b90b]' : 'from-[#f0b90b]/20 to-[#0ecb81]/20 border-[#f0b90b]/30 text-white']"
+                      :class="[ad.is_top_trader ? 'from-[#f0b90b]/40 to-[#f0b90b]/10 border-[#f0b90b] text-[#f0b90b]' : 'from-[#f0b90b]/20 to-[#0ecb81]/20 border-[#f0b90b]/30 text-white']"
                       class="w-9 h-9 rounded-xl bg-gradient-to-tr border flex items-center justify-center font-bold text-sm">
-                      {{ (ad.user?.p2p_merchant_name || ad.user?.name || 'M')[0].toUpperCase() }}
+                      {{ (ad.user?.username || ad.user?.p2p_merchant_name || ad.user?.name || 'M')[0].toUpperCase() }}
                     </div>
                     <div>
                       <div class="flex items-center space-x-1.5 flex-wrap gap-1">
-                        <span class="font-bold text-white text-sm">{{ ad.user?.p2p_merchant_name || ad.user?.name }}</span>
-                        <span v-if="!ad.is_dummy" class="bg-[#f0b90b]/15 text-[#f0b90b] border border-[#f0b90b]/30 text-[9px] px-1.5 py-0.2 rounded font-black tracking-wide uppercase">⭐ TOP TRADER</span>
-                        <span v-else class="text-[#0ecb81] text-xs" title="Verified Merchant">✓</span>
+                        <span class="font-bold text-white text-sm font-mono">{{ ad.user?.username || ad.user?.p2p_merchant_name || ad.user?.name }}</span>
+                        <!-- Highlight ONLY top traders (Top 3 rated with 100% and 5/5) -->
+                        <template v-if="ad.is_top_trader">
+                          <span class="bg-[#f0b90b]/20 text-[#f0b90b] border border-[#f0b90b]/40 text-[9px] px-1.5 py-0.2 rounded font-black tracking-wide uppercase">★ TOP TRADER</span>
+                          <span class="text-amber-400 font-bold text-[10px] ml-0.5">★ 5.0 (5/5)</span>
+                        </template>
+                        <template v-else>
+                          <span class="text-[#0ecb81] text-xs" title="Verified Merchant">✓</span>
+                          <span class="text-[#848e9c] text-[10px]">★ {{ Number(ad.user?.p2p_rating || 4.9).toFixed(1) }}/5</span>
+                        </template>
                       </div>
                       <div class="text-[11px] text-[#848e9c] flex items-center space-x-2 mt-0.5">
-                        <span>{{ ad.user?.p2p_completed_trades || 0 }} orders</span>
+                        <span>{{ Number(ad.user?.p2p_completed_trades || 0).toLocaleString() }} orders</span>
                         <span>·</span>
-                        <span class="text-[#0ecb81]">{{ Number(ad.user?.p2p_completion_rate || 100).toFixed(1) }}% completion</span>
+                        <span :class="ad.is_top_trader ? 'text-amber-300 font-bold' : 'text-[#0ecb81]'">
+                          {{ Number(ad.user?.p2p_completion_rate || 100).toFixed(1) }}% completion
+                        </span>
                       </div>
                     </div>
                   </div>

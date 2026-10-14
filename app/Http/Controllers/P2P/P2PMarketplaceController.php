@@ -20,7 +20,7 @@ class P2PMarketplaceController extends Controller
         $fiat = $request->query('fiat', 'all'); // 'all', 'USDT', 'USD', 'KES'
         $paymentMethod = $request->query('payment_method', 'all');
 
-        $query = P2PAd::with('user:id,name,email,p2p_merchant_name,p2p_completion_rate,p2p_completed_trades,is_dummy')
+        $query = P2PAd::with('user:id,name,username,email,p2p_merchant_name,p2p_completion_rate,p2p_completed_trades,p2p_rating,is_dummy')
             ->where('status', 'active')
             ->where('available_amount', '>', 0)
             ->where('type', $type);
@@ -37,10 +37,10 @@ class P2PMarketplaceController extends Controller
             $query->whereJsonContains('payment_methods', $paymentMethod);
         }
 
-        // Prioritize real users at the very top (is_dummy = 0 comes first)
-        $query->orderBy('is_dummy', 'asc');
+        // Feature the 3 Top Traders at the very top
+        $query->orderBy('is_top_trader', 'desc');
 
-        // Then sort by best price: For user buying (merchant 'sell'), lowest price first. For user selling (merchant 'buy'), highest price first.
+        // Then sort all advertisers by best market price
         if ($type === 'sell') {
             $query->orderBy('price', 'asc');
         } else {
