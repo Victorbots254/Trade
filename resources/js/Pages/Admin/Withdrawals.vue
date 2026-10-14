@@ -160,9 +160,9 @@
                 <th class="py-3 px-4">ID</th>
                 <th class="py-3 px-4">Trader Account</th>
                 <th class="py-3 px-4">Amount</th>
-                <th class="py-3 px-4">Destination Address</th>
+                <th class="py-3 px-4">Channel & Destination</th>
                 <th class="py-3 px-4">Status</th>
-                <th class="py-3 px-4">TxHash / BscScan</th>
+                <th class="py-3 px-4">Ref / TxID</th>
                 <th class="py-3 px-4">Requested Date</th>
                 <th class="py-3 px-4">Date Paid</th>
                 <th class="py-3 px-4 text-right">Admin Actions</th>
@@ -180,21 +180,46 @@
 
                 <!-- Amount -->
                 <td class="py-3.5 px-4 font-bold text-emerald-400">
-                  ${{ formatPrice(w.amount) }} {{ w.currency }}
+                  <div>${{ formatPrice(w.amount) }} {{ w.currency }}</div>
+                  <div v-if="w.amount_kes" class="text-[10px] text-slate-400 font-normal">
+                    ≈ KES {{ Number(w.amount_kes).toLocaleString() }}
+                  </div>
                 </td>
 
-                <!-- Destination BEP20 Address -->
+                <!-- Channel & Destination -->
                 <td class="py-3.5 px-4">
-                  <div class="flex items-center space-x-1.5">
-                    <span class="text-slate-300 font-mono truncate max-w-[140px]" :title="w.bep20_address">
-                      {{ w.bep20_address }}
-                    </span>
-                    <button @click="copyText(w.bep20_address)" class="text-slate-500 hover:text-cyan-400 p-0.5" title="Copy Address">
-                      📋
-                    </button>
-                    <a v-if="w.bep20_address" :href="'https://bscscan.com/address/' + w.bep20_address" target="_blank" class="text-slate-500 hover:text-cyan-400 text-[10px]" title="View on BscScan">
-                      ↗
-                    </a>
+                  <!-- M-Pesa destination -->
+                  <div v-if="w.payment_method === 'mpesa'" class="space-y-0.5">
+                    <div class="flex items-center space-x-1.5">
+                      <span class="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold uppercase text-[9px]">
+                        🟢 M-Pesa
+                      </span>
+                      <span class="text-white font-mono font-bold">{{ w.mpesa_phone }}</span>
+                      <button @click="copyText(w.mpesa_phone)" class="text-slate-500 hover:text-emerald-400 text-[10px]" title="Copy Phone">
+                        📋
+                      </button>
+                    </div>
+                    <div v-if="w.mpesa_name" class="text-[10px] text-slate-400 font-sans">
+                      {{ w.mpesa_name }} <span v-if="w.mpesa_type === 'paybill'">({{ w.mpesa_account_number }})</span>
+                    </div>
+                  </div>
+
+                  <!-- BEP20 destination -->
+                  <div v-else class="space-y-0.5">
+                    <div class="flex items-center space-x-1.5">
+                      <span class="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded font-bold uppercase text-[9px]">
+                        🟡 BEP-20
+                      </span>
+                      <span class="text-slate-300 font-mono truncate max-w-[130px]" :title="w.bep20_address">
+                        {{ w.bep20_address }}
+                      </span>
+                      <button v-if="w.bep20_address" @click="copyText(w.bep20_address)" class="text-slate-500 hover:text-cyan-400 p-0.5" title="Copy Address">
+                        📋
+                      </button>
+                      <a v-if="w.bep20_address" :href="'https://bscscan.com/address/' + w.bep20_address" target="_blank" class="text-slate-500 hover:text-cyan-400 text-[10px]" title="View on BscScan">
+                        ↗
+                      </a>
+                    </div>
                   </div>
                 </td>
 
@@ -305,11 +330,23 @@
           </div>
           <div class="flex justify-between">
             <span class="text-slate-400">Amount:</span>
-            <span class="text-emerald-400 font-bold">${{ formatPrice(approvingWithdrawal.amount) }} USDT</span>
+            <div class="text-right">
+              <span class="text-emerald-400 font-bold">${{ formatPrice(approvingWithdrawal.amount) }} USDT</span>
+              <span v-if="approvingWithdrawal.amount_kes" class="text-slate-400 block text-[10px]">
+                ≈ KES {{ Number(approvingWithdrawal.amount_kes).toLocaleString() }}
+              </span>
+            </div>
           </div>
           <div class="flex justify-between items-start">
             <span class="text-slate-400">Send To:</span>
-            <span class="text-cyan-400 break-all max-w-[240px] text-right">{{ approvingWithdrawal.bep20_address }}</span>
+            <div v-if="approvingWithdrawal.payment_method === 'mpesa'" class="text-right font-sans">
+              <span class="text-emerald-400 font-bold font-mono">{{ approvingWithdrawal.mpesa_phone }}</span>
+              <span class="text-slate-300 block text-[11px]">{{ approvingWithdrawal.mpesa_name }}</span>
+              <span v-if="approvingWithdrawal.mpesa_type === 'paybill'" class="text-slate-400 block text-[10px] font-mono">
+                Paybill Acc: {{ approvingWithdrawal.mpesa_account_number }}
+              </span>
+            </div>
+            <span v-else class="text-cyan-400 break-all max-w-[240px] text-right">{{ approvingWithdrawal.bep20_address }}</span>
           </div>
         </div>
 
@@ -326,13 +363,15 @@
         </div>
 
         <div class="space-y-2">
-          <label class="block text-slate-300 font-medium">BscScan Transaction Hash (TxID) — Optional</label>
+          <label class="block text-slate-300 font-medium">
+            {{ approvingWithdrawal.payment_method === 'mpesa' ? 'M-Pesa Reference / Confirmation Code — Optional' : 'BscScan Transaction Hash (TxID) — Optional' }}
+          </label>
           <input v-model="approvalTxHash"
                  type="text"
-                 placeholder="0x... (paste transaction hash after sending on BSC)"
+                 :placeholder="approvingWithdrawal.payment_method === 'mpesa' ? 'e.g. RK849204J2 (M-Pesa SMS Code)' : '0x... (paste transaction hash after sending on BSC)'"
                  class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs" />
           <p class="text-[11px] text-slate-500">
-            Pastes the blockchain transaction hash for the trader to view directly on BscScan.
+            {{ approvingWithdrawal.payment_method === 'mpesa' ? 'Enter the Safaricom M-Pesa transaction code for trader reference.' : 'Pastes the blockchain transaction hash for the trader to view directly on BscScan.' }}
           </p>
         </div>
 

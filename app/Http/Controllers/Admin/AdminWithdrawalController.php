@@ -83,7 +83,7 @@ class AdminWithdrawalController extends Controller
                         $withdrawal->user,
                         (float) $withdrawal->amount,
                         $withdrawal->currency ?: 'USDT',
-                        $withdrawal->bep20_address,
+                        $withdrawal->destination_label ?: ($withdrawal->bep20_address ?: 'M-Pesa'),
                         'Completed / Approved'
                     );
                 }
@@ -169,7 +169,7 @@ class AdminWithdrawalController extends Controller
                         $withdrawal->user,
                         (float) $withdrawal->amount,
                         $withdrawal->currency ?: 'USDT',
-                        $withdrawal->bep20_address,
+                        $withdrawal->destination_label ?: ($withdrawal->bep20_address ?: 'M-Pesa'),
                         'Rejected - ' . $reasonText
                     );
                 }

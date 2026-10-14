@@ -189,22 +189,27 @@ class TradingEmailService
 
             $formattedAmount = number_format($amount, 2);
 
+            $isMpesa = str_contains(strtolower($address), 'm-pesa');
+            $network = $isMpesa ? 'Safaricom M-Pesa Express' : 'BNB Smart Chain (BEP-20)';
+            $subtitle = $isMpesa ? 'M-Pesa Payout Processing' : 'BEP-20 Blockchain Payout Processing';
+            $intro = "Your withdrawal request of <strong>{$formattedAmount} {$currency}</strong> has been registered and will be sent to your preferred payment method within 24 hours.";
+
             $html = self::buildEmailTemplate([
                 'badge' => 'WITHDRAWAL',
                 'badgeColor' => '#38bdf8',
                 'title' => "Withdrawal Request: {$formattedAmount} {$currency}",
-                'subtitle' => 'BEP-20 Blockchain Payout Processing',
+                'subtitle' => $subtitle,
                 'recipientName' => $user->name,
-                'intro' => "Your withdrawal request of <strong>{$formattedAmount} {$currency}</strong> has been registered and is being processed over the Binance Smart Chain (BEP-20) network.",
+                'intro' => $intro,
                 'details' => [
                     'Withdrawal Amount' => "{$formattedAmount} {$currency}",
-                    'Destination Address' => $address,
-                    'Network' => 'BNB Smart Chain (BEP-20)',
+                    'Payout Method / Destination' => $address,
+                    'Payment Channel' => $network,
                     'Status' => $status,
                 ],
-                'buttonText' => 'View Account Hub',
-                'buttonUrl' => url('/profile'),
-                'note' => 'Blockchain transactions typically settle within 5–15 minutes depending on network congestion.',
+                'buttonText' => 'View Withdrawal History',
+                'buttonUrl' => url('/withdraw'),
+                'note' => 'Your payments will be sent to your preferred method within 24 hours. Contact support if you need any assistance.',
             ]);
 
             Mail::html($html, function ($message) use ($user, $formattedAmount, $currency) {
