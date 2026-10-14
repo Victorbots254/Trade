@@ -145,6 +145,7 @@ class UserActivitySeeder extends Seeder
                 'amount' => 500.00,
                 'kes_amount' => 65000.00,
                 'exchange_rate' => 130.00,
+                'tx_hash' => 'MPESA-' . strtoupper(Str::random(24)),
                 'mpesa_receipt' => 'SH' . strtoupper(Str::random(8)),
                 'status' => 'approved',
                 'approved_at' => Carbon::now()->subDays(6)->addMinutes(5),
@@ -342,10 +343,24 @@ class UserActivitySeeder extends Seeder
                     'updated_at' => $time->copy()->addMinutes(2),
                 ]);
 
+                $counterOrder = Order::create([
+                    'user_id' => $counterparty->id,
+                    'market_id' => $fo['market']['id'],
+                    'side' => $fo['side'] === 'buy' ? 'sell' : 'buy',
+                    'type' => 'limit',
+                    'price' => $fo['price'],
+                    'quantity' => $fo['qty'],
+                    'filled_quantity' => $fo['qty'],
+                    'status' => 'filled',
+                    'is_demo' => false,
+                    'created_at' => $time,
+                    'updated_at' => $time->copy()->addMinutes(2),
+                ]);
+
                 Trade::create([
                     'market_id' => $fo['market']['id'],
-                    'buy_order_id' => $fo['side'] === 'buy' ? $order->id : 1,
-                    'sell_order_id' => $fo['side'] === 'sell' ? $order->id : 1,
+                    'buy_order_id' => $fo['side'] === 'buy' ? $order->id : $counterOrder->id,
+                    'sell_order_id' => $fo['side'] === 'sell' ? $order->id : $counterOrder->id,
                     'buyer_id' => $fo['side'] === 'buy' ? $user->id : $counterparty->id,
                     'seller_id' => $fo['side'] === 'sell' ? $user->id : $counterparty->id,
                     'price' => $fo['price'],
