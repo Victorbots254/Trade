@@ -155,19 +155,24 @@ const props = defineProps({
   wallets: Array,
   selectedPrice: [Number, String],
   accountMode: String,
+  initialSide: String,
 });
 
 const emit = defineEmits(['order-placed']);
 
 const toastRef = ref(null);
 const activeAccountMode = computed(() => props.accountMode || localStorage.getItem('trade_account_mode') || 'demo');
-const side = ref('buy');
+const side = ref(props.initialSide || 'buy');
 const type = ref('limit');
 const price = ref(props.market?.last_price || 0);
 const userEditedPrice = ref(false);
 const orderAmount = ref('50');
 const loading = ref(false);
 const quickLiquidating = ref(false);
+
+watch(() => props.initialSide, (newSide) => {
+  if (newSide) side.value = newSide;
+});
 
 const calculatedQuantity = computed(() => {
   const u = parseFloat(orderAmount.value) || 0;

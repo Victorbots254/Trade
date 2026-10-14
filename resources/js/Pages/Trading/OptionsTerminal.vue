@@ -10,10 +10,18 @@
       @account-mode-changed="(mode) => accountMode = mode"
     />
 
+    <!-- Mobile Market Selector Bar (Swipeable carousel & modal) -->
+    <MobileMarketBar 
+      :markets="marketsList"
+      :currentMarket="displayedMarketState"
+      :currentSymbol="currentMarketState.symbol"
+      @select-market="changeMarket"
+    />
+
     <!-- Main Options Terminal Grid -->
     <div class="flex-1 grid grid-cols-12 gap-1.5 p-1.5 overflow-y-auto lg:overflow-hidden transition-all duration-300">
-      <!-- Sidebar Markets Selection (Collapsible / Hidden by Default on Mobile) -->
-      <div :class="isMarketCollapsed ? 'hidden lg:block lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-auto lg:h-full overflow-hidden transition-all duration-300">
+      <!-- Sidebar Markets Selection (Collapsible / Desktop Only) -->
+      <div :class="isMarketCollapsed ? 'hidden lg:block lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="hidden lg:block h-full overflow-hidden transition-all duration-300">
         <MarketList 
           :markets="marketsList"
           :currentSymbol="currentMarketState.symbol"
@@ -24,22 +32,6 @@
 
       <!-- Center Chart Area -->
       <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-8' : 'col-span-12 lg:col-span-7'" class="flex flex-col space-y-1.5 h-auto lg:h-full overflow-hidden transition-all duration-300">
-        <!-- Mobile Pair Quick Switcher Bar (Mobile Only) -->
-        <div class="lg:hidden flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs">
-          <div class="flex items-center space-x-2">
-            <button @click="isMarketCollapsed = !isMarketCollapsed" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500 text-slate-200 px-2.5 py-1 rounded font-bold flex items-center space-x-1.5 transition">
-              <span class="text-emerald-400 font-mono">{{ currentMarketState.symbol }}</span>
-              <span class="text-slate-500 text-[10px]">▼</span>
-            </button>
-            <span class="font-mono text-emerald-400 font-bold">${{ formatPrice(displayedMarketState.last_price) }}</span>
-            <span :class="displayedMarketState.change_24h >= 0 ? 'text-emerald-400' : 'text-rose-400'" class="font-mono text-[11px]">
-              {{ displayedMarketState.change_24h >= 0 ? '+' : '' }}{{ displayedMarketState.change_24h }}%
-            </span>
-          </div>
-          <button @click="isMarketCollapsed = !isMarketCollapsed" class="text-slate-400 hover:text-emerald-400 text-xs font-semibold">
-            {{ isMarketCollapsed ? 'All Pairs ↗' : 'Close ✕' }}
-          </button>
-        </div>
 
         <!-- Interactive Chart View with Visual Price Movement Engine -->
         <div class="flex-1 min-h-[280px] sm:min-h-[340px]">
@@ -248,6 +240,7 @@ import MarketList from '@/Components/MarketList.vue';
 import TradingViewChart from '@/Components/TradingViewChart.vue';
 import ToastNotification from '@/Components/ToastNotification.vue';
 import BottomMarketTicker from '@/Components/BottomMarketTicker.vue';
+import MobileMarketBar from '@/Components/MobileMarketBar.vue';
 
 const props = defineProps({
   currentMarket: Object,

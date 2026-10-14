@@ -12,10 +12,10 @@
       @open-register="showAuthModal = 'register'"
     />
 
-    <!-- Main Workspace Area -->
-    <div class="flex-1 grid grid-cols-12 gap-1.5 p-1.5 overflow-y-auto lg:overflow-hidden transition-all duration-300">
-      <!-- Column 1: Market Search & Selection (Collapsible / Hidden on Mobile by Default) -->
-      <div :class="isMarketCollapsed ? 'hidden lg:block lg:col-span-1' : 'col-span-12 lg:col-span-2'" class="h-auto lg:h-full overflow-hidden transition-all duration-300">
+    <!-- 1. DESKTOP WORKSPACE (Visible on screens >= lg) -->
+    <div class="hidden lg:grid flex-1 grid-cols-12 gap-1.5 p-1.5 overflow-hidden transition-all duration-300">
+      <!-- Column 1: Market Search & Selection (Collapsible) -->
+      <div :class="isMarketCollapsed ? 'col-span-1' : 'col-span-2'" class="h-full overflow-hidden transition-all duration-300">
         <MarketList 
           :markets="marketsList"
           :currentSymbol="currentMarketState.symbol"
@@ -25,26 +25,9 @@
       </div>
 
       <!-- Column 2: Center Interactive Chart & Bottom Orders -->
-      <div :class="isMarketCollapsed ? 'col-span-12 lg:col-span-7' : 'col-span-12 lg:col-span-6'" class="flex flex-col space-y-1.5 h-auto lg:h-full overflow-hidden transition-all duration-300">
-        <!-- Mobile Pair Switcher (Mobile Only) -->
-        <div class="lg:hidden flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs">
-          <div class="flex items-center space-x-2">
-            <button @click="isMarketCollapsed = !isMarketCollapsed" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-[#f0b90b] text-slate-200 px-2.5 py-1 rounded font-bold flex items-center space-x-1.5 transition">
-              <span class="text-[#f0b90b] font-mono">{{ currentMarketState.symbol }}</span>
-              <span class="text-slate-500 text-[10px]">▼</span>
-            </button>
-            <span class="font-mono text-emerald-400 font-bold">${{ formatPrice(currentMarketState.last_price) }}</span>
-            <span :class="currentMarketState.change_24h >= 0 ? 'text-emerald-400' : 'text-rose-400'" class="font-mono text-[11px]">
-              {{ currentMarketState.change_24h >= 0 ? '+' : '' }}{{ currentMarketState.change_24h }}%
-            </span>
-          </div>
-          <button @click="isMarketCollapsed = !isMarketCollapsed" class="text-slate-400 hover:text-[#f0b90b] text-xs font-semibold">
-            {{ isMarketCollapsed ? 'All Pairs ↗' : 'Close ✕' }}
-          </button>
-        </div>
-
+      <div :class="isMarketCollapsed ? 'col-span-7' : 'col-span-6'" class="flex flex-col space-y-1.5 h-full overflow-hidden transition-all duration-300">
         <!-- Candlestick Chart -->
-        <div class="flex-1 min-h-[260px] sm:min-h-[340px]">
+        <div class="flex-1 min-h-[340px]">
           <TradingViewChart 
             :symbol="currentMarketState.symbol"
             :market="currentMarketState"
@@ -54,7 +37,7 @@
         </div>
 
         <!-- Open Orders / Positions / History Tabs -->
-        <div class="h-40 sm:h-44">
+        <div class="h-44">
           <UserOrders 
             :orders="openOrdersList"
             :history="orderHistoryList"
@@ -67,8 +50,8 @@
       </div>
 
       <!-- Column 3: Order Book & Recent Trades (2 Cols) -->
-      <div class="col-span-12 lg:col-span-2 flex flex-col space-y-1.5 h-auto lg:h-full overflow-hidden">
-        <div class="flex-1 min-h-[200px] sm:min-h-[260px]">
+      <div class="col-span-2 flex flex-col space-y-1.5 h-full overflow-hidden">
+        <div class="flex-1 min-h-[260px]">
           <OrderBook 
             :bids="orderBookState.bids"
             :asks="orderBookState.asks"
@@ -76,13 +59,13 @@
             @select-price="onSelectPrice"
           />
         </div>
-        <div class="h-36 sm:h-44">
+        <div class="h-44">
           <RecentTrades :trades="tradesList" />
         </div>
       </div>
 
       <!-- Column 4: Buy / Sell Order Terminal (2 Cols) -->
-      <div class="col-span-12 lg:col-span-2 h-auto lg:h-full overflow-y-auto">
+      <div class="col-span-2 h-full overflow-y-auto">
         <OrderTerminal 
           :market="currentMarketState"
           :wallets="walletsList"
@@ -90,6 +73,122 @@
           :accountMode="accountMode"
           @order-placed="onOrderPlaced"
         />
+      </div>
+    </div>
+
+    <!-- 2. MOBILE DEDICATED WORKSPACE (Visible on screens < lg) -->
+    <div class="lg:hidden flex-1 flex flex-col overflow-y-auto space-y-2 pb-24">
+      <!-- A. Swipeable Market Carousel & Pair Info Bar -->
+      <MobileMarketBar 
+        :markets="marketsList"
+        :currentMarket="currentMarketState"
+        :currentSymbol="currentMarketState.symbol"
+        @select-market="changeMarket"
+      />
+
+      <!-- B. Responsive TradingView Chart -->
+      <div class="h-[310px] sm:h-[350px] w-full bg-slate-900 border-b border-slate-800 shrink-0">
+        <TradingViewChart 
+          :symbol="currentMarketState.symbol"
+          :market="currentMarketState"
+          :orderBook="orderBookState"
+          :trades="tradesList"
+        />
+      </div>
+
+      <!-- C. Mobile Segmented Navigation Tabs -->
+      <div class="px-2 pt-1">
+        <div class="grid grid-cols-4 gap-1 bg-slate-900/90 border border-slate-800 p-1 rounded-xl text-xs font-semibold shadow-inner">
+          <button @click="mobileTab = 'order'" 
+                  :class="mobileTab === 'order' ? 'bg-[#f0b90b] text-[#1e2329] font-black shadow-sm' : 'text-slate-400 hover:text-white'"
+                  class="py-2 rounded-lg transition flex items-center justify-center space-x-1 text-center">
+            <span>⚡</span>
+            <span>Trade</span>
+          </button>
+          <button @click="mobileTab = 'book'" 
+                  :class="mobileTab === 'book' ? 'bg-slate-800 text-emerald-400 font-bold border border-slate-700 shadow-sm' : 'text-slate-400 hover:text-white'"
+                  class="py-2 rounded-lg transition flex items-center justify-center space-x-1 text-center">
+            <span>📖</span>
+            <span>Book</span>
+          </button>
+          <button @click="mobileTab = 'trades'" 
+                  :class="mobileTab === 'trades' ? 'bg-slate-800 text-emerald-400 font-bold border border-slate-700 shadow-sm' : 'text-slate-400 hover:text-white'"
+                  class="py-2 rounded-lg transition flex items-center justify-center space-x-1 text-center">
+            <span>🕒</span>
+            <span>Trades</span>
+          </button>
+          <button @click="mobileTab = 'orders'" 
+                  :class="mobileTab === 'orders' ? 'bg-slate-800 text-emerald-400 font-bold border border-slate-700 shadow-sm' : 'text-slate-400 hover:text-white'"
+                  class="py-2 rounded-lg transition flex items-center justify-center space-x-1 text-center">
+            <span>📋</span>
+            <span>Orders</span>
+            <span v-if="openOrdersList.length > 0" class="bg-emerald-500 text-slate-950 text-[10px] px-1 rounded-full font-mono font-bold">{{ openOrdersList.length }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- D. Mobile Tab Content Panels -->
+      <!-- Panel 1: Order Terminal (Trade) -->
+      <div v-show="mobileTab === 'order'" class="px-2">
+        <OrderTerminal 
+          :market="currentMarketState"
+          :wallets="walletsList"
+          :selectedPrice="selectedTerminalPrice"
+          :accountMode="accountMode"
+          :initialSide="mobileSide"
+          @order-placed="onOrderPlaced"
+        />
+      </div>
+
+      <!-- Panel 2: Order Book -->
+      <div v-show="mobileTab === 'book'" class="px-2 space-y-2">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-[11px] text-slate-400 flex items-center justify-between">
+          <span>💡 Tap any price below to copy it into your trade form</span>
+          <span class="text-[#f0b90b] font-bold">1-Tap Fill</span>
+        </div>
+        <div class="h-[430px] bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+          <OrderBook 
+            :bids="orderBookState.bids"
+            :asks="orderBookState.asks"
+            :lastPrice="Number(currentMarketState.last_price || 0)"
+            @select-price="handlePriceFromBook"
+          />
+        </div>
+      </div>
+
+      <!-- Panel 3: Recent Trades -->
+      <div v-show="mobileTab === 'trades'" class="px-2">
+        <div class="h-[430px] bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+          <RecentTrades :trades="tradesList" />
+        </div>
+      </div>
+
+      <!-- Panel 4: My Orders & Positions -->
+      <div v-show="mobileTab === 'orders'" class="px-2">
+        <div class="min-h-[380px] bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+          <UserOrders 
+            :orders="openOrdersList"
+            :history="orderHistoryList"
+            :wallets="walletsList"
+            :markets="marketsList"
+            :accountMode="accountMode"
+            @order-cancelled="fetchUserData"
+          />
+        </div>
+      </div>
+
+      <!-- E. Sticky Floating Mobile Quick Action Bar (Above Marquee Ticker) -->
+      <div class="fixed bottom-9 left-0 right-0 z-40 px-3 py-1.5 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 flex items-center space-x-2 shadow-2xl">
+        <button @click="openMobileTrade('buy')" 
+                class="flex-1 bg-[#0ecb81] hover:bg-[#0bb573] active:scale-[0.98] text-[#1e2329] font-black py-2.5 px-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-500/20 transition">
+          <span>▲</span>
+          <span>BUY {{ currentMarketState.base_currency }}</span>
+        </button>
+        <button @click="openMobileTrade('sell')" 
+                class="flex-1 bg-[#f6465d] hover:bg-[#e0384f] active:scale-[0.98] text-white font-black py-2.5 px-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center space-x-1.5 shadow-lg shadow-rose-500/20 transition">
+          <span>▼</span>
+          <span>SELL {{ currentMarketState.base_currency }}</span>
+        </button>
       </div>
     </div>
 
@@ -155,6 +254,7 @@ import OrderTerminal from '@/Components/OrderTerminal.vue';
 import UserOrders from '@/Components/UserOrders.vue';
 import DepositModal from '@/Components/DepositModal.vue';
 import BottomMarketTicker from '@/Components/BottomMarketTicker.vue';
+import MobileMarketBar from '@/Components/MobileMarketBar.vue';
 
 const props = defineProps({
   currentMarket: Object,
@@ -181,6 +281,19 @@ const orderHistoryList = ref([]);
 const showDepositModal = ref(false);
 const showAuthModal = ref(null);
 const selectedTerminalPrice = ref(null);
+
+const mobileTab = ref('order'); // 'order', 'book', 'trades', 'orders'
+const mobileSide = ref('buy');
+
+function openMobileTrade(side) {
+  mobileSide.value = side;
+  mobileTab.value = 'order';
+}
+
+function handlePriceFromBook(price) {
+  selectedTerminalPrice.value = price;
+  mobileTab.value = 'order';
+}
 
 let liveWs = null;
 let tickerWs = null;
