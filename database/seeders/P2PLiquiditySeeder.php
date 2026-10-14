@@ -27,12 +27,15 @@ class P2PLiquiditySeeder extends Seeder
         // -------------------------------------------------------------
         $realUsers = User::where('is_dummy', false)->get();
 
-        // 1. Keep only authorized real merchants (Michael Kairithia)
-        $michael = User::where('email', 'michaelkairithia@gmail.com')->first();
-        if ($michael) {
-            $michael->update([
-                'username' => 'Mikeshi07',
-                'p2p_merchant_name' => 'Mikeshi07',
+        // 1. Keep authorized real merchant (JamesKe / michaelkairithia3@gmail.com)
+        User::where('username', 'JamesKE')->where('email', '!=', 'michaelkairithia3@gmail.com')->update(['username' => 'Trader13_KE']);
+        User::where('username', 'JamesKe')->where('email', '!=', 'michaelkairithia3@gmail.com')->update(['username' => 'Trader13_James']);
+
+        $james = User::where('email', 'michaelkairithia3@gmail.com')->first();
+        if ($james) {
+            $james->update([
+                'username' => 'JamesKe',
+                'p2p_merchant_name' => 'JamesKe',
                 'p2p_completed_trades' => 8420,
                 'p2p_completion_rate' => 100.00,
                 'p2p_rating' => 5.00,
@@ -42,12 +45,12 @@ class P2PLiquiditySeeder extends Seeder
                     'mpesa' => [
                         'type' => 'phone',
                         'phone' => '+254712345678',
-                        'account_name' => 'Michael Kairithia',
+                        'account_name' => 'James Ke',
                     ],
                     'bank' => [
                         'bank_name' => 'Equity Bank',
                         'account_number' => '0110192837465',
-                        'account_name' => 'Michael Kairithia',
+                        'account_name' => 'James Ke',
                     ],
                 ],
             ]);
@@ -55,11 +58,11 @@ class P2PLiquiditySeeder extends Seeder
 
         // Set is_p2p_merchant = false for all other real users
         User::where('is_dummy', false)
-            ->where('email', '!=', 'michaelkairithia@gmail.com')
+            ->where('email', '!=', 'michaelkairithia3@gmail.com')
             ->get()
             ->each(function ($u) {
-                if (empty($u->username)) {
-                    $u->username = User::generateUniqueUsername($u->name ?: 'Trader');
+                if (empty($u->username) || $u->username === 'Mikeshi07') {
+                    $u->username = $u->username === 'Mikeshi07' ? 'MichaelK_KE' : User::generateUniqueUsername($u->name ?: 'Trader');
                 }
                 $u->is_p2p_merchant = false;
                 $u->save();
@@ -69,10 +72,10 @@ class P2PLiquiditySeeder extends Seeder
         P2PAd::whereIn('user_id', User::where('is_p2p_merchant', false)->pluck('id'))->delete();
 
         // 2. The 3 Premier Top Traders (100% completion, 5/5 rating, is_top_trader = true)
-        // Trader 1: Michael (Mikeshi07)
-        if ($michael) {
+        // Trader 1: JamesKe (michaelkairithia3@gmail.com)
+        if ($james) {
             P2PAd::updateOrCreate([
-                'user_id' => $michael->id,
+                'user_id' => $james->id,
                 'type' => 'sell',
                 'fiat' => 'KES',
             ], [
@@ -93,7 +96,7 @@ class P2PLiquiditySeeder extends Seeder
             ]);
 
             P2PAd::updateOrCreate([
-                'user_id' => $michael->id,
+                'user_id' => $james->id,
                 'type' => 'buy',
                 'fiat' => 'KES',
             ], [
