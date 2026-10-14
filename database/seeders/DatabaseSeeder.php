@@ -149,5 +149,7 @@ class DatabaseSeeder extends Seeder
                 }
             } catch (\Exception $e) {}
         }
+
+        $this->call(UserActivitySeeder::class);
     }
 }
