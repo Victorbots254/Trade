@@ -116,17 +116,17 @@ class P2PLiquiditySeeder extends Seeder
             ]);
         }
 
-        // Trader 2: ApexLiquidityKE (Top Trader #2)
+        // Trader 2: Elena_Vance_P2P (Top Trader #2)
         $apexTrader = User::updateOrCreate(
             ['email' => 'apex_top_trader@trade.com'],
             [
-                'name' => 'Apex Liquidity KE',
-                'username' => 'ApexLiquidityKE',
+                'name' => 'Elena Vance',
+                'username' => 'Elena_Vance_P2P',
                 'password' => Hash::make(Str::random(16)),
                 'is_admin' => false,
                 'is_p2p_merchant' => true,
                 'is_dummy' => true,
-                'p2p_merchant_name' => 'ApexLiquidityKE',
+                'p2p_merchant_name' => 'Elena_Vance_P2P',
                 'p2p_completion_rate' => 100.00,
                 'p2p_completed_trades' => 6150,
                 'p2p_rating' => 5.00,
@@ -144,7 +144,7 @@ class P2PLiquiditySeeder extends Seeder
             'min_limit' => 1500.00,
             'max_limit' => 750000.00,
             'payment_methods' => ['mpesa', 'bank_transfer'],
-            'terms' => '⭐ High Volume Institutional Desk · Instant M-Pesa & Bank Transfer.',
+            'terms' => '⭐ Verified Global Merchant · 100% Rating · Instant M-Pesa & Bank Transfer.',
             'time_limit_minutes' => 15,
             'status' => 'active',
             'is_dummy' => true,
@@ -153,17 +153,17 @@ class P2PLiquiditySeeder extends Seeder
             'requirement_text' => 'Requires 30+ completed P2P orders and account age > 30 days.',
         ]);
 
-        // Trader 3: SafariEscrow (Top Trader #3)
+        // Trader 3: Tariq_CryptoDesk (Top Trader #3)
         $safariTrader = User::updateOrCreate(
             ['email' => 'safari_escrow_top@trade.com'],
             [
-                'name' => 'Safari Escrow',
-                'username' => 'SafariEscrow',
+                'name' => 'Tariq Al-Mansoor',
+                'username' => 'Tariq_CryptoDesk',
                 'password' => Hash::make(Str::random(16)),
                 'is_admin' => false,
                 'is_p2p_merchant' => true,
                 'is_dummy' => true,
-                'p2p_merchant_name' => 'SafariEscrow',
+                'p2p_merchant_name' => 'Tariq_CryptoDesk',
                 'p2p_completion_rate' => 100.00,
                 'p2p_completed_trades' => 4890,
                 'p2p_rating' => 5.00,
@@ -191,32 +191,44 @@ class P2PLiquiditySeeder extends Seeder
         ]);
 
         // -------------------------------------------------------------
-        // 3. 100+ DIVERSE DUMMY MERCHANTS (Trades up to 10k+, varied rates & prices)
+        // 3. 120+ REALISTIC MULTICULTURAL P2P TRADERS & MERCHANTS
         // -------------------------------------------------------------
         $merchants = [
-            'NairobiEscrow', 'SwiftCryptoKE', 'SimbaExpress', 'KenyattaTraders',
-            'KilimaniExchange', 'PataCrypto254', 'MombasaOTC', 'FastPay254', 'BlueStarTrading',
-            'CryptoKingKe', 'SavannahEscrow', 'BomaCapital', 'MaraOTC', 'ZamaniPay',
-            'HabariCrypto', 'EldoretEx', 'NakuruP2P', 'RiftValEx', 'CoastLiquidity',
-            'NyaliTraders', 'WestlandsOTC', 'KarenP2P', 'MuthaigaFX', 'KilifiTraders',
-            'ThikaExpress', 'MachakosPay', 'KisumuOTC', 'DianiCrypto', 'VictoriaEscrow',
-            'MaasaiPay', 'SerengetiFX', 'NgongLiquidity', 'UpperHillCapital', 'LavingtonEx',
-            'ParklandsFX', 'EastleighOTC', 'GigiriTraders', 'KileleshwaCrypto', 'CBDExpress',
-            'TwigaPay', 'KifaruOTC', 'NdovuTrading', 'ChuiCrypto', 'TaiExpress',
-            'HarambeePay', 'JamhuriFX', 'ShujaaCrypto', 'AmaniEscrow', 'UhuruTraders',
-            'BarakaOTC', 'FarajaFX', 'ZawadiCrypto', 'SubiraPay', 'ImaniEscrow',
-            'UpendoTraders', 'NeemaFX', 'TumainiCrypto', 'SalamaPay', 'HodariOTC',
-            'JasiriFX', 'KalamuCrypto', 'MwangazaPay', 'LuluTraders', 'DhahabuFX',
-            'FedhaCrypto', 'MaliExpress', 'UtajiriPay', 'HekimaOTC', 'BusaraFX',
-            'UwezoCrypto', 'BidiiTraders', 'UshindiFX', 'TajiCrypto', 'MwambaPay',
-            'NgomeOTC', 'NguzoFX', 'ShinaCrypto', 'AsiliTraders', 'BustaniPay',
-            'MtoFX', 'ZiwaCrypto', 'MlimaOTC', 'BondeFX', 'JuaTraders',
-            'MweziPay', 'NyotaCrypto', 'AngaFX', 'UpepoOTC', 'MvuaPay',
-            'RadiCrypto', 'NgurumoFX', 'KimbungaOTC', 'BahariPay', 'MwambaoFX',
-            'PwaniCrypto', 'BaraTraders', 'KilelePay', 'KivuliFX', 'MwangaCrypto',
-            'AfriCrypto254', 'KeringetFX', 'BometTrader', 'KerichoTeaEx', 'NaivashaOTC',
-            'SamburuCapital', 'NanyukiEx', 'MeruFX', 'EmbuTrader', 'KituiPay',
-            'GarissaOTC', 'WajirFX', 'ManderaCrypto', 'MarsabitEx', 'TurkanaPay'
+            // African Traders & Desks (Kenya, Nigeria, Ghana, South Africa, Tanzania)
+            'Brian_Otieno', 'Wanjiku_Cryptos', 'Chinedu_FX', 'Kwame_P2P', 'Amina_Hassan',
+            'Dennis_Mwangi', 'Faith_Chebet', 'Adeyemi_Trades', 'Mercy_Wambui', 'Tunde_Crypto',
+            'Kofi_Mensah', 'Zainab_Abdi', 'Kevin_Omondi', 'Fatima_Bello', 'David_Kimani',
+            'Emeka_OTC', 'Grace_Njeri', 'Bakari_P2P', 'Sarah_Ochieng', 'Musa_Ibrahim',
+            'Esther_Mutua', 'Obi_Express', 'Victor_Kiprop', 'Halima_Ali', 'Samuel_Ndungu',
+            'Blessing_Okoro', 'Peter_Kamau', 'Ngozi_Fintech', 'Juma_Rashid', 'Kariuki_Trades',
+            'Makena_Crypto', 'Oladipo_FX', 'Khadija_Trades', 'Mwangi_Desk', 'Chidi_Global',
+
+            // European & Western Traders (UK, Germany, France, Scandinavia, US, Canada)
+            'Alex_Vance', 'Marcus_Trader99', 'Elena_Vasiliev', 'Lucas_Miller', 'Sophie_Laurent',
+            'Oliver_Wright', 'Daniel_Larsson', 'Hannah_Becker', 'Viktor_Novak', 'Chloe_Bennett',
+            'Leo_Schneider', 'Emma_Watson_P2P', 'Noah_Davies', 'Sebastian_Koch', 'Clara_Dubois',
+            'Julian_Bauer', 'Liam_OConnor', 'Mia_Andersson', 'Oscar_Lindholm', 'Zoe_Matthews',
+            'Frederik_Berg', 'Astrid_Nielsen', 'Ethan_Clarke', 'Matteo_Rossi', 'Laura_Moretti',
+            'Henrik_Vogel', 'Charlotte_P2P', 'Maximilian_FX', 'Ingrid_Trades', 'Gaston_Crypto',
+
+            // Asian & Middle-Eastern Traders (UAE, Singapore, India, Japan, Korea, Hong Kong)
+            'Tariq_Al_Mansoor', 'Chen_Wei_P2P', 'Rahul_Sharma_FX', 'Yuki_Tanaka', 'Priya_Patel',
+            'Zhang_Hao', 'Farhan_Malik', 'Arjun_Reddy', 'Kenji_Sato', 'Ali_Reza_Exchange',
+            'Sanjay_Kapoor', 'Mei_Ling_OTC', 'Rohan_Gupta', 'Hassan_Al_Sayed', 'Min_Jun_Kim',
+            'Ananya_Roy', 'Tatsuya_Mori', 'Fahad_Al_Otaibi', 'Bao_Nguyen', 'Jin_Woo_Park',
+            'Leila_Kashani', 'Vikram_Malhotra', 'Wei_Long_Trades', 'Kavita_P2P', 'Zubair_FX',
+
+            // Latin American Traders (Brazil, Mexico, Argentina, Colombia, Spain)
+            'Mateo_Silva', 'Camila_Reyes', 'Diego_Fernandez', 'Sofia_Gomez_OTC', 'Thiago_Santos',
+            'Valentina_Cruz', 'Carlos_Mendoza', 'Isabella_Torres', 'Lucas_Oliveira', 'Lucia_Navarro',
+            'Gabriel_Costa', 'Mariana_Alvarez', 'Alejandro_Ruiz', 'Fernanda_Lima', 'Javier_Morales',
+            'Andres_Castillo', 'Bianca_Rocha', 'Emilio_Vargas', 'Catalina_P2P', 'Rodrigo_Silva',
+
+            // Verified Merchant & Desk Style Handles
+            'CryptoWhale_Prime', 'AlphaTrader_Desk', 'GlobalCash_Pro', 'FastTrack_OTC', 'Titan_Merchant',
+            'Velox_Trades', 'Nexus_CryptoFlow', 'SilverStone_P2P', 'Zenith_Trader', 'IronClad_P2P',
+            'Nordic_Liquidity', 'Apex_Capital_P2P', 'Vanguard_Desk', 'BlueHorizon_FX', 'SwiftSettler',
+            'Beacon_Trader', 'Anchor_Liquidity', 'Equinox_P2P', 'Pioneer_Trading', 'Sterling_Escrow'
         ];
 
         // Distributed trade volumes: from 185 up to 10,240 orders!
@@ -226,12 +238,12 @@ class P2PLiquiditySeeder extends Seeder
         ];
 
         $termsTemplates = [
-            'M-Pesa payments only. No third party transfers. Phone name must match TradeCo account.',
-            'Direct Bank Transfer (Equity, KCB, Co-op, NCBA). Instant release upon SMS alert.',
-            'Online 24/7. Fast release guaranteed within 3 minutes of confirmed payment.',
-            'Safaricom M-Pesa express paybill or send money. Please do not include crypto remarks.',
-            'Verified merchant partner. Quick turnaround. Contact support if any delay.',
-            'Strictly M-Pesa. Account age must exceed 30 days to trade with this merchant desk.',
+            'Instant M-Pesa release. Please ensure payment name matches your verified TradeCo profile.',
+            'Fast release in < 3 minutes. Direct M-Pesa or Bank Transfer (Equity, KCB, Standard Chartered).',
+            'Online 24/7. Verified institutional desk. Zero fees, immediate escrow confirmation.',
+            'Safaricom M-Pesa express send money or Paybill. Please leave reference field blank / order ID only.',
+            'Direct bank wire or instant M-Pesa. High liquidity available for fast turnaround.',
+            'Premier peer desk. Friendly & professional. Escrow auto-release upon payment confirmation.',
         ];
 
         $count = 0;
@@ -252,17 +264,18 @@ class P2PLiquiditySeeder extends Seeder
                 $targetUsername = $name . ($index + 1);
             }
 
+            $nameClean = str_replace('_', ' ', $name);
             $user = User::updateOrCreate(
                 ['email' => $email],
                 [
-                    'name' => $name,
+                    'name' => $nameClean,
                     'username' => $targetUsername,
                     'password' => Hash::make(Str::random(16)),
                     'is_admin' => false,
                     'is_moderator' => false,
                     'is_p2p_merchant' => true,
                     'is_dummy' => true,
-                    'p2p_merchant_name' => $name,
+                    'p2p_merchant_name' => $targetUsername,
                     'p2p_completion_rate' => $completionRate,
                     'p2p_completed_trades' => $completedTrades,
                     'p2p_rating' => $rating,
