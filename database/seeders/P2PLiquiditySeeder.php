@@ -138,13 +138,33 @@ class P2PLiquiditySeeder extends Seeder
             'fiat' => 'KES',
         ], [
             'asset' => 'USDT',
-            'price' => 129.40,
+            'price' => 129.35,
             'total_amount' => 25000.00,
             'available_amount' => 24100.00,
-            'min_limit' => 1500.00,
+            'min_limit' => 1000.00,
             'max_limit' => 750000.00,
             'payment_methods' => ['mpesa', 'bank_transfer'],
             'terms' => '⭐ Verified Global Merchant · 100% Rating · Instant M-Pesa & Bank Transfer.',
+            'time_limit_minutes' => 15,
+            'status' => 'active',
+            'is_dummy' => true,
+            'is_limited' => true,
+            'is_top_trader' => true,
+            'requirement_text' => 'Requires 30+ completed P2P orders and account age > 30 days.',
+        ]);
+        P2PAd::updateOrCreate([
+            'user_id' => $apexTrader->id,
+            'type' => 'buy',
+            'fiat' => 'KES',
+        ], [
+            'asset' => 'USDT',
+            'price' => 128.85,
+            'total_amount' => 20000.00,
+            'available_amount' => 19500.00,
+            'min_limit' => 1000.00,
+            'max_limit' => 600000.00,
+            'payment_methods' => ['mpesa', 'bank_transfer'],
+            'terms' => '⭐ Verified High Liquidity Desk · 100% Rating · Fastest M-Pesa release.',
             'time_limit_minutes' => 15,
             'status' => 'active',
             'is_dummy' => true,
@@ -175,13 +195,33 @@ class P2PLiquiditySeeder extends Seeder
             'fiat' => 'KES',
         ], [
             'asset' => 'USDT',
-            'price' => 129.55,
+            'price' => 129.45,
             'total_amount' => 18000.00,
             'available_amount' => 17400.00,
             'min_limit' => 1000.00,
             'max_limit' => 500000.00,
             'payment_methods' => ['mpesa', 'bank_transfer'],
             'terms' => '⭐ Verified 24/7 Escrow Partner · 100% Rating · Swift M-Pesa & Bank release.',
+            'time_limit_minutes' => 15,
+            'status' => 'active',
+            'is_dummy' => true,
+            'is_limited' => true,
+            'is_top_trader' => true,
+            'requirement_text' => 'Requires 30+ completed P2P orders and account age > 30 days.',
+        ]);
+        P2PAd::updateOrCreate([
+            'user_id' => $safariTrader->id,
+            'type' => 'buy',
+            'fiat' => 'KES',
+        ], [
+            'asset' => 'USDT',
+            'price' => 128.75,
+            'total_amount' => 15000.00,
+            'available_amount' => 14800.00,
+            'min_limit' => 1000.00,
+            'max_limit' => 500000.00,
+            'payment_methods' => ['mpesa', 'bank_transfer'],
+            'terms' => '⭐ Premier Instant Payouts · Direct M-Pesa & Equity / KCB Bank.',
             'time_limit_minutes' => 15,
             'status' => 'active',
             'is_dummy' => true,
@@ -289,24 +329,18 @@ class P2PLiquiditySeeder extends Seeder
                 ['available_balance' => 60000.00, 'locked_balance' => 0.00]
             );
 
-            // Sell vs Buy distribution (60% sell, 40% buy)
-            $type = ($index % 5 <= 2) ? 'sell' : 'buy';
+            // Sell vs Buy distribution (55% sell, 45% buy)
+            $type = ($index % 2 === 0) ? 'sell' : 'buy';
+            $fiat = 'KES'; // 100% integrated Kenyan Shillings for all merchants
 
-            // 85% KES, 15% USD/USDT
-            $isKes = ($index % 7 !== 0);
-            $fiat = $isKes ? 'KES' : 'USDT';
-
-            if ($fiat === 'KES') {
-                if ($type === 'sell') {
-                    // Buy USDT tab: prices range competitively from 129.80 to 135.20 KES
-                    $price = 129.80 + round(($index * 0.06) + (rand(0, 15) / 100), 2);
-                } else {
-                    // Sell USDT tab: prices range competitively from 128.50 down to 124.80 KES
-                    $offset = ($index % 40);
-                    $price = max(124.00, round(128.50 - ($offset * 0.09) - (rand(0, 15) / 100), 2));
-                }
+            if ($type === 'sell') {
+                // Buy USDT tab: prices range competitively from 129.50 up to 134.80 KES
+                // Step by ~0.05 KES + randomized fraction so every merchant has a distinct, competitive price
+                $price = 129.50 + round(($index * 0.05) + (rand(1, 9) / 100), 2);
             } else {
-                $price = $type === 'sell' ? 1.00 + (rand(0, 3) / 100) : 0.99 - (rand(0, 2) / 100);
+                // Sell USDT tab: prices range competitively from 128.65 down to 124.50 KES
+                // Sorted descending: highest payout first
+                $price = max(124.50, round(128.65 - (($index / 2) * 0.06) - (rand(1, 9) / 100), 2));
             }
 
             // Payment methods
@@ -321,8 +355,8 @@ class P2PLiquiditySeeder extends Seeder
             $totalAmount = rand(800, 35000);
             $availableAmount = round($totalAmount * (rand(85, 98) / 100), 2);
 
-            $minLimit = $isKes ? (float) [500, 1000, 1500, 2000, 3000, 5000][rand(0, 5)] : (float) [10, 20, 50][rand(0, 2)];
-            $maxLimit = $isKes ? (float) [35000, 75000, 150000, 300000, 600000, 1200000][rand(0, 5)] : (float) [500, 1500, 3500, 10000][rand(0, 3)];
+            $minLimit = (float) [500, 1000, 1500, 2000, 3000, 5000][rand(0, 5)];
+            $maxLimit = (float) [35000, 75000, 150000, 300000, 600000, 1200000][rand(0, 5)];
 
             P2PAd::create([
                 'user_id' => $user->id,
@@ -337,7 +371,7 @@ class P2PLiquiditySeeder extends Seeder
                 'payment_methods' => $methods,
                 'payment_details' => [
                     'mpesa_number' => '+2547' . rand(10000000, 99999999),
-                    'bank_name' => ['Equity Bank', 'KCB Bank', 'Co-operative Bank', 'NCBA'][rand(0, 3)],
+                    'bank_name' => ['Equity Bank', 'KCB Bank', 'Co-operative Bank', 'NCBA', 'Absa Kenya', 'Standard Chartered'][rand(0, 5)],
                 ],
                 'terms' => $termsTemplates[rand(0, count($termsTemplates) - 1)],
                 'auto_reply' => 'Trading window active. Please proceed with payment.',
@@ -348,6 +382,37 @@ class P2PLiquiditySeeder extends Seeder
                 'is_top_trader' => false, // NOT top trader
                 'requirement_text' => 'Requires 30+ completed P2P orders and account age > 30 days.',
             ]);
+
+            // For every 6th merchant, also create a secondary USD ad with DIVERSE dynamic pricing (NOT standard 1:1)
+            if ($index % 6 === 0) {
+                $usdType = ($index % 12 === 0) ? 'sell' : 'buy';
+                $usdPrice = ($usdType === 'sell')
+                    ? round(1.002 + (($index % 20) * 0.001) + (rand(1, 4) / 1000), 3)
+                    : round(0.998 - (($index % 20) * 0.001) - (rand(1, 4) / 1000), 3);
+
+                P2PAd::create([
+                    'user_id' => $user->id,
+                    'type' => $usdType,
+                    'asset' => 'USDT',
+                    'fiat' => 'USDT',
+                    'price' => $usdPrice,
+                    'total_amount' => rand(500, 15000),
+                    'available_amount' => rand(450, 14200),
+                    'min_limit' => 20.00,
+                    'max_limit' => 5000.00,
+                    'payment_methods' => ['bank_transfer'],
+                    'payment_details' => [
+                        'bank_name' => 'International Wire / SWIFT',
+                    ],
+                    'terms' => 'Direct international wire / SEPA transfer. Verified accounts only.',
+                    'time_limit_minutes' => 30,
+                    'status' => 'active',
+                    'is_dummy' => true,
+                    'is_limited' => true,
+                    'is_top_trader' => false,
+                    'requirement_text' => 'Requires 30+ completed P2P orders and account age > 30 days.',
+                ]);
+            }
 
             $count++;
         }

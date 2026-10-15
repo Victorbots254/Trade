@@ -344,19 +344,19 @@
               <div class="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  @click="onFiatChanged('USDT')"
-                  :class="adForm.fiat === 'USDT' || adForm.fiat === 'USD' ? 'bg-[#f0b90b] text-[#1e2329] font-black shadow' : 'border border-[#2b3139] text-[#848e9c] hover:text-white bg-[#0b0e11]'"
-                  class="py-2.5 px-3 rounded-xl font-bold transition text-xs flex items-center justify-center space-x-1.5">
-                  <span>🪙</span>
-                  <span>USDT (Standard 1:1)</span>
-                </button>
-                <button
-                  type="button"
                   @click="onFiatChanged('KES')"
                   :class="adForm.fiat === 'KES' ? 'bg-[#0ecb81] text-[#1e2329] font-black shadow' : 'border border-[#2b3139] text-[#848e9c] hover:text-white bg-[#0b0e11]'"
                   class="py-2.5 px-3 rounded-xl font-bold transition text-xs flex items-center justify-center space-x-1.5">
                   <span>🇰🇪</span>
                   <span>KES (Kenyan Shilling)</span>
+                </button>
+                <button
+                  type="button"
+                  @click="onFiatChanged('USDT')"
+                  :class="adForm.fiat === 'USDT' || adForm.fiat === 'USD' ? 'bg-[#f0b90b] text-[#1e2329] font-black shadow' : 'border border-[#2b3139] text-[#848e9c] hover:text-white bg-[#0b0e11]'"
+                  class="py-2.5 px-3 rounded-xl font-bold transition text-xs flex items-center justify-center space-x-1.5">
+                  <span>🪙</span>
+                  <span>USD / USDT</span>
                 </button>
               </div>
             </div>
@@ -373,26 +373,22 @@
                   <button type="button" @click="applyMarketRate" class="text-[10px] text-[#f0b90b] hover:underline ml-1">(Apply)</button>
                 </div>
                 <div v-else class="text-[11px] text-[#f0b90b] font-mono">
-                  1 USDT = $1.00 USD
+                  1 USDT ≈ $1.00 USD
                 </div>
               </div>
 
-              <div v-if="adForm.fiat === 'USDT' || adForm.fiat === 'USD'" class="bg-[#181a20] border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-white font-mono text-sm flex justify-between items-center">
-                <span class="text-emerald-400 font-bold text-base">1.00 {{ adForm.fiat }}</span>
-                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded font-sans font-semibold">Fixed 1:1 Parity</span>
-              </div>
-              <div v-else class="relative">
+              <div class="relative">
                 <input
                   v-model="adForm.price"
                   type="number"
-                  step="0.01"
+                  step="any"
                   required
-                  placeholder="e.g. 129.50"
+                  :placeholder="adForm.fiat === 'KES' ? 'e.g. 129.50' : 'e.g. 1.00'"
                   class="w-full bg-[#181a20] border border-[#2b3139] rounded-xl px-3.5 py-2.5 text-white font-mono text-sm focus:border-[#f0b90b] focus:outline-none" />
                 <span class="absolute right-3 top-2.5 text-xs text-[#848e9c] font-mono font-bold">{{ adForm.fiat }}</span>
               </div>
               <p class="text-[10px] text-[#848e9c]">
-                {{ adForm.fiat === 'KES' ? 'Market price auto-fetched. You can customize your offer rate.' : 'Standard 1:1 stablecoin settlement rate (1 USDT = $1.00).' }}
+                {{ adForm.fiat === 'KES' ? 'Market price auto-fetched. You can customize your offer rate in Kenyan Shillings.' : 'Enter your rate per USDT in USD (e.g. 1.00, 1.005, 0.995).' }}
               </p>
             </div>
           </div>
@@ -871,11 +867,11 @@ function deletePaymentMethod(action) {
 const adForm = ref({
   type: 'sell',
   asset: 'USDT',
-  fiat: 'USDT',
-  price: '1.00',
+  fiat: 'KES',
+  price: (props.marketRateKes || 129.50).toFixed(2),
   total_amount: '50',
-  min_limit: '10',
-  max_limit: '5000',
+  min_limit: '650',
+  max_limit: '50000',
   payment_methods: ['mpesa'],
   payment_details: {
     mpesa: {
@@ -892,7 +888,7 @@ const adForm = ref({
       branch: '',
     },
   },
-  auto_reply: 'Hello! I am online. Please follow payment instructions and confirm in chat.',
+  auto_reply: 'Hello! Please send M-Pesa payment and confirm transaction ID in chat.',
   terms: 'Real-time escrow protected by TradeCo. Instant release upon verification.',
   time_limit_minutes: 15,
 });
@@ -929,9 +925,6 @@ function applyMarketRate() {
 }
 
 function submitCreateAd() {
-  if (adForm.value.fiat === 'USDT' || adForm.value.fiat === 'USD') {
-    adForm.value.price = '1.00';
-  }
   creatingAd.value = true;
   router.post('/p2p/merchant/ads', adForm.value, {
     onSuccess: () => {

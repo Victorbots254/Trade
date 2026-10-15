@@ -44,16 +44,16 @@ class P2POrderController extends Controller
                 return redirect()->back()->withErrors(['message' => 'Trading with this advertiser is restricted for your account tier. Please trade with our verified top merchants at the top of the list.']);
             }
 
-            // Effective unit price: If fiat is USDT or USD, unit price is strictly 1:1 ($1.00)
-            $effectivePrice = (in_array($ad->fiat, ['USDT', 'USD']) || (float)$ad->price <= 0) ? 1.00 : (float)$ad->price;
+            // Effective unit price from the advertisement
+            $effectivePrice = (float)$ad->price > 0 ? (float)$ad->price : 1.00;
 
             // Calculate exact crypto and fiat amounts
             if ($request->amount_type === 'crypto') {
                 $cryptoAmount = round((float) $request->amount, 4);
-                $fiatAmount = in_array($ad->fiat, ['USDT', 'USD']) ? round($cryptoAmount, 2) : round($cryptoAmount * $effectivePrice, 2);
+                $fiatAmount = round($cryptoAmount * $effectivePrice, 2);
             } else {
                 $fiatAmount = round((float) $request->amount, 2);
-                $cryptoAmount = in_array($ad->fiat, ['USDT', 'USD']) ? round($fiatAmount, 4) : round($fiatAmount / $effectivePrice, 4);
+                $cryptoAmount = round($fiatAmount / $effectivePrice, 4);
             }
 
             // Calculate escrow fee: Free up to $50.00; 0.50 USDT fee for amounts > $50.00

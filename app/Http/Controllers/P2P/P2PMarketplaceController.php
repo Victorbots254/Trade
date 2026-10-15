@@ -17,7 +17,7 @@ class P2PMarketplaceController extends Controller
     public function index(Request $request)
     {
         $type = $request->query('type', 'sell'); // 'sell' = user wants to BUY usdt; 'buy' = user wants to SELL usdt
-        $fiat = $request->query('fiat', 'all'); // 'all', 'USDT', 'USD', 'KES'
+        $fiat = $request->query('fiat', 'KES'); // Default to Kenyan Shillings (KES)
         $paymentMethod = $request->query('payment_method', 'all');
 
         $query = P2PAd::with('user:id,name,username,email,p2p_merchant_name,p2p_completion_rate,p2p_completed_trades,p2p_rating,is_dummy,is_p2p_merchant')
@@ -42,6 +42,10 @@ class P2PMarketplaceController extends Controller
 
         // Feature the 3 Top Traders at the very top
         $query->orderBy('is_top_trader', 'desc');
+
+        if ($fiat === 'all') {
+            $query->orderByRaw("CASE WHEN fiat = 'KES' THEN 0 ELSE 1 END");
+        }
 
         // Then sort all advertisers by best market price
         if ($type === 'sell') {

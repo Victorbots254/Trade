@@ -102,22 +102,6 @@
             <!-- Currency Filter Tabs -->
             <div class="flex items-center bg-[#0b0e11] p-1 rounded-xl border border-[#2b3139]">
               <button
-                @click="setCurrency('all')"
-                type="button"
-                :class="selectedFiat === 'all' ? 'bg-[#2b3139] text-white font-bold' : 'text-[#848e9c] hover:text-white'"
-                class="px-3 py-1.5 rounded-lg text-xs transition">
-                All
-              </button>
-              <button
-                @click="setCurrency('USDT')"
-                type="button"
-                :class="selectedFiat === 'USDT' || selectedFiat === 'USD' ? 'bg-[#f0b90b] text-[#1e2329] font-black shadow' : 'text-[#848e9c] hover:text-white'"
-                class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1">
-                <span>🪙</span>
-                <span>USDT</span>
-                <span v-if="stats?.usdtAdsCount !== undefined" class="text-[10px] opacity-80">({{ stats.usdtAdsCount }})</span>
-              </button>
-              <button
                 @click="setCurrency('KES')"
                 type="button"
                 :class="selectedFiat === 'KES' ? 'bg-[#0ecb81] text-[#1e2329] font-black shadow' : 'text-[#848e9c] hover:text-white'"
@@ -125,6 +109,22 @@
                 <span>🇰🇪</span>
                 <span>KES</span>
                 <span v-if="stats?.kesAdsCount !== undefined" class="text-[10px] opacity-80">({{ stats.kesAdsCount }})</span>
+              </button>
+              <button
+                @click="setCurrency('USDT')"
+                type="button"
+                :class="selectedFiat === 'USDT' || selectedFiat === 'USD' ? 'bg-[#f0b90b] text-[#1e2329] font-black shadow' : 'text-[#848e9c] hover:text-white'"
+                class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1">
+                <span>🪙</span>
+                <span>USD</span>
+                <span v-if="stats?.usdtAdsCount !== undefined" class="text-[10px] opacity-80">({{ stats.usdtAdsCount }})</span>
+              </button>
+              <button
+                @click="setCurrency('all')"
+                type="button"
+                :class="selectedFiat === 'all' ? 'bg-[#2b3139] text-white font-bold' : 'text-[#848e9c] hover:text-white'"
+                class="px-3 py-1.5 rounded-lg text-xs transition">
+                All
               </button>
             </div>
 
@@ -195,7 +195,8 @@
                 <!-- Price -->
                 <td class="py-4 px-4 font-mono">
                   <div class="text-base font-black text-white">
-                    <span v-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$ {{ Number(getEffectivePrice(ad)).toFixed(2) }}</span>
+                    <span v-if="ad.fiat === 'KES'" class="text-[#0ecb81]">KSh {{ Number(ad.price).toFixed(2) }}</span>
+                    <span v-else-if="ad.fiat === 'USDT' || ad.fiat === 'USD'" class="text-[#f0b90b]">$ {{ Number(ad.price).toFixed(2) }}</span>
                     <span v-else>{{ Number(ad.price).toFixed(2) }}</span>
                     <span class="text-xs text-[#848e9c] font-normal ml-1">{{ ad.fiat }}</span>
                   </div>
@@ -211,9 +212,11 @@
                   <div class="text-[11px] text-[#848e9c]">
                     <span>Limit: </span>
                     <span class="text-white">
-                      <span v-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$</span>
+                      <span v-if="ad.fiat === 'KES'">KSh </span>
+                      <span v-else-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$ </span>
                       {{ Number(ad.min_limit).toLocaleString() }} - 
-                      <span v-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$</span>
+                      <span v-if="ad.fiat === 'KES'">KSh </span>
+                      <span v-else-if="ad.fiat === 'USDT' || ad.fiat === 'USD'">$ </span>
                       {{ Number(ad.max_limit).toLocaleString() }} {{ ad.fiat }}
                     </span>
                   </div>
@@ -327,15 +330,17 @@
           <div class="flex justify-between items-center">
             <span class="text-[#848e9c]">Unit Price:</span>
             <span class="font-bold text-white text-xs">
-              <span v-if="selectedAd.fiat === 'USDT' || selectedAd.fiat === 'USD'">$1.00 {{ selectedAd.fiat }} (1:1 Fixed)</span>
+              <span v-if="selectedAd.fiat === 'KES'" class="text-[#0ecb81]">KSh {{ Number(selectedAd.price).toFixed(2) }} KES</span>
+              <span v-else-if="selectedAd.fiat === 'USDT' || selectedAd.fiat === 'USD'" class="text-[#f0b90b]">${{ Number(selectedAd.price).toFixed(2) }} {{ selectedAd.fiat }}</span>
               <span v-else>{{ Number(selectedAd.price).toFixed(2) }} {{ selectedAd.fiat }}</span>
             </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-[#848e9c]">Order Limits:</span>
             <span class="text-white">
-              <span v-if="selectedAd.fiat === 'USDT' || selectedAd.fiat === 'USD'">$</span>{{ Number(selectedAd.min_limit).toLocaleString() }} - 
-              <span v-if="selectedAd.fiat === 'USDT' || selectedAd.fiat === 'USD'">$</span>{{ Number(selectedAd.max_limit).toLocaleString() }} {{ selectedAd.fiat }}
+              <span v-if="selectedAd.fiat === 'KES'">KSh {{ Number(selectedAd.min_limit).toLocaleString() }} - KSh {{ Number(selectedAd.max_limit).toLocaleString() }} KES</span>
+              <span v-else-if="selectedAd.fiat === 'USDT' || selectedAd.fiat === 'USD'">${{ Number(selectedAd.min_limit).toLocaleString() }} - ${{ Number(selectedAd.max_limit).toLocaleString() }} {{ selectedAd.fiat }}</span>
+              <span v-else>{{ Number(selectedAd.min_limit).toLocaleString() }} - {{ Number(selectedAd.max_limit).toLocaleString() }} {{ selectedAd.fiat }}</span>
             </span>
           </div>
           <div class="flex justify-between items-center">
@@ -479,7 +484,7 @@ import P2PNotificationBanner from '@/Components/P2PNotificationBanner.vue';
 
 const props = defineProps({
   ads: { type: Object, required: true },
-  filters: { type: Object, default: () => ({ type: 'sell', fiat: 'all', payment_method: 'all' }) },
+  filters: { type: Object, default: () => ({ type: 'sell', fiat: 'KES', payment_method: 'all' }) },
   user: { type: Object, default: null },
   isNewUser: { type: Boolean, default: false },
   usdtBalance: { type: Number, default: 0.00 },
@@ -488,7 +493,7 @@ const props = defineProps({
 });
 
 const activeType = ref(props.filters.type || 'sell');
-const selectedFiat = ref(props.filters.fiat || 'all');
+const selectedFiat = ref(props.filters.fiat || 'KES');
 const selectedPayment = ref(props.filters.payment_method || 'all');
 
 const selectedAd = ref(null);
@@ -505,7 +510,6 @@ function openLimitedNotice(ad) {
 
 function getEffectivePrice(ad) {
   if (!ad) return 1.0;
-  if (ad.fiat === 'USDT' || ad.fiat === 'USD') return 1.0;
   return parseFloat(ad.price) || 1.0;
 }
 
