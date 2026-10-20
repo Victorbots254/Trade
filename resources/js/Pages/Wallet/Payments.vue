@@ -110,7 +110,6 @@ import { Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import TradingHeader from '@/Components/TradingHeader.vue';
 import ToastNotification from '@/Components/ToastNotification.vue';
-import WithdrawalTicker from '@/Components/WithdrawalTicker.vue';
 import BottomMarketTicker from '@/Components/BottomMarketTicker.vue';
 
 const props = defineProps({

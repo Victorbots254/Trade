@@ -49,7 +49,6 @@
                     :class="isDark ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-800'">(18%)</span>
             </a>
             <a href="#security" class="hover:text-[#f0b90b] px-3 py-2 rounded transition">Security</a>
-            <a href="#withdrawals" class="hover:text-[#f0b90b] px-3 py-2 rounded transition">Community</a>
           </nav>
         </div>
         <div class="flex items-center space-x-2 text-[13px]">
@@ -426,71 +425,6 @@
       </div>
     </section>
 
-    <!-- RECENT WITHDRAWALS SLIDER -->
-    <section id="withdrawals" class="py-16 px-4 border-y" :class="isDark?'bg-[#181a20] border-[#2b3139]':'bg-gray-50 border-gray-200'">
-      <div class="max-w-[1400px] mx-auto space-y-8">
-        <div class="text-center space-y-2">
-          <h2 class="text-2xl font-bold" :class="isDark?'text-white':'text-[#1e2329]'">🏆 Recent Community Payouts</h2>
-          <p class="text-[13px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Real traders. Real withdrawals. Verified on-chain. Past 30 days.</p>
-        </div>
-
-        <!-- Slider Container -->
-        <div class="relative" @mouseenter="pauseSlider" @mouseleave="resumeSlider">
-          <!-- Prev Arrow -->
-          <button @click="prevSlide"
-            class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-9 h-9 rounded-full border flex items-center justify-center shadow-lg transition hover:border-[#f0b90b] hover:text-[#f0b90b]"
-            :class="isDark?'bg-[#1e2329] border-[#2b3139] text-[#848e9c]':'bg-white border-gray-200 text-[#474d57]'">
-            ‹
-          </button>
-
-          <!-- Cards Track -->
-          <div class="overflow-hidden mx-4">
-            <div class="flex transition-transform duration-500 ease-in-out gap-4"
-              :style="`transform: translateX(calc(-${sliderIndex * (100 / visibleCards)}% - ${sliderIndex * 16 / visibleCards}px))`">
-              <div v-for="w in recentWithdrawals" :key="w.name"
-                class="rounded-xl p-4 border flex items-center space-x-3 flex-shrink-0 transition-all duration-300"
-                :class="isDark?'bg-[#1e2329] border-[#2b3139]':'bg-white border-gray-200'"
-                :style="`width: calc(${100 / visibleCards}% - ${(visibleCards-1)*16/visibleCards}px)`">
-                <!-- Avatar -->
-                <div class="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 text-white shadow-md"
-                  :style="`background:${w.color}`">
-                  {{ w.name.charAt(0).toUpperCase() }}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-bold text-[13px] truncate" :class="isDark?'text-white':'text-[#1e2329]'">{{ w.name }}</div>
-                  <div class="text-[11px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">{{ w.time }}</div>
-                </div>
-                <div class="text-right flex-shrink-0">
-                  <div class="font-bold text-[#0ecb81] text-[13px]">+{{ w.amount }}</div>
-                  <div class="text-[10px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">Withdrawn</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Next Arrow -->
-          <button @click="nextSlide"
-            class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-9 h-9 rounded-full border flex items-center justify-center shadow-lg transition hover:border-[#f0b90b] hover:text-[#f0b90b]"
-            :class="isDark?'bg-[#1e2329] border-[#2b3139] text-[#848e9c]':'bg-white border-gray-200 text-[#474d57]'">
-            ›
-          </button>
-        </div>
-
-        <!-- Dot Indicators -->
-        <div class="flex items-center justify-center space-x-2 pt-2">
-          <button v-for="(_, i) in dotCount" :key="i"
-            @click="goToSlide(i)"
-            class="rounded-full transition-all duration-300"
-            :class="sliderIndex === i ? 'w-6 h-2 bg-[#f0b90b]' : isDark ? 'w-2 h-2 bg-[#2b3139] hover:bg-[#f0b90b]/50' : 'w-2 h-2 bg-gray-300 hover:bg-[#f0b90b]/50'">
-          </button>
-        </div>
-
-        <div class="text-center text-[12px]" :class="isDark?'text-[#848e9c]':'text-[#707a8a]'">
-          ✅ All payouts verified on BNB Smart Chain. Average withdrawal time: &lt;10 minutes.
-        </div>
-      </div>
-    </section>
-
 
     <!-- FEATURES -->
     <section id="features" class="py-20 px-4" :class="isDark?'bg-[#0b0e11]':'bg-white'">
@@ -658,7 +592,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps({ user: Object, markets: Array });
 
@@ -683,48 +617,6 @@ const openFaq = ref(null);
 
 const chartBars = [40,55,45,70,60,80,65,90,75,88,72,95,78,85,100,88,92,78,85,90];
 
-// ===== SLIDER =====
-const sliderIndex = ref(0);
-const sliderPaused = ref(false);
-let sliderTimer = null;
-
-// Responsive: 4 on lg, 2 on sm, 1 on xs
-const visibleCards = ref(4);
-
-function updateVisibleCards() {
-  if (window.innerWidth < 640) visibleCards.value = 1;
-  else if (window.innerWidth < 1024) visibleCards.value = 2;
-  else visibleCards.value = 4;
-}
-
-const dotCount = computed(() => {
-  const total = 12; // recentWithdrawals.length
-  return Math.ceil(total / visibleCards.value);
-});
-
-const maxSlideIndex = computed(() => dotCount.value - 1);
-
-function nextSlide() {
-  sliderIndex.value = sliderIndex.value >= maxSlideIndex.value ? 0 : sliderIndex.value + 1;
-}
-
-function prevSlide() {
-  sliderIndex.value = sliderIndex.value <= 0 ? maxSlideIndex.value : sliderIndex.value - 1;
-}
-
-function goToSlide(i) {
-  sliderIndex.value = i;
-}
-
-function pauseSlider() { sliderPaused.value = true; }
-function resumeSlider() { sliderPaused.value = false; }
-
-function startSliderTimer() {
-  sliderTimer = setInterval(() => {
-    if (!sliderPaused.value) nextSlide();
-  }, 3000);
-}
-
 onMounted(() => {
   if (localStorage.getItem('trade_theme') === 'light') {
     isDark.value = false;
@@ -735,16 +627,7 @@ onMounted(() => {
     document.documentElement.classList.remove('light');
     document.documentElement.classList.add('dark');
   }
-  updateVisibleCards();
-  window.addEventListener('resize', updateVisibleCards);
-  startSliderTimer();
 });
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateVisibleCards);
-  if (sliderTimer) clearInterval(sliderTimer);
-});
-// ===== END SLIDER =====
 
 
 const cryptoSymbols = ['BTC/USDT','ETH/USDT','BNB/USDT','SOL/USDT','XRP/USDT','DOGE/USDT'];
@@ -829,21 +712,6 @@ function getMarketCap(symbol) { return mcaps[symbol.split('/')[0]] || '-'; }
 function formatPrice(val) {
   return Number(val||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
 }
-
-const recentWithdrawals = [
-  {name:'alex_m94', amount:'$14,820', time:'2 hours ago', color:'#f7931a'},
-  {name:'cryptoJade', amount:'$50,000', time:'5 hours ago', color:'#627eea'},
-  {name:'traderKing_X', amount:'$11,500', time:'8 hours ago', color:'#0ecb81'},
-  {name:'Maria_T', amount:'$28,200', time:'12 hours ago', color:'#9945ff'},
-  {name:'SunilFX', amount:'$10,100', time:'1 day ago', color:'#f0b90b'},
-  {name:'GoldHands88', amount:'$16,750', time:'1 day ago', color:'#ffd700'},
-  {name:'neo_block', amount:'$42,000', time:'2 days ago', color:'#00aae4'},
-  {name:'LunaRise', amount:'$12,300', time:'2 days ago', color:'#e31937'},
-  {name:'BearKiller99', amount:'$18,900', time:'3 days ago', color:'#76b900'},
-  {name:'CryptoElena', amount:'$10,400', time:'3 days ago', color:'#c2a633'},
-  {name:'tradeXpert', amount:'$31,000', time:'4 days ago', color:'#00a4ef'},
-  {name:'moonWalker', amount:'$22,500', time:'5 days ago', color:'#ff6b35'},
-];
 
 const features = [
   {icon:'⚡', title:'Sub-Millisecond Matching', desc:'Redis in-memory order books with atomic Lua scripts guarantee price-time priority matching at under 0.5ms latency.', bg:'#f0b90b'},
