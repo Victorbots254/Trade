@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Auto-sync live market prices every minute
 Schedule::command('market:sync')->everyMinute();
+
+// Automatically process and unlock matured USDT MMF subscriptions every minute
+Schedule::command('mmf:process-maturities')->everyMinute();

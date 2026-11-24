@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\MmfSubscription;
 use App\Models\Wallet;
+use App\Services\MmfService;
 use Illuminate\Support\Facades\DB;
 
 class MmfController extends Controller
@@ -13,6 +14,10 @@ class MmfController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+
+        // Automatically process and unlock any matured MMF subscriptions for this user
+        MmfService::processMaturities($user->id);
+
         $subscriptions = MmfSubscription::where("user_id", $user->id)->orderBy("created_at", "desc")->get();
         $logs = \App\Models\MmfInterestLog::where("user_id", $user->id)->orderBy("created_at", "desc")->get();
         
@@ -28,6 +33,18 @@ class MmfController extends Controller
             "wallet" => $wallet,
             "custodialAddress" => config('app.bep20_custodial_address', '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'),
         ]);
+    }
+
+    public function unlockMatured(Request $request)
+    {
+        $user = $request->user();
+        $unlocked = MmfService::processMaturities($user->id);
+
+        if ($unlocked > 0) {
+            return back()->with("message", "Successfully unlocked {$unlocked} matured MMF subscription(s) back into your available balance!");
+        }
+
+        return back()->with("message", "All current active locks are still within their 30-day maturity period.");
     }
 
     public function lockFunds(Request $request)

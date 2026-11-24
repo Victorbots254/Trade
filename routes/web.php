@@ -323,6 +323,7 @@ Route::middleware('auth')->group(function () {
     // Monthly Interests (MMF)
     Route::get('/monthly-interests', [\App\Http\Controllers\MmfController::class, 'index'])->name('monthly.interests');
     Route::post('/monthly-interests/lock', [\App\Http\Controllers\MmfController::class, 'lockFunds']);
+    Route::post('/monthly-interests/unlock', [\App\Http\Controllers\MmfController::class, 'unlockMatured']);
 
     // Spot Orders
     Route::get('/api/orders', [OrderController::class, 'index']);

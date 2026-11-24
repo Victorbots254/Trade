@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\P2POrder;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Services\MmfService;
 use Illuminate\Support\Facades\DB;
 
 class WalletReconciliationService
@@ -17,6 +18,11 @@ class WalletReconciliationService
      */
     public static function reconcileUsdtWallet(User $user, bool $isDemo = false): Wallet
     {
+        // For live wallets, unlock any matured MMF subscriptions first
+        if (!$isDemo) {
+            MmfService::processMaturities($user->id);
+        }
+
         return DB::transaction(function () use ($user, $isDemo) {
             $wallet = Wallet::firstOrCreate(
                 ['user_id' => $user->id, 'currency' => 'USDT', 'is_demo' => $isDemo],

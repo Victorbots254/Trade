@@ -337,10 +337,18 @@
                   {{ subscriptions.length }}
                 </span>
               </h3>
-              <button @click="showDepositModal = true" class="text-xs text-emerald-400 hover:text-emerald-300 font-semibold flex items-center space-x-1">
-                <span>+</span>
-                <span>Add More Funds</span>
-              </button>
+              <div class="flex items-center space-x-2">
+                <button @click="router.post('/monthly-interests/unlock', {}, { preserveScroll: true })"
+                        type="button"
+                        class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-2.5 py-1.5 rounded-lg transition font-medium flex items-center space-x-1">
+                  <span>🔄</span>
+                  <span>Sync & Unlock</span>
+                </button>
+                <button @click="showDepositModal = true" class="text-xs text-emerald-400 hover:text-emerald-300 font-semibold flex items-center space-x-1">
+                  <span>+</span>
+                  <span>Add More Funds</span>
+                </button>
+              </div>
             </div>
             <div class="p-0 overflow-auto flex-1">
               <table class="w-full text-left text-sm">
